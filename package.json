@@ -1,0 +1,39 @@
+{
+  "name": "BEV",
+  "version": "1.0.0",
+  "description": "Blockchain Electronic Voting",
+  "main": "src/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "start": "webpack-dev-server --mode development --open"
+  },
+  "devDependencies": {
+    "babel-core": "6.26.3",
+    "babel-loader": "7.1.5",
+    "babel-plugin-transform-async-to-generator": "6.24.1",
+    "babel-polyfill": "6.26.0",
+    "babel-preset-env": "1.7.0",
+    "babel-preset-react": "6.24.1",
+    "html-webpack-plugin": "3.2.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-scripts": "^3.3.0",
+    "react-toastr": "3.0.0",
+    "truffle-contract": "^3.0.6",
+    "truffle-hdwallet-provider": "^1.0.17",
+    "web3": "1.2.4",
+    "webpack": "^4.41.2",
+    "webpack-cli": "3.1.0",
+    "webpack-dev-server": "^3.9.0"
+  },
+  "author": "Martin Obermeier",
+  "license": "",
+  "repository": {
+    "type": "",
+    "url": ""
+  },
+  "homepage": "",
+  "dependencies": {}
+}
