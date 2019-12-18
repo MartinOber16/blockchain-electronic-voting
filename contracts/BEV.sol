@@ -58,10 +58,6 @@ contract BEV {
     constructor () public {
         owner = msg.sender; // Quien publica el contrato es el dueño
         admins[msg.sender] = true; // Es administrador tambien
-        addAdmin(0x14723a09acff6d2a60dcdf7aa4aff308fddc160c);
-        addElection("Elección 1");
-        addElection("Elección 2");
-        addElection("Elección 2");
     }
 
     // Agregar un administrador
@@ -113,6 +109,10 @@ contract BEV {
         elections[_idElection].candidates[elections[_idElection].candidatesCount] = Candidate(elections[_idElection].candidatesCount, _name, 0);
     }
 
+    function getCandidatesCount (uint _idElection) public view returns(uint){
+        return elections[_idElection].candidatesCount;
+    }
+
    // Eliminar un candidato
     function deleteCandidate(uint _idElection, uint _candidateId) public isAdmin {
         require(electionIsValid(_idElection), "Elección no valida");
@@ -128,6 +128,10 @@ contract BEV {
         elections[_idElection].votersCount++;
         elections[_idElection].voters[_addr] = Voter(_name, false);
         elections[_idElection].joinedVoters[_addr] = true;
+    }
+
+    function getVotersCount (uint _idElection) public view returns(uint){
+        return elections[_idElection].votersCount;
     }
 
    // Eliminar votante
