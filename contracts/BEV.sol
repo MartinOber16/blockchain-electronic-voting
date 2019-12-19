@@ -33,14 +33,14 @@ contract BEV {
     mapping(uint => Election) private elections; // Lista de elecciones
     uint private electionsCount; // Almacenar el recuento de las elecciones
     
-    event electionEvent (
+    event ElectionEvent (
         uint indexed _idElection,
         bool _active
     );
 
-    event votedEvent (
+    event VotedEvent (
         uint indexed _idElection,
-        uint indexed _candidateId
+        uint indexed _idCandidate
     );
 
     // Validar si es propietario
@@ -91,7 +91,7 @@ contract BEV {
         require(electionIsValid(_idElection), "Elección no valida");
         elections[_idElection].active = _active;
 
-        emit electionEvent(_idElection, _active);
+        emit ElectionEvent(_idElection, _active);
     }
 
    // Eliminar una elección
@@ -125,19 +125,19 @@ contract BEV {
     }
 
     // Obtener un candidato
-    function getCandidate(uint _idElection, uint _candidateId) public view returns(uint, string, uint) {
+    function getCandidate(uint _idElection, uint _idCandidate) public view returns(uint, string, uint) {
         require(electionIsValid(_idElection), "Elección no valida");
-        require(candidateIsValid(_idElection, _candidateId), "Candidato no valido");
-        Candidate memory candidate = elections[_idElection].candidates[_candidateId];
+        require(candidateIsValid(_idElection, _idCandidate), "Candidato no valido");
+        Candidate memory candidate = elections[_idElection].candidates[_idCandidate];
         return (candidate.id, candidate.name, candidate.voteCount);
     }
 
    // Eliminar un candidato
-    function deleteCandidate(uint _idElection, uint _candidateId) public isAdmin {
+    function deleteCandidate(uint _idElection, uint _idCandidate) public isAdmin {
         require(electionIsValid(_idElection), "Elección no valida");
-        require(candidateIsValid(_idElection, _candidateId), "Candidato no valido");
+        require(candidateIsValid(_idElection, _idCandidate), "Candidato no valido");
         elections[_idElection].candidatesCount--;
-        delete elections[_idElection].candidates[_candidateId];
+        delete elections[_idElection].candidates[_idCandidate];
     }
 
     // Obtener la cantidad de candidatos de una elección
@@ -147,9 +147,9 @@ contract BEV {
     }
 
     // Comprobar si el candidato es valido
-    function candidateIsValid(uint _idElection, uint _candidateId) private view returns(bool) {
+    function candidateIsValid(uint _idElection, uint _idCandidate) private view returns(bool) {
         require(electionIsValid(_idElection), "Elección no valida");
-        if(_candidateId > 0 && _candidateId <= elections[_idElection].candidatesCount)
+        if(_idCandidate > 0 && _idCandidate <= elections[_idElection].candidatesCount)
             return true;
         
         return false;
@@ -187,16 +187,16 @@ contract BEV {
     }
     
     // Votar
-    function voting (uint _idElection, uint _candidateId) public {
+    function voting (uint _idElection, uint _idCandidate) public {
         require(electionIsValid(_idElection), "Elección no valida"); // Requerir una elección válida
         // Exigir que sea un votante valido y que no haya votado antes
         require(voterIsJoined(_idElection, msg.sender), "Votante no valido");
         require(!voterHasVoted(_idElection, msg.sender), "Votante ya voto");
-        require(candidateIsValid(_idElection, _candidateId), "Candidato no valido"); // Requerir un candidato válido
+        require(candidateIsValid(_idElection, _idCandidate), "Candidato no valido"); // Requerir un candidato válido
         
         elections[_idElection].voters[msg.sender].voted = true; // Registro de que el votante ha votado
-        elections[_idElection].candidates[_candidateId].voteCount ++; // Registro de que el votante ha votado
-        emit votedEvent(_idElection, _candidateId); // Evento desencadenante del voto
+        elections[_idElection].candidates[_idCandidate].voteCount ++; // Registro de que el votante ha votado
+        emit VotedEvent(_idElection, _idCandidate); // Evento desencadenante del voto
     }
 
     // Comprobar si el votante ya voto
@@ -205,4 +205,7 @@ contract BEV {
         require(voterIsJoined(_idElection, _addr), "Votante no valido");
         return elections[_idElection].voters[_addr].voted;
     }
+
+    // Transferir etheres para poder votar
+    
 }

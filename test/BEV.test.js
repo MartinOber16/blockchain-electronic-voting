@@ -222,4 +222,8 @@ contract('BEV', accounts => {
     assert(voteCount >0);
   });
 
+  // Transferir etheres a los votantes
+  
+  // Casos de prueba para probar errores
+
 });
