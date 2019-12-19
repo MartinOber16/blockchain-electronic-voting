@@ -30,17 +30,17 @@ contract BEV {
         mapping(address => bool) joinedVoters; // Almacenar cuentas que pueden votar
     }
 
-    mapping(uint => Election) public elections; // Lista de elecciones
-    uint public electionsCount; // Almacenar el recuento de las elecciones
+    mapping(uint => Election) private elections; // Lista de elecciones
+    uint private electionsCount; // Almacenar el recuento de las elecciones
     
-    event votedEvent (
-        uint indexed _idElection,
-        uint indexed _candidateId
-    );
-
     event electionEvent (
         uint indexed _idElection,
         bool _active
+    );
+
+    event votedEvent (
+        uint indexed _idElection,
+        uint indexed _candidateId
     );
 
     // Validar si es propietario
@@ -79,17 +79,19 @@ contract BEV {
         //elections.push(Election(_name, false, 0, 0));
     }
 
+    // Obtener detalles de una elección
+    function getElection(uint _idElection) public view returns(uint, string, bool, uint, uint) {
+        require(electionIsValid(_idElection), "Elección no valida");
+        Election memory election = elections[_idElection];
+        return (election.id, election.name, election.active, election.candidatesCount, election.votersCount);
+    }
+
     // Activar una elección
     function activeElection(uint _idElection, bool _active) public isAdmin {
         require(electionIsValid(_idElection), "Elección no valida");
         elections[_idElection].active = _active;
 
         emit electionEvent(_idElection, _active);
-    }
-
-    function getElection(uint _idElection) public view returns(uint, string, bool, uint, uint) {
-        Election memory election = elections[_idElection];
-        return (election.id, election.name, election.active, election.candidatesCount, election.votersCount);
     }
 
    // Eliminar una elección
@@ -102,6 +104,19 @@ contract BEV {
         delete elections[_idElection];
     }
 
+    // Devuelve la cantidad de elecciones que hay en el contrato
+    function getTotalElections() public view returns(uint) {
+        return electionsCount;
+    }
+
+    // Comprobar si la eleccion es valida
+    function electionIsValid(uint _idElection) private view returns(bool) {
+        if(_idElection > 0 && _idElection <= electionsCount)
+            return true;
+        
+        return false;
+    }
+
     // Agregar un candidato
     function addCandidate (uint _idElection, string _name) public isAdmin {
         require(electionIsValid(_idElection), "Elección no valida");
@@ -109,17 +124,35 @@ contract BEV {
         elections[_idElection].candidates[elections[_idElection].candidatesCount] = Candidate(elections[_idElection].candidatesCount, _name, 0);
     }
 
-    function getCandidatesCount (uint _idElection) public view returns(uint){
-        return elections[_idElection].candidatesCount;
+    // Obtener un candidato
+    function getCandidate(uint _idElection, uint _candidateId) public view returns(uint, string, uint) {
+        require(electionIsValid(_idElection), "Elección no valida");
+        require(candidateIsValid(_idElection, _candidateId), "Candidato no valido");
+        Candidate memory candidate = elections[_idElection].candidates[_candidateId];
+        return (candidate.id, candidate.name, candidate.voteCount);
     }
 
    // Eliminar un candidato
     function deleteCandidate(uint _idElection, uint _candidateId) public isAdmin {
         require(electionIsValid(_idElection), "Elección no valida");
         require(candidateIsValid(_idElection, _candidateId), "Candidato no valido");
-        
         elections[_idElection].candidatesCount--;
         delete elections[_idElection].candidates[_candidateId];
+    }
+
+    // Obtener la cantidad de candidatos de una elección
+    function getCandidatesCount (uint _idElection) public view returns(uint){
+        require(electionIsValid(_idElection), "Elección no valida");
+        return elections[_idElection].candidatesCount;
+    }
+
+    // Comprobar si el candidato es valido
+    function candidateIsValid(uint _idElection, uint _candidateId) private view returns(bool) {
+        require(electionIsValid(_idElection), "Elección no valida");
+        if(_candidateId > 0 && _candidateId <= elections[_idElection].candidatesCount)
+            return true;
+        
+        return false;
     }
 
     // Agregar un votante
@@ -130,8 +163,10 @@ contract BEV {
         elections[_idElection].joinedVoters[_addr] = true;
     }
 
-    function getVotersCount (uint _idElection) public view returns(uint){
-        return elections[_idElection].votersCount;
+    // Comprobar si el votante esta en el padrón
+    function voterIsJoined(uint _idElection, address _addr) public view returns(bool) {
+        require(electionIsValid(_idElection), "Elección no valida");
+        return elections[_idElection].joinedVoters[_addr];
     }
 
    // Eliminar votante
@@ -145,75 +180,29 @@ contract BEV {
         delete elections[_idElection].voters[_addr];
     }
 
-    // Obtener un candidato
-    function getCandidate(uint _idElection, uint _candidateId) public view returns(string, uint) {
-        //require(_candidateId > 0 && _candidateId <= elections[_idElection].candidatesCount);
+    // Obtener la cantidad de votantes de la elección
+    function getVotersCount (uint _idElection) public view returns(uint){
         require(electionIsValid(_idElection), "Elección no valida");
-        require(candidateIsValid(_idElection, _candidateId), "Candidato no valido");
-        Candidate memory candidate = elections[_idElection].candidates[_candidateId];
-        return (candidate.name, candidate.voteCount);
+        return elections[_idElection].votersCount;
+    }
+    
+    // Votar
+    function voting (uint _idElection, uint _candidateId) public {
+        require(electionIsValid(_idElection), "Elección no valida"); // Requerir una elección válida
+        // Exigir que sea un votante valido y que no haya votado antes
+        require(voterIsJoined(_idElection, msg.sender), "Votante no valido");
+        require(!voterHasVoted(_idElection, msg.sender), "Votante ya voto");
+        require(candidateIsValid(_idElection, _candidateId), "Candidato no valido"); // Requerir un candidato válido
+        
+        elections[_idElection].voters[msg.sender].voted = true; // Registro de que el votante ha votado
+        elections[_idElection].candidates[_candidateId].voteCount ++; // Registro de que el votante ha votado
+        emit votedEvent(_idElection, _candidateId); // Evento desencadenante del voto
     }
 
-    // Comprobar si la eleccion es valida
-    function electionIsValid(uint _idElection) public view returns(bool) {
-        if(_idElection > 0 && _idElection <= electionsCount)
-            return true;
-        
-        return false;
-    }
-    
-    // Comprobar si el candidato es valido
-    function candidateIsValid(uint _idElection, uint _candidateId) public view returns(bool) {
-        require(electionIsValid(_idElection), "Elección no valida");
-        if(_candidateId > 0 && _candidateId <= elections[_idElection].candidatesCount)
-            return true;
-        
-        return false;
-    }
-    
-    // Comprobar si el votante esta en el padrón
-    function voterIsJoined(uint _idElection, address _addr) public view returns(bool) {
-        require(electionIsValid(_idElection), "Elección no valida");
-        return elections[_idElection].joinedVoters[_addr];
-    }
-    
     // Comprobar si el votante ya voto
     function voterHasVoted(uint _idElection, address _addr) public view returns(bool) {
         require(electionIsValid(_idElection), "Elección no valida");
+        require(voterIsJoined(_idElection, _addr), "Votante no valido");
         return elections[_idElection].voters[_addr].voted;
-    }
-
-    // Cantidad de candidatos de una elección
-    function totalCandidates(uint _idElection) public view returns(uint) {
-        return elections[_idElection].candidatesCount;
-    }
-    
-    // Cantidad de votantes de una elección
-    function totalVoters(uint _idElection) public view returns(uint) {
-        return elections[_idElection].votersCount;
-    }
-
-    // Votar
-    function vote (uint _idElection, uint _candidateId) public {
-        // Requerir una elección válida
-        require(electionIsValid(_idElection), "Elección no valida");
-        
-        // Exigir que sea un votante valido y que no haya votado antes
-        //require(elections[_idElection].joinedVoters[msg.sender] && !elections[_idElection].voters[msg.sender].voted);
-        require(voterIsJoined(_idElection, msg.sender), "Votante no valido");
-        require(!voterHasVoted(_idElection, msg.sender), "Votante ya voto");
-
-        // Requerir un candidato válido
-        //require(_candidateId > 0 && _candidateId <= elections[_idElection].candidatesCount);
-        require(candidateIsValid(_idElection, _candidateId), "Candidato no valido");
-
-        // Registro de que el votante ha votado
-        elections[_idElection].voters[msg.sender].voted = true;
-
-        // Actualizar el recuento de votos de los candidatos
-        elections[_idElection].candidates[_candidateId].voteCount ++;
-
-        // Evento desencadenante del voto
-        emit votedEvent(_idElection, _candidateId);
     }
 }
