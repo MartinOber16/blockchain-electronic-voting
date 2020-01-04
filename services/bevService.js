@@ -12,7 +12,7 @@ export class BEVService {
     // ELECTION
     // getAll()
     async getElections() {
-        let total = await this.contract.electionsCount();
+        let total = await this.contract.electionsCount;
         let elections = [];        
         for(var i = 1; i <= total; i++) {            
             let election = await this.contract.getElection(i);
