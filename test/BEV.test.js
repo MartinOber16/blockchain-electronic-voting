@@ -54,16 +54,17 @@ contract('BEV', accounts => {
   });
 
   it('Caso 05: Agregar una elección', async() => {
-    await instance.addElection("Elección 1").then((receipt) => {
+    await instance.addElection("Elección 1", { from: accounts[0], value: 1000000000000000000 }).then((receipt) => {
       //console.log(receipt);
       //logTransaction(receipt.tx);
     });
+    
     let total = await instance.getTotalElections(); // instance.method.electionsCount();
     assert(total>0);
   });
 
   it('Caso 06: Obtener los detalles de una elección', async() => {
-    await instance.addElection("Elección 1").then((receipt) => {
+    await instance.addElection("Elección 1", { from: accounts[0], value: 1000000000000000000 }).then((receipt) => {
       //logTransaction(receipt.tx);
     });
     let total = await instance.getTotalElections();
@@ -77,7 +78,7 @@ contract('BEV', accounts => {
   });
 
   it('Caso 07: Activar una elección', async() => {
-    await instance.addElection("Elección 1").then((receipt) => {
+    await instance.addElection("Elección 1", { from: accounts[0], value: 1000000000000000000 }).then((receipt) => {
       //logTransaction(receipt.tx);
     });
     let total = await instance.getTotalElections();
@@ -94,7 +95,7 @@ contract('BEV', accounts => {
   });
   
   it('Caso 08: Eliminar una elección', async() => {
-    await instance.addElection("Elección 1").then((receipt) => {
+    await instance.addElection("Elección 1", { from: accounts[0], value: 1000000000000000000}).then((receipt) => {
       //logTransaction("addElection: " + receipt.tx);
     });
     let total = await instance.getTotalElections();
@@ -106,7 +107,7 @@ contract('BEV', accounts => {
   });
 
   it('Caso 09: Agregar un candidato', async() => {
-    await instance.addElection("Elección 1").then((receipt) => {
+    await instance.addElection("Elección 1", { from: accounts[0], value: 1000000000000000000 }).then((receipt) => {
       //logTransaction(receipt.tx);
     });
     await instance.addCandidate(1, "Candidato 1").then((receipt) => {
@@ -117,7 +118,7 @@ contract('BEV', accounts => {
   });
 
   it('Caso 10: Obtener los detalles de un candidato', async() => {
-    await instance.addElection("Elección 1").then((receipt) => {
+    await instance.addElection("Elección 1", { from: accounts[0], value: 1000000000000000000 }).then((receipt) => {
       //logTransaction(receipt.tx);
     });
     let elecciones = await instance.getTotalElections();
@@ -135,7 +136,7 @@ contract('BEV', accounts => {
   });
   
   it('Caso 11: Eliminar un candidato', async() => {
-    await instance.addElection("Elección 1").then((receipt) => {
+    await instance.addElection("Elección 1", { from: accounts[0], value: 1000000000000000000 }).then((receipt) => {
       //logTransaction(receipt.tx);
     });
     let elecciones = await instance.getTotalElections();
@@ -151,7 +152,7 @@ contract('BEV', accounts => {
   });
 
   it('Caso 12: Agregar un votante', async() => {
-    await instance.addElection("Elección 1").then((receipt) => {
+    await instance.addElection("Elección 1", { from: accounts[0], value: 1000000000000000000 }).then((receipt) => {
       //logTransaction(receipt.tx);
     });
     let votante = '0x64745f6442486525d046A8B4CD678B28570aDC58';
@@ -163,7 +164,7 @@ contract('BEV', accounts => {
   });
 
   it('Caso 13: Comprobar si el votante esta en el padrón', async() => {
-    await instance.addElection("Elección 1").then((receipt) => {
+    await instance.addElection("Elección 1", { from: accounts[0], value: 1000000000000000000 }).then((receipt) => {
       //logTransaction(receipt.tx);
     });
     let votante = '0x64745f6442486525d046A8B4CD678B28570aDC58';
@@ -175,7 +176,7 @@ contract('BEV', accounts => {
   });
 
   it('Caso 14: Eliminar un votante', async() => {
-    await instance.addElection("Elección 1").then((receipt) => {
+    await instance.addElection("Elección 1", { from: accounts[0], value: 1000000000000000000 }).then((receipt) => {
       //logTransaction(receipt.tx);
     });
     let votante = '0x64745f6442486525d046A8B4CD678B28570aDC58';
@@ -193,21 +194,23 @@ contract('BEV', accounts => {
   });
 
   it('Caso 15: Votar', async() => {
-    await instance.addElection("Elección 1").then((receipt) => {
+    await instance.addElection("Elección 1", { from: accounts[0], value: 1000000000000000000 }).then((receipt) => {
       //logTransaction(receipt.tx);
     });
+
     await instance.addCandidate(1, "Candidato 1").then((receipt) => {
       //logTransaction(receipt.tx);
     });
-    //let votante = '0x64745f6442486525d046A8B4CD678B28570aDC58';
+
     let votante = accounts[0];
-    logAddress("Votante: " + votante);
     await instance.addVoter(1, votante ,"Votante 1").then((receipt) => {
       //logTransaction(receipt.tx);
     });
-    await instance.voting(1,1).then((receipt) => {
+
+    await instance.voting(1,1, {from: votante}).then((receipt) => {
+      // Data del evento
+      log("Nuevo evento -> " + votante + " ha votado en la elección " + receipt.logs[0].args._idElection.toNumber() + " por el candidato " + receipt.logs[0].args._idCandidate.toNumber()); 
       logTransaction("Comprobante de voto: " + receipt.tx);
-      //log(receipt.logs); // Ver como obtener la data del evento
     });
 
     let yaVoto = await instance.voterHasVoted(1, votante);
@@ -218,12 +221,124 @@ contract('BEV', accounts => {
       //console.log(receipt);
       [id, name, voteCount] = receipt; 
     });
-    log("Candidato: "  + name + ", votos: " + voteCount);
     assert(voteCount >0);
   });
 
-  // Transferir etheres a los votantes
+  it('Caso 16: Resultado de la votación', async() => {
+    await instance.addElection("Elección 1", { from: accounts[0], value: 1000000000000000000 }).then((receipt) => {
+      //logTransaction(receipt.tx);
+    });
+    
+    await instance.addCandidate(1, "Candidato 1").then((receipt) => {
+      //logTransaction(receipt.tx);
+    });
+
+    await instance.addCandidate(1, "Candidato 2").then((receipt) => {
+      //logTransaction(receipt.tx);
+    });
+
+    await instance.addCandidate(1, "Candidato 3").then((receipt) => {
+      //logTransaction(receipt.tx);
+    });
+
+    await instance.addVoter(1, accounts[0],"Votante 1").then((receipt) => {
+      //logTransaction(receipt.tx);
+    });
+
+    await instance.addVoter(1, accounts[1],"Votante 2").then((receipt) => {
+      //logTransaction(receipt.tx);
+    });
+
+    await instance.addVoter(1, accounts[2],"Votante 3").then((receipt) => {
+      //logTransaction(receipt.tx);
+    });
+
+    await instance.voting(1,3,{from: accounts[0]}).then((receipt) => {
+      //logTransaction("Votante: " + accounts[0] + " - Comprobante de voto: " + receipt.tx);
+    });
+
+    await instance.voting(1,1,{from: accounts[1]}).then((receipt) => {
+      //logTransaction("Votante: " + accounts[1] + " - Comprobante de voto: " + receipt.tx);
+    });
+
+    await instance.voting(1,3,{from: accounts[2]}).then((receipt) => {
+      //logTransaction("Votante: " + accounts[2] + " - Comprobante de voto: " + receipt.tx);
+    });
   
+    var id, name, voteCount; 
+    await instance.getResultElection(1).then((receipt) => {
+      //log(receipt);
+      id = receipt;
+    });
+  
+    await instance.getCandidate(1, id).then((receipt) => {
+      //console.log(receipt);
+      [id, name, voteCount] = receipt;
+    });
+      
+    log("Id: " + id + ", Candidato: "  + name + ", votos: " + voteCount);
+    assert(id == 3);
+
+  });
+
+  it('Caso 17: Resultado de la votación empate', async() => {
+    await instance.addElection("Elección 1", {from: accounts[0], value: 1000000000000000000}).then((receipt) => {
+      //logTransaction(receipt.tx);
+    });
+    
+    await instance.addCandidate(1, "Candidato 1").then((receipt) => {
+      //logTransaction(receipt.tx);
+    });
+
+    await instance.addCandidate(1, "Candidato 2").then((receipt) => {
+      //logTransaction(receipt.tx);
+    });
+
+    await instance.addCandidate(1, "Candidato 3").then((receipt) => {
+      //logTransaction(receipt.tx);
+    });
+
+    await instance.addVoter(1, accounts[0],"Votante 1").then((receipt) => {
+      //logTransaction(receipt.tx);
+    });
+
+    await instance.addVoter(1, accounts[1],"Votante 2").then((receipt) => {
+      //logTransaction(receipt.tx);
+    });
+
+    await instance.addVoter(1, accounts[2],"Votante 3").then((receipt) => {
+      //logTransaction(receipt.tx);
+    });
+
+    await instance.voting(1,1,{from: accounts[0]}).then((receipt) => {
+      //logTransaction("Votante: " + accounts[0] + " - Comprobante de voto: " + receipt.tx);
+    });
+
+    await instance.voting(1,2,{from: accounts[1]}).then((receipt) => {
+      //logTransaction("Votante: " + accounts[1] + " - Comprobante de voto: " + receipt.tx);
+    });
+
+    await instance.voting(1,3,{from: accounts[2]}).then((receipt) => {
+      //logTransaction("Votante: " + accounts[2] + " - Comprobante de voto: " + receipt.tx);
+    });
+  
+    var id, name, voteCount; 
+    await instance.getResultElection(1).then((receipt) => {
+      //log(receipt);
+      id = receipt;
+    });
+  
+    if(id != 0) {
+      await instance.getCandidate(1, id).then((receipt) => {
+        //console.log(receipt);
+        [id, name, voteCount] = receipt;
+      });
+    }
+      
+    log("Id: " + id + ", Candidato: "  + name + ", votos: " + voteCount);
+    assert(id == 0);
+  });
+
   // Casos de prueba para probar errores
 
 });

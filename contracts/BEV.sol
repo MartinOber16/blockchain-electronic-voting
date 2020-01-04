@@ -32,7 +32,7 @@ contract BEV {
 
     mapping(uint => Election) private elections; // Lista de elecciones
     uint private electionsCount; // Almacenar el recuento de las elecciones
-    
+
     event ElectionEvent (
         uint indexed _idElection,
         bool _active
@@ -73,7 +73,8 @@ contract BEV {
     }
 
     // Agregar una elección
-    function addElection(string _name) public isAdmin {
+    function addElection(string _name) public isAdmin payable {
+        require(msg.value == 1 ether);
         electionsCount++;
         elections[electionsCount] = Election(electionsCount, _name, false, 0, 0);
         //elections.push(Election(_name, false, 0, 0));
@@ -113,7 +114,7 @@ contract BEV {
     function electionIsValid(uint _idElection) private view returns(bool) {
         if(_idElection > 0 && _idElection <= electionsCount)
             return true;
-        
+
         return false;
     }
 
@@ -151,7 +152,7 @@ contract BEV {
         require(electionIsValid(_idElection), "Elección no valida");
         if(_idCandidate > 0 && _idCandidate <= elections[_idElection].candidatesCount)
             return true;
-        
+
         return false;
     }
 
@@ -161,6 +162,7 @@ contract BEV {
         elections[_idElection].votersCount++;
         elections[_idElection].voters[_addr] = Voter(_name, false);
         elections[_idElection].joinedVoters[_addr] = true;
+        getEthersForVoting(_idElection, _addr);
     }
 
     // Comprobar si el votante esta en el padrón
@@ -174,7 +176,7 @@ contract BEV {
         require(electionIsValid(_idElection), "Elección no valida");
         require(voterIsJoined(_idElection, _addr),"El usuario no existe!");
         require(!voterHasVoted(_idElection, _addr), "Votante ya voto");
-        
+
         elections[_idElection].votersCount--;
         elections[_idElection].joinedVoters[_addr] = false;
         delete elections[_idElection].voters[_addr];
@@ -185,17 +187,17 @@ contract BEV {
         require(electionIsValid(_idElection), "Elección no valida");
         return elections[_idElection].votersCount;
     }
-    
-    // Votar
+
+    // Votar: Reemplazar voter por msg.sender!
     function voting (uint _idElection, uint _idCandidate) public {
         require(electionIsValid(_idElection), "Elección no valida"); // Requerir una elección válida
         // Exigir que sea un votante valido y que no haya votado antes
         require(voterIsJoined(_idElection, msg.sender), "Votante no valido");
         require(!voterHasVoted(_idElection, msg.sender), "Votante ya voto");
         require(candidateIsValid(_idElection, _idCandidate), "Candidato no valido"); // Requerir un candidato válido
-        
+
         elections[_idElection].voters[msg.sender].voted = true; // Registro de que el votante ha votado
-        elections[_idElection].candidates[_idCandidate].voteCount ++; // Registro de que el votante ha votado
+        elections[_idElection].candidates[_idCandidate].voteCount++; // Registro de que el votante ha votado
         emit VotedEvent(_idElection, _idCandidate); // Evento desencadenante del voto
     }
 
@@ -206,6 +208,36 @@ contract BEV {
         return elections[_idElection].voters[_addr].voted;
     }
 
+    // Resultado de la votación
+    function getResultElection(uint _idElection) public view returns(uint) {
+        require(electionIsValid(_idElection), "Elección no valida");
+        uint idGanadorActual = elections[_idElection].candidates[1].id;
+        uint votosGanadorActual = elections[_idElection].candidates[1].voteCount;
+        for(uint i = 2; i <= elections[_idElection].candidatesCount; i++) {
+            if(elections[_idElection].candidates[i].voteCount > votosGanadorActual) {
+                idGanadorActual = elections[_idElection].candidates[i].id;
+                votosGanadorActual = elections[_idElection].candidates[i].voteCount;
+            }
+            else {
+                if(elections[_idElection].candidates[i].voteCount == votosGanadorActual)
+                    idGanadorActual = 0;
+            }
+        }
+        return idGanadorActual;
+    }
+
     // Transferir etheres para poder votar
-    
+    function getEthersForVoting(uint _idElection, address _addr) private {
+        require(voterIsJoined(_idElection, _addr), "Votante no valido");
+        uint monto = 20000000000000000;
+        require(getBEVBalance() > monto, "No hay ethers suficientes");
+        _addr.transfer(monto);
+    }
+
+    // Obtener el balance del SmartContract
+    function getBEVBalance() public isAdmin view returns (uint) {
+        address BEVAddress = this;
+        return BEVAddress.balance;
+    }
+
 }
