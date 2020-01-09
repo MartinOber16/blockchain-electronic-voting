@@ -1,26 +1,76 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<title>BEV</title>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
-<style>
-    div {
-        margin-bottom: 5px;
-    }
-    button {
-        margin-left: 8px;
-    } 
-    span {
-        margin-top:5px;
-    }
-</style>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-</head>
+    <!-- Estilos -->        
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">            
+    
+    <style>
+    </style>
 
-<body>
- <div id="app"></div>
-</body>
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script> 
+    
+    <script>
+        $(document).ready(function(){
+
+          $("#myInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#myTable tr").filter(function() {
+              $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+          });
+
+          $("#guardarNuevo").on("click", function() {
+            
+            console.log($("#formElection"));
+          });
+          
+        });
+    </script>
+
+    <title>Blockchain Electronic Voting (BEV)</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="#">
+  </head>
+  <body class="container">                
+    <div id="app"></div>
+  </body>
+  <br/>
+  <footer class="footer bg-dark text-white">
+      <div class="mt-5 pt-4 pb-2 footer">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-5 col-xs-12 about-company">
+                <h5>Martin Obermeier</h5>
+                <p class="pr-5 text-white-50 small">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ac ante mollis quam tristique convallis </p>
+                <p><a href="#"><i class="fa fa-facebook-square mr-1"></i></a><a href="#"><i class="fa fa-linkedin-square"></i></a></p>
+              </div>
+              <div class="col-lg-3 col-xs-12 links">
+                <h5 class="mt-lg-0 mt-sm-3">Links</h5>
+                  <ul class="m-0 p-0">
+                    <li><a href="#">Lorem ipsum</a></li>
+                    <li><a href="#">Nam mauris velit</a></li>
+                    <li><a href="#">Etiam vitae mauris</a></li>
+                  </ul>
+              </div>
+              <div class="col-lg-4 col-xs-12 location">
+                <h5 class="mt-lg-0 mt-sm-4">Univesidad de Morón</h5>
+                <p>22, Lorem ipsum dolor, consectetur adipiscing</p>
+                <p class="mb-0"><i class="fa fa-phone mr-3"></i>(541) 754-3010</p>
+                <p><i class="fa fa-envelope-o mr-3"></i>info@hsdf.com</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col copyright">
+                <p class=""><small class="text-white-50">© 2020. All Rights Reserved.</small></p>
+              </div>
+            </div>
+          </div>
+      </div>
+  </footer>
 </html>
