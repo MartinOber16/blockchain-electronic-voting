@@ -12,22 +12,28 @@ const converter = (web3) => {
     }
 }
 
+const valueElection = 1000000000000000000; // 1 ether
+
 export class App extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            network: 'Ganache',
+            network: undefined,
             conected: false,
             contract: 0,
+            contractBalance: 0,
             account: undefined,
-            balance: 0,
+            admin: false,
+            name: undefined,
+            accountBalance: 0,
             elections: []
         };
     }
 
     // despues de que se cargo el componente
-    async componentDidMount() {
+    async componentDidMount() {        
+        // Obtengo la versión 1 de web3
         this.web3 = await getWeb3();
         console.log("Versión web3: " + this.web3.version);
 
@@ -38,15 +44,12 @@ export class App extends Component {
         try{
             this.BEV = await BEVContract(this.web3.currentProvider);
             this.BEVService = new BEVService(this.BEV);
-            this.setState({
-                contract: this.BEV.contract.address,
-                conected: this.web3.currentProvider.isConnected()
-            });
         }
         catch(e) {
             console.log(e);
         }
 
+        // Información del usuario actual
         var account = (await this.web3.eth.getAccounts())[0];
         console.log("Cuenta actual: " + account);
 
@@ -67,15 +70,34 @@ export class App extends Component {
         } );
     }
 
-    // Obtengo el balance de la cuenta
-    async getBalance(){
-        let weiBalance = await this.web3.eth.getBalance(this.state.account);
+    async getContractInfo() {
         this.setState({
-            balance: this.toEther(weiBalance)
+            network: 'Ganache',
+            contract: this.BEV.contract.address,
+            conected: this.web3.currentProvider.isConnected(), 
+            contractBalance: this.toEther(await this.BEVService.getContractBalance())
         });
     }
 
-    // Obtengo las elecciones en las que esta incluida la cuenta
+    async getUserInfo() {
+        let weiBalance = await this.web3.eth.getBalance(this.state.account);
+        if(this.state.conected) {
+            let isAdmin = await this.BEVService.isAdmin(this.state.account);
+            let name;
+            if(isAdmin)
+                name = "Administrador";
+            else
+                name = "Votante";
+
+            this.setState({
+                name: name,
+                admin: isAdmin,
+                accountBalance: this.toEther(weiBalance)
+            });
+        }
+    }
+
+    // TODO: Obtengo las elecciones en las que esta incluida la cuenta
     async getElections() {
         //let elections = await this.BEVService.getElectionsByAccount(this.state.account);
         if(this.state.conected) {
@@ -84,19 +106,29 @@ export class App extends Component {
                 elections
             });
         }
+        console.log(this.state.elections);
+    }
+
+    // TODO: Obtener datos del formulario y mostrar comprobante 
+    async addElection(){
+        console.log("Add Election");
+        let x = await this.BEVService.addElection("Eleccion 1", this.state.account, valueElection);
+        console.log(x);
     }
 
     async load(){
-        this.getBalance();
-        this.getElections();
+        await this.getContractInfo();
+        await this.getUserInfo();
+        await this.getElections();
     }
 
-    isConected() {
+    isConectedInfo() {
         if (this.state.conected) {
           return <span className="badge badge-success">Conectado</span>;
         }
+
         return <span className="badge badge-danger">Desconectado</span>;
-      }
+    }
 
     render() {
         return <React.Fragment>
@@ -108,7 +140,7 @@ export class App extends Component {
                         </div>
                     </div>
                     <div className="col-sm-4 text-info text-right pr-5" id="profile">
-                        <b>Martin Obermeier</b>
+                        <b>{this.state.name}</b>
                         <p className="small">{this.state.account}</p>
                     </div>
                 </div>
@@ -149,23 +181,23 @@ export class App extends Component {
                             </div>
                             <div className="card bg-light text-dark" id="accountData">
                                 <div className="card-body">
-                                    <h5 className="card-title">Martin Obermeier</h5>
+                                    <h5 className="card-title">Información de la cuenta</h5>
                                     <br/>
-                                    <div className="card-text"><b>Email:</b> martin.obermeier@mail.com</div>
-                                    <div className="card-text"><b>Account:</b> {this.state.account}</div>
-                                    <div className="card-text"><b>Balance:</b> {this.state.balance} eth</div>
+                                    <div className="card-text"><b>Cuenta:</b> {this.state.account}</div>
+                                    <div className="card-text"><b>Balance:</b> {this.state.accountBalance} eth</div>
                                 </div>
                             </div>
                             <br/>
                             <br/>
                             <div className="card bg-light text-dark" id="networkData">
                                 <div className="card-body">
-                                    <h5 className="card-title">{this.state.network}
-                                        <div className="float-right">{this.isConected()}</div>
+                                    <h5 className="card-title">Información de la red
+                                        <div className="float-right">{this.isConectedInfo()}</div>
                                     </h5>    
                                     <br/>                         
-                                    <div className="card-text"><b>Contract Address:</b> {this.state.contract}</div>
-                                    <div className="card-text"><b>Contract Balance:</b> 100.00 ethers</div>
+                                    <div className="card-text"><b>Nombre de la red:</b> {this.state.network}</div>
+                                    <div className="card-text"><b>Dirección del contrato:</b> {this.state.contract}</div>
+                                    <div className="card-text"><b>Balance del contrato:</b> {this.state.contractBalance} eth</div>
                                 </div>
                             </div> 
                         </div>
@@ -183,7 +215,7 @@ export class App extends Component {
                                     <button className="btn btn-primary" type="submit">Clear</button>
                                 </div>
                                 <div className="btn-group col-sm-2">                                
-                                    <button type="button" className="btn btn-success" data-toggle="modal" data-target="#myModal">Nuevo</button>
+                                    <button type="button" className="btn btn-success" onClick={async () => {await this.addElection();} } data-toggle="modal" data-target="#myModal">Nuevo</button>
                                 </div>
                             </div>
                             <br/>

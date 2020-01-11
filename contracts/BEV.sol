@@ -227,15 +227,15 @@ contract BEV {
     }
 
     // Transferir etheres para poder votar
-    function getEthersForVoting(uint _idElection, address _addr) private {
+    function getEthersForVoting(uint _idElection, address _addr) isAdmin private {
         require(voterIsJoined(_idElection, _addr), "Votante no valido");
         uint monto = 20000000000000000;
-        require(getBEVBalance() > monto, "No hay ethers suficientes");
+        require(getContractBalance() > monto, "No hay ethers suficientes");
         _addr.transfer(monto);
     }
 
     // Obtener el balance del SmartContract
-    function getBEVBalance() public isAdmin view returns (uint) {
+    function getContractBalance() public view returns (uint) {
         address BEVAddress = this;
         return BEVAddress.balance;
     }

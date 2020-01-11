@@ -1,18 +1,39 @@
 export class BEVService {
+
     constructor(contract) {
         this.contract = contract;
     }
 
     // ADMINS
-    // get(id)
-    // getAll()
-    // new(model)
-    // delete(id)
+    async isAdmin(addr) {
+        let isUserAdmin = await this.contract.admins(addr);
+        return isUserAdmin;
+    }
 
-    // ELECTION
-    // getAll()
+    async getContractBalance(){
+        let contractBalance = (await this.contract.getContractBalance()).toNumber();
+        return contractBalance; 
+    }
+
+    async getTotalElections() {
+        let total = (await this.contract.getTotalElections()).toNumber();
+        return total;
+    }
+
+    mapElection(elections) {
+        return elections.map(election => {
+            return {
+                id: election[0].toNumber(),
+                name: election[1],
+                active: election[2],
+                candidatesCount: election[3].toNumber(),
+                votersCount: election[4].toNumber()
+            }
+        })
+    }
+
     async getElections() {
-        let total = await this.contract.electionsCount;
+        let total = await this.getTotalElections();
         let elections = [];        
         for(var i = 1; i <= total; i++) {            
             let election = await this.contract.getElection(i);
@@ -20,7 +41,19 @@ export class BEVService {
         }
         return this.mapElection(elections);
     }
-    
+
+    async addElection(name, account, valueElection) {
+        let x;
+        await this.contract.addElection(name, { from: account, value: valueElection }).then((receipt) => {
+            x = receipt;
+            //console.log(receipt);
+            //logTransaction(receipt.tx);
+          });
+        return x;
+    }
+
+
+
     // getById(id)
     async getElectionById(id) {        
         let elections = [];                
@@ -42,44 +75,5 @@ export class BEVService {
         }
         return this.mapElection(elections);
     }
-
-    mapElection(elections) {
-        return elections.map(election => {
-            return {
-                id: election[0],
-                name: election[1],
-                active: election[2],
-                candidatesCount: election[3],
-                votersCount: election[4]
-            }
-        })
-    }
-
-    // new(model)
-    async newElection(name) {
-        await this.contract.addElection(name);
-
-        return await this.contract.electionsCount;
-    }
-
-    // delete(id)
-    // setStatus(bool)
-    // getResult(id)
-
-    // CANDIDATE
-    // get(id)
-    // getAll()
-    // new(model)
-    // delete(id)
-
-    // VOTER
-    // get(id)
-    // getAll()
-    // new(model)
-    // delete(id)
-
-    // UTILS
-    // Response JSON
-    // Map ?
 
 }
