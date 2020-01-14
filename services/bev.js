@@ -6,6 +6,6 @@ export default async (provider) => {
     BEV.setProvider(provider);
 
     let instance = await BEV.deployed();
-    console.log("instance address: " + instance.address);
+    //console.log("instance address: " + instance.address);
     return instance;
 }

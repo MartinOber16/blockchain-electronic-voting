@@ -22,6 +22,7 @@ export class App extends Component {
             network: undefined,
             conected: false,
             contract: 0,
+            totalElections: 0,
             contractBalance: 0,
             account: undefined,
             admin: false,
@@ -31,7 +32,7 @@ export class App extends Component {
         };
     }
 
-    // despues de que se cargo el componente
+    // Despues de que se carga el componente
     async componentDidMount() {        
         // Obtengo la versión 1 de web3
         this.web3 = await getWeb3();
@@ -51,7 +52,7 @@ export class App extends Component {
 
         // Información del usuario actual
         var account = (await this.web3.eth.getAccounts())[0];
-        console.log("Cuenta actual: " + account);
+        //console.log("Cuenta actual: " + account);
 
         // Metodo de metamask para actualizar cuando hay cambio de cuenta
         this.web3.currentProvider.publicConfigStore.on('update', async function(event){
@@ -70,15 +71,20 @@ export class App extends Component {
         } );
     }
 
+    // Obtengo la información del contrato
     async getContractInfo() {
+        let contractInfo = await this.BEVService.getContractInfo();
+        //console.log(contractInfo);
         this.setState({
             network: 'Ganache',
-            contract: this.BEV.contract.address,
-            conected: this.web3.currentProvider.isConnected(), 
-            contractBalance: this.toEther(await this.BEVService.getContractBalance())
+            contract: contractInfo.address,
+            totalElections: contractInfo.totalElections, 
+            contractBalance: this.toEther(contractInfo.balance),
+            conected: this.web3.currentProvider.isConnected() 
         });
     }
 
+    // Obtengo la información del usuario actual
     async getUserInfo() {
         let weiBalance = await this.web3.eth.getBalance(this.state.account);
         if(this.state.conected) {
@@ -97,19 +103,43 @@ export class App extends Component {
         }
     }
 
-    // TODO: Obtengo las elecciones en las que esta incluida la cuenta
-    async getElections() {
-        //let elections = await this.BEVService.getElectionsByAccount(this.state.account);
-        if(this.state.conected) {
-            let elections = await this.BEVService.getElections();
-            this.setState({
-                elections
-            });
+    // Obtengo la información si la aplacacción esta conectada
+    isConectedInfo() {
+        if (this.state.conected) {
+          return <span className="badge badge-success">Conectado</span>;
         }
-        console.log(this.state.elections);
+
+        return <span className="badge badge-danger">Desconectado</span>;
     }
 
-    // TODO: Obtener datos del formulario y mostrar comprobante 
+    // Obtengo todas las elecciones
+    async getElections() {
+        if(this.state.conected) {
+            let allElections = await this.BEVService.getElections();
+            console.log(allElections);
+            this.setState({
+                elections: allElections
+            });
+        }
+    }
+
+    // Genero los registros con los datos de las elecciones
+    renderTableDataElections() {
+        return this.state.elections.map((election   ) => {
+           const { id, name, active, candidatesCount, votersCount } = election //destructuring
+           return (
+              <tr key={id}>
+                 <td>{id}</td>
+                 <td>{name}</td>
+                 <td>{active}</td>
+                 <td>{candidatesCount}</td>
+                 <td>{votersCount}</td>
+              </tr>
+           )
+        })
+     }
+
+    // TODO: Obtener datos del formulario y mostrar el comprobante 
     async addElection(){
         console.log("Add Election");
         let x = await this.BEVService.addElection("Eleccion 1", this.state.account, valueElection);
@@ -120,14 +150,6 @@ export class App extends Component {
         await this.getContractInfo();
         await this.getUserInfo();
         await this.getElections();
-    }
-
-    isConectedInfo() {
-        if (this.state.conected) {
-          return <span className="badge badge-success">Conectado</span>;
-        }
-
-        return <span className="badge badge-danger">Desconectado</span>;
     }
 
     render() {
@@ -223,35 +245,15 @@ export class App extends Component {
                             <table className="table border">
                                 <thead className="thead-dark">
                                     <tr>
-                                        <th>Cuenta</th>
+                                        <th>Número</th>
                                         <th>Nombre</th>
-                                        <th>Email</th>
-                                        <th>Voto</th>
-                                        <th>Actions</th>
+                                        <th>Estado</th>
+                                        <th>Candidatos</th>
+                                        <th>Votantes</th>
                                     </tr>
                                 </thead>
                                 <tbody id="myTable">
-                                    <tr>
-                                        <td>0xd63DdFD0a3547bA641302419957b392fA664eED1</td>
-                                        <td>John Doe</td>
-                                        <td>john@example.com</td>
-                                        <td>Si</td>
-                                        <td><button type="button" className="btn btn-danger btn-sm">Eliminar</button></td>                          
-                                    </tr>
-                                    <tr>
-                                        <td>0xd63DdFD0a3547bA641302419957b392fA664eED2</td>
-                                        <td>Mary Moe</td>
-                                        <td>mary@example.com</td>
-                                        <td>No</td>
-                                        <td><button type="button" className="btn btn-danger btn-sm">Eliminar</button></td>                     
-                                    </tr>
-                                    <tr>
-                                        <td>0xd63DdFD0a3547bA641302419957b392fA664eED3</td>
-                                        <td>July Dooley</td>
-                                        <td>july@example.com</td>
-                                        <td>Si</td>
-                                        <td><button type="button" className="btn btn-danger btn-sm">Eliminar</button></td>                         
-                                    </tr>
+                                    {this.renderTableDataElections()}
                                 </tbody>
                             </table>
                             <br/>

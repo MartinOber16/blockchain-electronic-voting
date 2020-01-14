@@ -4,12 +4,7 @@ export class BEVService {
         this.contract = contract;
     }
 
-    // ADMINS
-    async isAdmin(addr) {
-        let isUserAdmin = await this.contract.admins(addr);
-        return isUserAdmin;
-    }
-
+    // Información del contrato
     async getContractBalance(){
         let contractBalance = (await this.contract.getContractBalance()).toNumber();
         return contractBalance; 
@@ -20,12 +15,27 @@ export class BEVService {
         return total;
     }
 
+    async getContractInfo() {
+        return {
+            address: this.contract.address,
+            totalElections: await this.contract.getTotalElections(),
+            balance: await this.contract.getContractBalance()
+        }
+    }
+
+    // Información de una cuenta
+    async isAdmin(addr) {
+        let isUserAdmin = await this.contract.admins(addr);
+        return isUserAdmin;
+    }
+
+    // Listado de elecciones
     mapElection(elections) {
         return elections.map(election => {
             return {
                 id: election[0].toNumber(),
                 name: election[1],
-                active: election[2],
+                active: election[2].toString(),
                 candidatesCount: election[3].toNumber(),
                 votersCount: election[4].toNumber()
             }
@@ -42,14 +52,15 @@ export class BEVService {
         return this.mapElection(elections);
     }
 
+    // Agregar nueva elección
     async addElection(name, account, valueElection) {
-        let x;
+        let transactionInfo;
         await this.contract.addElection(name, { from: account, value: valueElection }).then((receipt) => {
-            x = receipt;
+            transactionInfo = receipt;
             //console.log(receipt);
             //logTransaction(receipt.tx);
           });
-        return x;
+        return transactionInfo;
     }
 
 
