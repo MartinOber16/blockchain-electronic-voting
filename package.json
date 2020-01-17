@@ -37,5 +37,7 @@
     "url": ""
   },
   "homepage": "",
-  "dependencies": {}
+  "dependencies": {
+    "formik": "^2.1.2"
+  }
 }

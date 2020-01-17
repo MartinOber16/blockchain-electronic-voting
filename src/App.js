@@ -4,6 +4,7 @@ import getWeb3 from "../services/getWeb3";
 import BEVContract from "../services/bev";
 import {BEVService} from "../services/bevService";
 import { ToastContainer } from "react-toastr";
+import { useFormik } from 'formik';
 
 // Funcion para convertir de weis a ethers
 const converter = (web3) => {
@@ -13,6 +14,42 @@ const converter = (web3) => {
 }
 
 const valueElection = 1000000000000000000; // 1 ether
+
+const ElectionForm = (props) => {
+    // Pass the useFormik() hook initial form values and a submit function that will
+    // be called when the form is submitted
+    const formik = useFormik({
+        initialValues: {
+        electionName: '',
+        },
+        onSubmit: values => {
+        //console.log(JSON.stringify(values, null, 2));
+        console.log(values.electionName);
+        console.log(props);
+        
+        console.log("Add Election");
+        let x = props.BEVService.addElection(values.electionName, props.account, valueElection);
+        console.log(x);
+        values.electionName = "";
+        },
+    });
+    return (
+        <form onSubmit={formik.handleSubmit}>
+        <label htmlFor="electionName">Name</label>
+        <input className="form-control" placeholder="Enter name"
+            id="electionName"
+            name="electionName"
+            type="electionName"
+            onChange={formik.handleChange}
+            value={formik.values.electionName}
+        />
+        <br />
+        <div className="modal-footer">
+            <button type="submit" className="btn btn-success">Guardar</button>
+        </div>
+        </form>
+    );
+};
 
 export class App extends Component {
 
@@ -37,6 +74,7 @@ export class App extends Component {
         // Obtengo la versión 1 de web3
         this.web3 = await getWeb3();
         console.log("Versión web3: " + this.web3.version);
+        
 
         // Funcion para convertir a ether
         this.toEther = converter(this.web3);
@@ -134,15 +172,32 @@ export class App extends Component {
                  <td>{active}</td>
                  <td>{candidatesCount}</td>
                  <td>{votersCount}</td>
+                 <td>
+                    <button type="button" className="btn btn-info" onClick={async () => {await this.getElection(1);}} >Ver</button> 
+                    <button type="button" className="btn btn-danger" onClick={async () => {await this.deleteElection(1);}} >Eliminar</button>
+                </td>
               </tr>
            )
         })
      }
 
     // TODO: Obtener datos del formulario y mostrar el comprobante 
-    async addElection(){
+    async getElection(id) {
+        console.log("Get Election");
+        let election = await this.BEVService.getElectionById(id);
+        console.log(election[0]);
+    }
+
+    async addElection(name){
         console.log("Add Election");
-        let x = await this.BEVService.addElection("Eleccion 1", this.state.account, valueElection);
+        let x = await this.BEVService.addElection(name, this.state.account, valueElection);
+        console.log(x);
+    }
+
+    // TODO: No anda muy bien el eliminar, ver si es necesario o quizas una baja logica...
+    async deleteElection(id) {
+        console.log("Delete Election: " + id);
+        let x = await this.BEVService.deleteElection(id, this.state.account);
         console.log(x);
     }
 
@@ -228,7 +283,6 @@ export class App extends Component {
                             <div className="text-left mb-4" id="section">
                                 <h3>Elecciones</h3>   
                             </div>
-                        
                             <div className="input-group row">  
                                 <div className="input-group-append col-sm-1">
                                 </div>                                          
@@ -237,7 +291,9 @@ export class App extends Component {
                                     <button className="btn btn-primary" type="submit">Clear</button>
                                 </div>
                                 <div className="btn-group col-sm-2">                                
-                                    <button type="button" className="btn btn-success" onClick={async () => {await this.addElection();} } data-toggle="modal" data-target="#myModal">Nuevo</button>
+                                    <button type="button" className="btn btn-success" 
+                                    //data-toggle="modal" data-target="#myModal"
+                                    >Nuevo</button>
                                 </div>
                             </div>
                             <br/>
@@ -250,6 +306,7 @@ export class App extends Component {
                                         <th>Estado</th>
                                         <th>Candidatos</th>
                                         <th>Votantes</th>
+                                        <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody id="myTable">
@@ -258,7 +315,10 @@ export class App extends Component {
                             </table>
                             <br/>
 
-                            <div className="modal" id="myModal">
+                            <div 
+                                //className="modal" 
+                                id="myModal"
+                            >
                                 <div className="modal-dialog">
                                     <div className="modal-content">
 
@@ -268,51 +328,12 @@ export class App extends Component {
                                         </div>
                                         
                                         <div className="modal-body">
-                                            <div id="formElection" className="container border">                                                                                    
-                                                <div className="form-group">
-                                                    <label htmlFor="name">Nombre</label>
-                                                    <input type="text" className="form-control" placeholder="Enter name" id="name" />
-                                                </div>
-                                                <div className="form-group">
-                                                    <label htmlFor="email">Email</label>
-                                                    <input type="email" className="form-control" placeholder="Your Email" id="email" />
-                                                </div>
-                
-                                                <div className="form-group">
-                                                    <label htmlFor="sel1">Select list:</label>
-                                                    <select className="form-control" id="sel1">
-                                                        <option>1</option>
-                                                        <option>2</option>
-                                                        <option>3</option>
-                                                        <option>4</option>
-                                                    </select>
-                                                </div>
-                                                <div className="form-group">
-                                                    <label htmlFor="comment">Comment:</label>
-                                                    <textarea className="form-control" rows="5" id="comment"></textarea>
-                                                </div>
-                
-                                                <div className="form-check">
-                                                    <label className="form-check-label">
-                                                    <input type="checkbox" className="form-check-input" value="" />Option 1
-                                                    </label>
-                                                </div>
-                                                <div className="form-check">
-                                                    <label className="form-check-label">
-                                                    <input type="checkbox" className="form-check-input" value="" />Option 2
-                                                    </label>
-                                                </div>
-                                                <br/>
-
-                                                <div className="modal-footer">
-                                                    <button id="guardarNuevo" className="btn btn-success" data-dismiss="modal" >Submit</button>
-                                                    <button className="btn btn-danger" data-dismiss="modal">Close</button>
-                                                </div>                                                      
-                                            </div>
+                                            <ElectionForm BEVService={this.BEVService} account={this.state.account}/>
                                         </div>
                                                                         
                                     </div>
                                 </div>
+
                             </div>
                         </div>
 

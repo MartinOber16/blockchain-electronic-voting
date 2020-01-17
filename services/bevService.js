@@ -52,39 +52,44 @@ export class BEVService {
         return this.mapElection(elections);
     }
 
+    // Ver una elección
+    async getElectionById(id) {        
+        let elections = [];            
+        let election = await this.contract.getElection(id);
+        elections.push(election);
+        return this.mapElection(elections);
+    }
+
+    // Comprobar las elecciones en las que esta incluida la cuenta
+    async getElectionsByAccount(account) {
+        let total = await this.getTotalElections();
+        let elections = [];        
+        for(var i = 0; i < total; i++) {
+            if(await this.contract.voterIsJoined(i, account)) {
+                let election = await this.contract.getElection(i);
+                elections.push(election);
+            }
+        }
+        return this.mapElection(elections);
+    }
+
     // Agregar nueva elección
     async addElection(name, account, valueElection) {
         let transactionInfo;
         await this.contract.addElection(name, { from: account, value: valueElection }).then((receipt) => {
             transactionInfo = receipt;
-            //console.log(receipt);
-            //logTransaction(receipt.tx);
-          });
+            });
         return transactionInfo;
     }
 
-
-
-    // getById(id)
-    async getElectionById(id) {        
-        let elections = [];                
-        let election = await this.contract.elections[id];
-        elections.push(election);
-
-        return this.mapElection(elections);
-    }
-
-    // getByAccount
-    async getElectionsByAccount(account) {
-        let total = await this.contract.electionsCount;
-        let elections = [];        
-        for(var i = 0; i < total; i++) {
-            if(await voterIsJoined(i, account)) {
-                let election = await this.contract.elections[i];
-                elections.push(election);
-            }
-        }
-        return this.mapElection(elections);
+    // Eliminar una elección
+    async deleteElection(id, account) {
+        console.log("async deleteElection("+id+")");
+        let transactionInfo;
+        await this.contract.deleteElection(id, {from: account}).then((receipt) => {
+            transactionInfo = receipt;
+        });
+        console.log(transactionInfo);
     }
 
 }
