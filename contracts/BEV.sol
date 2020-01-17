@@ -28,6 +28,7 @@ contract BEV {
         mapping(uint => Candidate) candidates; // Lectura/escritura de candidatos
         mapping(address => Voter) voters; // Lectura/escritura de los votantes
         mapping(address => bool) joinedVoters; // Almacenar cuentas que pueden votar
+        mapping(uint => address) allVoters; // Lista de los votantes
     }
 
     mapping(uint => Election) private elections; // Lista de elecciones
@@ -126,11 +127,11 @@ contract BEV {
     }
 
     // Obtener un candidato
-    function getCandidate(uint _idElection, uint _idCandidate) public view returns(uint, string, uint) {
+    function getCandidate(uint _idElection, uint _idCandidate) public view returns(uint, uint, string, uint) {
         require(electionIsValid(_idElection), "Elección no valida");
         require(candidateIsValid(_idElection, _idCandidate), "Candidato no valido");
         Candidate memory candidate = elections[_idElection].candidates[_idCandidate];
-        return (candidate.id, candidate.name, candidate.voteCount);
+        return (_idElection, candidate.id, candidate.name, candidate.voteCount);
     }
 
    // Eliminar un candidato
@@ -162,6 +163,7 @@ contract BEV {
         elections[_idElection].votersCount++;
         elections[_idElection].voters[_addr] = Voter(_name, false);
         elections[_idElection].joinedVoters[_addr] = true;
+        elections[_idElection].allVoters[elections[_idElection].votersCount] = _addr;
         getEthersForVoting(_idElection, _addr);
     }
 
@@ -169,6 +171,20 @@ contract BEV {
     function voterIsJoined(uint _idElection, address _addr) public view returns(bool) {
         require(electionIsValid(_idElection), "Elección no valida");
         return elections[_idElection].joinedVoters[_addr];
+    }
+
+    // Obtengo la cuenta de un votante según su posición
+    function getAddressVoter(uint _idElection, uint _index) public isAdmin view returns(address) {
+        require(electionIsValid(_idElection), "Elección no valida");
+        return elections[_idElection].allVoters[_index];
+    }
+
+    // Obtengo un votante
+    function getVoter(uint _idElection, address _addr) public isAdmin view returns(uint, address, string, bool) {
+        require(electionIsValid(_idElection), "Elección no valida");
+        require(voterIsJoined(_idElection, _addr), "Votante no valido");
+        Voter memory voter = elections[_idElection].voters[_addr];
+        return (_idElection, _addr, voter.name, voter.voted);
     }
 
    // Eliminar votante

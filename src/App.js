@@ -2,9 +2,11 @@ import React, { Component } from "react";
 import Panel from "./Panel";
 import getWeb3 from "../services/getWeb3";
 import BEVContract from "../services/bev";
-import {BEVService} from "../services/bevService";
+import { BEVService } from "../services/bevService";
 import { ToastContainer } from "react-toastr";
 import { useFormik } from 'formik';
+
+const valueElection = 1000000000000000000; // 1 ether
 
 // Funcion para convertir de weis a ethers
 const converter = (web3) => {
@@ -13,8 +15,7 @@ const converter = (web3) => {
     }
 }
 
-const valueElection = 1000000000000000000; // 1 ether
-
+// Formularios
 const ElectionForm = (props) => {
     // Pass the useFormik() hook initial form values and a submit function that will
     // be called when the form is submitted
@@ -35,11 +36,11 @@ const ElectionForm = (props) => {
     });
     return (
         <form onSubmit={formik.handleSubmit}>
-        <label htmlFor="electionName">Name</label>
+        <label htmlFor="electionName">Nombre de la Elección</label>
         <input className="form-control" placeholder="Enter name"
             id="electionName"
             name="electionName"
-            type="electionName"
+            type="text"
             onChange={formik.handleChange}
             value={formik.values.electionName}
         />
@@ -50,6 +51,142 @@ const ElectionForm = (props) => {
         </form>
     );
 };
+
+const CandidateForm = (props) => {
+    const formik = useFormik({
+        initialValues: {
+        idElection: 0,
+        candidateName: '',
+        },
+        onSubmit: values => {
+        //console.log(JSON.stringify(values, null, 2));
+        console.log(values.idElection);
+        console.log(values.candidateName);
+        console.log(props);
+        
+        console.log("Add Candidate");
+        let x = props.BEVService.addCandidate(values.idElection, values.candidateName, props.account);
+        console.log(x);
+        values.idElection = 0;
+        values.candidateName = "";
+        },
+    });
+    return (
+        <form onSubmit={formik.handleSubmit}>
+        <label htmlFor="idElection">Nro de Elección</label>
+        <input className="form-control" placeholder="Enter election"
+            id="idElection"
+            name="idElection"
+            type="number"
+            onChange={formik.handleChange}
+            value={formik.values.idElection}
+        />
+        <label htmlFor="candidateName">Nombre del candidato</label>
+        <input className="form-control" placeholder="Enter name"
+            id="candidateName"
+            name="candidateName"
+            type="text"
+            onChange={formik.handleChange}
+            value={formik.values.candidateName}
+        />
+        <br />
+        <div className="modal-footer">
+            <button type="submit" className="btn btn-success">Guardar</button>
+        </div>
+        </form>
+    );
+};
+
+const VoterForm = (props) => {
+    const formik = useFormik({
+        initialValues: {
+        idElection: 0,
+        voterAddress: '',
+        voterName: '',
+        },
+        onSubmit: values => {
+        //console.log(JSON.stringify(values, null, 2));
+        console.log(values.idElection);
+        console.log(values.voterAddress);
+        console.log(values.voterName);
+        console.log(props);
+        
+        console.log("Add Voter");
+        let x = props.BEVService.addVoter(values.idElection, values.voterAddress, values.voterName, props.account);
+        console.log(x);
+        values.idElection = 0;
+        values.voterAddress = "";
+        values.voterName = "";
+        },
+    });
+    return (
+        <form onSubmit={formik.handleSubmit}>
+        <label htmlFor="idElection">Nro de Elección</label>
+        <input className="form-control" placeholder="Enter election"
+            id="idElection"
+            name="idElection"
+            type="number"
+            onChange={formik.handleChange}
+            value={formik.values.idElection}
+        />
+        <label htmlFor="voterAddress">Cuenta del Votante</label>
+        <input className="form-control" placeholder="Enter address"
+            id="voterAddress"
+            name="voterAddress"
+            type="text"
+            onChange={formik.handleChange}
+            value={formik.values.voterAddress}
+        />
+        <label htmlFor="voterName">Nombre del Votante</label>
+        <input className="form-control" placeholder="Enter name"
+            id="voterName"
+            name="voterName"
+            type="text"
+            onChange={formik.handleChange}
+            value={formik.values.voterName}
+        />
+        <br />
+        <div className="modal-footer">
+            <button type="submit" className="btn btn-success">Guardar</button>
+        </div>
+        </form>
+    );
+};
+
+const adminForm = (props) => {
+    const formik = useFormik({
+        initialValues: {
+        adminAddress: '',
+        },
+        onSubmit: values => {
+        //console.log(JSON.stringify(values, null, 2));
+        console.log(values.adminAddress);
+        console.log(props);
+        
+        console.log("Add Election");
+        let x = props.BEVService.addAdmin(values.adminAddress, props.account);
+        console.log(x);
+        values.adminAddress = "";
+        },
+    });
+    return (
+        <form onSubmit={formik.handleSubmit}>
+        <label htmlFor="adminAddress">Name</label>
+        <input className="form-control" placeholder="Enter address"
+            id="adminAddress"
+            name="adminAddress"
+            type="text"
+            onChange={formik.handleChange}
+            value={formik.values.adminAddress}
+        />
+        <br />
+        <div className="modal-footer">
+            <button type="submit" className="btn btn-success">Guardar</button>
+        </div>
+        </form>
+    );
+};
+
 
 export class App extends Component {
 
@@ -65,7 +202,9 @@ export class App extends Component {
             admin: false,
             name: undefined,
             accountBalance: 0,
-            elections: []
+            elections: [],
+            candidates: [],
+            voters: []
         };
     }
 
@@ -75,7 +214,6 @@ export class App extends Component {
         this.web3 = await getWeb3();
         console.log("Versión web3: " + this.web3.version);
         
-
         // Funcion para convertir a ether
         this.toEther = converter(this.web3);
 
@@ -161,6 +299,84 @@ export class App extends Component {
         }
     }
 
+    // TODO: Obtener comprobante de transacciones
+    async getElection(id) {
+        console.log("Get Election: " + id);
+        let election = await this.BEVService.getElection(id);
+        console.log(election[0]);
+    }
+
+    async addElection(name){
+        console.log("Add Election");
+        let x = await this.BEVService.addElection(name, this.state.account, valueElection);
+        console.log(x);
+    }
+
+    async deleteElection(id) {
+        console.log("Delete Election: " + id);
+        let x = await this.BEVService.deleteElection(id, this.state.account);
+        console.log(x);
+    }
+
+    // Obtengo todos los candidatos
+    async getCandidates() {
+        if(this.state.conected) {
+            let allCandidates = await this.BEVService.getCandidates();
+            console.log(allCandidates);
+            this.setState({
+                candidates: allCandidates
+            });
+        }
+    }
+
+    async getCandidate(election, id) {
+        console.log("Get Candidate election: " + election + " id: " + id);
+        let candidate = await this.BEVService.getCandidate(election, id);
+        console.log(candidate[0]);
+    }
+
+    async addCandidate(election, name){
+        console.log("Add Candidate");
+        let x = await this.BEVService.addCandidate(election, name, this.state.account);
+        console.log(x);
+    }
+    
+    async deleteCandidate(election, id) {
+        console.log("Delete Candidate: " + id);
+        let x = await this.BEVService.deleteCandidate(election, id, this.state.account);
+        console.log(x);
+    }
+
+    // Obtengo todos los votantes
+    async getVoters() {
+        if(this.state.conected) {
+            let allVoters = await this.BEVService.getVoters();
+            console.log(allVoters);
+            this.setState({
+                voters: allVoters
+            });
+        }
+    }
+
+    async getVoter(election, address) {
+        console.log("Get Voter: " + address);
+        let voter = await this.BEVService.getVoter(election, address);
+        console.log(voter[0]);
+    }
+
+    async addVoter(election, address, name){
+        console.log("Add Voter");
+        let x = await this.BEVService.addVoter(election, address, name, this.state.account);
+        console.log(x);
+    }
+    
+    async deleteVoter(election, address) {
+        console.log("Delete Voter: " + address);
+        let x = await this.BEVService.deleteVoter(election, address, this.state.account);
+        console.log(x);
+    }
+
+
     // Genero los registros con los datos de las elecciones
     renderTableDataElections() {
         return this.state.elections.map((election   ) => {
@@ -173,42 +389,61 @@ export class App extends Component {
                  <td>{candidatesCount}</td>
                  <td>{votersCount}</td>
                  <td>
-                    <button type="button" className="btn btn-info" onClick={async () => {await this.getElection(1);}} >Ver</button> 
-                    <button type="button" className="btn btn-danger" onClick={async () => {await this.deleteElection(1);}} >Eliminar</button>
+                    <button type="button" className="btn btn-info" onClick={async () => {await this.getElection(id);}} >Ver</button> 
+                    <button type="button" className="btn btn-danger" onClick={async () => {await this.deleteElection(id);}} >Eliminar</button>
                 </td>
               </tr>
            )
         })
      }
 
-    // TODO: Obtener datos del formulario y mostrar el comprobante 
-    async getElection(id) {
-        console.log("Get Election");
-        let election = await this.BEVService.getElectionById(id);
-        console.log(election[0]);
-    }
+    // Genero los registros con los datos de los candidatos
+    renderTableDataCandidates() {
+        return this.state.candidates.map((candidate, index ) => {
+           const { election, id, name, voteCount } = candidate //destructuring
+           return (
+                <tr key={index}>
+                    <td>{election}</td>
+                    <td>{name}</td>
+                    <td>{voteCount}</td>
+                    <td>
+                        <button type="button" className="btn btn-info" onClick={async () => {await this.getCandidate(election, id);}} >Ver</button> 
+                        <button type="button" className="btn btn-danger" onClick={async () => {await this.deleteCandidate(election, id);}} >Eliminar</button>
+                    </td>
+                </tr>
+           )
+        })
+     }
 
-    async addElection(name){
-        console.log("Add Election");
-        let x = await this.BEVService.addElection(name, this.state.account, valueElection);
-        console.log(x);
-    }
-
-    // TODO: No anda muy bien el eliminar, ver si es necesario o quizas una baja logica...
-    async deleteElection(id) {
-        console.log("Delete Election: " + id);
-        let x = await this.BEVService.deleteElection(id, this.state.account);
-        console.log(x);
-    }
+    // Genero los registros con los datos de los votantes
+    renderTableDataVoters() {
+        return this.state.voters.map((voter, index) => {
+           const { election, address, name, voted } = voter //destructuring
+           return (
+              <tr key={index}>
+                 <td>{election}</td>
+                 <td>{address}</td>
+                 <td>{name}</td>
+                 <td>{voted}</td>
+                 <td>
+                    <button type="button" className="btn btn-info" onClick={async () => {await this.getVoter(election, address);}} >Ver</button> 
+                    <button type="button" className="btn btn-danger" onClick={async () => {await this.deleteVoter(election, address);}} >Eliminar</button>
+                </td>
+              </tr>
+           )
+        })
+     }
 
     async load(){
         await this.getContractInfo();
         await this.getUserInfo();
         await this.getElections();
+        await this.getCandidates();
+        await this.getVoters();
     }
 
     render() {
-        return <React.Fragment>
+        return <React.Fragment>        
             <div className="jumbotron jumbotron-fluid bg-dark text-white">
                 <div className="row">
                     <div className="col-sm-8" id="title">
@@ -233,13 +468,7 @@ export class App extends Component {
                                 <a className="nav-link active" data-toggle="pill" href="#home">Inicio</a>                                
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link" data-toggle="pill" href="#listElection">Elecciones</a>                                
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" data-toggle="pill" href="#listCandidate">Candidatos</a>                            
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" data-toggle="pill" href="#listVoter">Votantes</a>                                
+                                <a className="nav-link" data-toggle="pill" href="#adminElection">Administrar Elecciones</a>                                
                             </li>
                             <li className="nav-item">
                                 <a className="nav-link" data-toggle="pill" href="#support">Soporte</a>                                
@@ -279,74 +508,156 @@ export class App extends Component {
                             </div> 
                         </div>
 
-                        <div id="listElection" className="container tab-pane fade">
+                        <div id="adminElection" className="container tab-pane fade">
                             <div className="text-left mb-4" id="section">
-                                <h3>Elecciones</h3>   
+                                <h3>Administrar Elecciones</h3>   
                             </div>
-                            <div className="input-group row">  
-                                <div className="input-group-append col-sm-1">
-                                </div>                                          
-                                <div className="input-group-append col-sm-8">   
-                                    <input type="text" className="form-control" id="myInput" placeholder="Search" />                                                              
-                                    <button className="btn btn-primary" type="submit">Clear</button>
-                                </div>
-                                <div className="btn-group col-sm-2">                                
-                                    <button type="button" className="btn btn-success" 
-                                    //data-toggle="modal" data-target="#myModal"
-                                    >Nuevo</button>
-                                </div>
-                            </div>
-                            <br/>
-
-                            <table className="table border">
-                                <thead className="thead-dark">
-                                    <tr>
-                                        <th>Número</th>
-                                        <th>Nombre</th>
-                                        <th>Estado</th>
-                                        <th>Candidatos</th>
-                                        <th>Votantes</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="myTable">
-                                    {this.renderTableDataElections()}
-                                </tbody>
-                            </table>
-                            <br/>
-
-                            <div 
-                                //className="modal" 
-                                id="myModal"
-                            >
-                                <div className="modal-dialog">
-                                    <div className="modal-content">
-
-                                        <div className="modal-header">
-                                            <h4 className="modal-title">Nuevo</h4>
-                                            <button type="button" className="close" data-dismiss="modal">&times;</button>
-                                        </div>
-                                        
-                                        <div className="modal-body">
-                                            <ElectionForm BEVService={this.BEVService} account={this.state.account}/>
-                                        </div>
-                                                                        
+                            <div id="elections">
+                                <div className="input-group row">  
+                                    <div className="input-group-append col-sm-1">
+                                    </div>                                          
+                                    <div className="input-group-append col-sm-8">   
+                                        <input type="text" className="form-control" id="electionInput" placeholder="Search" />                                                              
+                                        <button className="btn btn-primary" type="submit">Clear</button>
+                                    </div>
+                                    <div className="btn-group col-sm-2">                                
+                                        <button type="button" className="btn btn-success" 
+                                        //data-toggle="modal" data-target="#electionModal"
+                                        >Nuevo</button>
                                     </div>
                                 </div>
-
+                                <br/>                    
+                                <table className="table border">
+                                    <thead className="thead-dark">
+                                        <tr>
+                                            <th>Número</th>
+                                            <th>Nombre</th>
+                                            <th>Estado</th>
+                                            <th>Candidatos</th>
+                                            <th>Votantes</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="electionTable">
+                                        {this.renderTableDataElections()}
+                                    </tbody>
+                                </table>
+                                <br/>
+                                <div 
+                                    //className="modal" 
+                                    id="electionModal">
+                                    <div className="modal-dialog">
+                                        <div className="modal-content">
+                                            <div className="modal-header">
+                                                <h4 className="modal-title">Nueva Elección</h4>
+                                                <button type="button" className="close" data-dismiss="modal">&times;</button>
+                                            </div>                                        
+                                            <div className="modal-body">
+                                                <ElectionForm BEVService={this.BEVService} account={this.state.account}/>
+                                            </div>                                                                        
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                            <br />
+                            <hr />
+                            <br />
+                            <div id="candidates">
+                                <div className="input-group row">  
+                                    <div className="input-group-append col-sm-1">
+                                    </div>                                          
+                                    <div className="input-group-append col-sm-8">   
+                                        <input type="text" className="form-control" id="candidateInput" placeholder="Search" />                                                              
+                                        <button className="btn btn-primary" type="submit">Clear</button>
+                                    </div>
+                                    <div className="btn-group col-sm-2">                                
+                                        <button type="button" className="btn btn-success" 
+                                        //data-toggle="modal" data-target="#candidateModal"
+                                        >Nuevo</button>
+                                    </div>
+                                </div>
+                                <br/>                    
+                                <table className="table border">
+                                    <thead className="thead-dark">
+                                        <tr>
+                                            <th>Elección</th>
+                                            <th>Nombre</th>
+                                            <th>Votos</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="candidateTable">
+                                        {this.renderTableDataCandidates()}
+                                    </tbody>
+                                </table>
+                                <br/>
+                                <div 
+                                    //className="modal" 
+                                    id="candidateModal">
+                                    <div className="modal-dialog">
+                                        <div className="modal-content">
+                                            <div className="modal-header">
+                                                <h4 className="modal-title">Nuevo Candidato</h4>
+                                                <button type="button" className="close" data-dismiss="modal">&times;</button>
+                                            </div>                                        
+                                            <div className="modal-body">
+                                                <CandidateForm BEVService={this.BEVService} account={this.state.account}/>
+                                            </div>                                                                        
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <hr />
+                            <br />
+                            <div id="voters">
+                                <div className="input-group row">  
+                                    <div className="input-group-append col-sm-1">
+                                    </div>                                          
+                                    <div className="input-group-append col-sm-8">   
+                                        <input type="text" className="form-control" id="voterInput" placeholder="Search" />                                                              
+                                        <button className="btn btn-primary" type="submit">Clear</button>
+                                    </div>
+                                    <div className="btn-group col-sm-2">                                
+                                        <button type="button" className="btn btn-success" 
+                                        //data-toggle="modal" data-target="#voterModal"
+                                        >Nuevo</button>
+                                    </div>
+                                </div>
+                                <br/>                    
+                                <table className="table border">
+                                    <thead className="thead-dark">
+                                        <tr>
+                                            <th>Elección</th>
+                                            <th>Cuenta</th>
+                                            <th>Nombre</th>
+                                            <th>Voto</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="voterTable">
+                                        {this.renderTableDataVoters()}
+                                    </tbody>
+                                </table>
+                                <br/>
+                                <div 
+                                    //className="modal" 
+                                    id="voterModal">
+                                    <div className="modal-dialog">
+                                        <div className="modal-content">
+                                            <div className="modal-header">
+                                                <h4 className="modal-title">Nuevo Votante</h4>
+                                                <button type="button" className="close" data-dismiss="modal">&times;</button>
+                                            </div>                                        
+                                            <div className="modal-body">
+                                                <VoterForm BEVService={this.BEVService} account={this.state.account}/>
+                                            </div>                                                                        
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
 
-                        <div id="listCandidate" className="container tab-pane fade">
-                            <div className="text-left mb-4" id="section">
-                                <h3>Candidatos</h3>                
-                            </div>                                           
-                        </div>
-
-                        <div id="listVoter" className="container tab-pane fade">
-                            <div className="text-left mb-4" id="section">
-                                <h3>Votantes</h3>                        
-                            </div>                               
                         </div>
 
                         <div id="support" className="container tab-pane fade">
@@ -366,6 +677,7 @@ export class App extends Component {
                                 </p>
                             </div>
                         </div>
+
                         <br/>
                         <br/>
                     </div>

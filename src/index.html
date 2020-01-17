@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -19,9 +20,23 @@
     <script>
         $(document).ready(function(){
 
-          $("#myInput").on("keyup", function() {
+          $("#electionInput").on("keyup", function() {
             var value = $(this).val().toLowerCase();
-            $("#myTable tr").filter(function() {
+            $("#electionTable tr").filter(function() {
+              $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+          });
+
+          $("#candidateInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#candidateTable tr").filter(function() {
+              $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+          });
+
+          $("#voterInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#voterTable tr").filter(function() {
               $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
             });
           });
@@ -32,9 +47,11 @@
     <title>Blockchain Electronic Voting (BEV)</title>
     <link rel="icon" type="image/png" sizes="16x16" href="#">
   </head>
+
   <body class="container">                
     <div id="app"></div>
   </body>
+
   <br/>
   <footer class="footer bg-dark text-white">
       <div class="mt-5 pt-4 pb-2 footer">
@@ -68,4 +85,5 @@
           </div>
       </div>
   </footer>
+
 </html>
