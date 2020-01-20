@@ -63,9 +63,10 @@ export class BEVService {
 
     // Comprobar las elecciones en las que esta incluida la cuenta
     async getElectionsByAccount(account) {
+        console.log("getElectionsByAccount");
         let total = await this.getTotalElections();
         let elections = [];        
-        for(var i = 0; i < total; i++) {
+        for(var i = 1; i <= total; i++) {
             if(await this.contract.voterIsJoined(i, account)) {
                 let election = await this.contract.getElection(i);
                 elections.push(election);
@@ -195,5 +196,9 @@ export class BEVService {
         });
         console.log(transactionInfo);
     }
+
+    // TODO: Votacion
+
+    // TODO: Administradores
 
 }

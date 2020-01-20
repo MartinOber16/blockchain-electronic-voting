@@ -21,17 +21,17 @@ const ElectionForm = (props) => {
     // be called when the form is submitted
     const formik = useFormik({
         initialValues: {
-        electionName: '',
+            electionName: '',
         },
         onSubmit: values => {
-        //console.log(JSON.stringify(values, null, 2));
-        console.log(values.electionName);
-        console.log(props);
-        
-        console.log("Add Election");
-        let x = props.BEVService.addElection(values.electionName, props.account, valueElection);
-        console.log(x);
-        values.electionName = "";
+            //console.log(JSON.stringify(values, null, 2));
+            console.log(values.electionName);
+            console.log(props);
+            
+            console.log("Add Election");
+            let x = props.BEVService.addElection(values.electionName, props.account, valueElection);
+            console.log(x);
+            values.electionName = "";
         },
     });
     return (
@@ -55,31 +55,31 @@ const ElectionForm = (props) => {
 const CandidateForm = (props) => {
     const formik = useFormik({
         initialValues: {
-        idElection: 0,
-        candidateName: '',
+            idElectionCandidate: 0,
+            candidateName: '',
         },
         onSubmit: values => {
-        //console.log(JSON.stringify(values, null, 2));
-        console.log(values.idElection);
-        console.log(values.candidateName);
-        console.log(props);
-        
-        console.log("Add Candidate");
-        let x = props.BEVService.addCandidate(values.idElection, values.candidateName, props.account);
-        console.log(x);
-        values.idElection = 0;
-        values.candidateName = "";
+            //console.log(JSON.stringify(values, null, 2));
+            console.log(values.idElectionCandidate);
+            console.log(values.candidateName);
+            console.log(props);
+            
+            console.log("Add Candidate");
+            let x = props.BEVService.addCandidate(values.idElectionCandidate, values.candidateName, props.account);
+            console.log(x);
+            values.idElectionCandidate = 0;
+            values.candidateName = "";
         },
     });
     return (
         <form onSubmit={formik.handleSubmit}>
-        <label htmlFor="idElection">Nro de Elección</label>
+        <label htmlFor="idElectionCandidate">Nro de Elección</label>
         <input className="form-control" placeholder="Enter election"
-            id="idElection"
-            name="idElection"
+            id="idElectionCandidate"
+            name="idElectionCandidate"
             type="number"
             onChange={formik.handleChange}
-            value={formik.values.idElection}
+            value={formik.values.idElectionCandidate}
         />
         <label htmlFor="candidateName">Nombre del candidato</label>
         <input className="form-control" placeholder="Enter name"
@@ -100,34 +100,34 @@ const CandidateForm = (props) => {
 const VoterForm = (props) => {
     const formik = useFormik({
         initialValues: {
-        idElection: 0,
-        voterAddress: '',
-        voterName: '',
+            idElectionVoter: 0,
+            voterAddress: '',
+            voterName: '',
         },
         onSubmit: values => {
-        //console.log(JSON.stringify(values, null, 2));
-        console.log(values.idElection);
-        console.log(values.voterAddress);
-        console.log(values.voterName);
-        console.log(props);
-        
-        console.log("Add Voter");
-        let x = props.BEVService.addVoter(values.idElection, values.voterAddress, values.voterName, props.account);
-        console.log(x);
-        values.idElection = 0;
-        values.voterAddress = "";
-        values.voterName = "";
+            //console.log(JSON.stringify(values, null, 2));
+            console.log(values.idElectionVoter);
+            console.log(values.voterAddress);
+            console.log(values.voterName);
+            console.log(props);
+            
+            console.log("Add Voter");
+            let x = props.BEVService.addVoter(values.idElectionVoter, values.voterAddress, values.voterName, props.account);
+            console.log(x);
+            values.idElectionVoter = 0;
+            values.voterAddress = "";
+            values.voterName = "";
         },
     });
     return (
         <form onSubmit={formik.handleSubmit}>
-        <label htmlFor="idElection">Nro de Elección</label>
+        <label htmlFor="idElectionVoter">Nro de Elección</label>
         <input className="form-control" placeholder="Enter election"
-            id="idElection"
-            name="idElection"
+            id="idElectionVoter"
+            name="idElectionVoter"
             type="number"
             onChange={formik.handleChange}
-            value={formik.values.idElection}
+            value={formik.values.idElectionVoter}
         />
         <label htmlFor="voterAddress">Cuenta del Votante</label>
         <input className="form-control" placeholder="Enter address"
@@ -153,6 +153,8 @@ const VoterForm = (props) => {
     );
 };
 
+
+// TODO: Administradores
 const adminForm = (props) => {
     const formik = useFormik({
         initialValues: {
@@ -187,6 +189,51 @@ const adminForm = (props) => {
     );
 };
 
+// TODO: Proceso de votación
+const VoteForm = (props) => {
+    // Pass the useFormik() hook initial form values and a submit function that will
+    // be called when the form is submitted
+    const formik = useFormik({
+        initialValues: {
+            electionIdVote: '',
+            candidateVote: '',
+        },
+        onSubmit: values => {
+            //console.log(JSON.stringify(values, null, 2));
+            console.log("Vote Election");
+            console.log(values.electionIdVote);
+            console.log(values.candidateVote);
+            //let x = props.BEVService.addElection(values.electionIdVote, props.account, valueElection);
+            //console.log(x);
+            values.electionIdVote = "";
+            values.candidateVote = "";
+        },
+    });
+    return (
+        <form onSubmit={formik.handleSubmit}>
+        <label htmlFor="electionIdVote">Elección</label>
+        <input className="form-control" placeholder="Enter electionIdVote"
+            id="electionIdVote"
+            name="electionIdVote"
+            type="number"
+            onChange={formik.handleChange}
+            value={formik.values.electionIdVote}
+        />
+        <label htmlFor="candidateVote">Candidato</label>
+        <input className="form-control" placeholder="Enter candidate"
+            id="candidateVote"
+            name="candidateVote"
+            type="text"
+            onChange={formik.handleChange}
+            value={formik.values.candidateVote}
+        />
+        <br />
+        <div className="modal-footer">
+            <button type="submit" className="btn btn-success">Votar</button>
+        </div>
+        </form>
+    );
+};
 
 export class App extends Component {
 
@@ -203,6 +250,7 @@ export class App extends Component {
             name: undefined,
             accountBalance: 0,
             elections: [],
+            electionsByAccount: [],
             candidates: [],
             voters: []
         };
@@ -299,7 +347,17 @@ export class App extends Component {
         }
     }
 
-    // TODO: Obtener comprobante de transacciones
+    async getElectionsByAccount() {
+        if(this.state.conected) {
+            let electionsByAccount = await this.BEVService.getElectionsByAccount(this.state.account);
+            console.log(electionsByAccount);
+            this.setState({
+                electionsByAccount: electionsByAccount
+            });
+        }
+    }
+
+    // Obtener comprobante de transacciones
     async getElection(id) {
         console.log("Get Election: " + id);
         let election = await this.BEVService.getElection(id);
@@ -434,10 +492,29 @@ export class App extends Component {
         })
      }
 
+    renderTableDataElectionsByAccount() {
+        return this.state.electionsByAccount.map((election   ) => {
+           const { id, name, active, candidatesCount, votersCount } = election //destructuring
+           return (
+              <tr key={id}>
+                 <td>{id}</td>
+                 <td>{name}</td>
+                 <td>{active}</td>
+                 <td>No</td>
+                 <td>
+                    <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#electionByAccountModal">Votar</button>
+                    <button type="button" className="btn btn-info" onClick={async () => {await this.getElection(id);}} >Resultados</button> 
+                </td>
+              </tr>
+           )
+        })
+     }
+
     async load(){
         await this.getContractInfo();
         await this.getUserInfo();
         await this.getElections();
+        await this.getElectionsByAccount();
         await this.getCandidates();
         await this.getVoters();
     }
@@ -483,47 +560,85 @@ export class App extends Component {
 
                         <div id="home" className="container tab-pane active">
                             <div className="text-left mb-4" id="section">
-                                <h3>Inicio</h3>                        
+                                <h3>Inicio</h3>
+                                <hr />                  
                             </div>
-                            <div className="card bg-light text-dark" id="accountData">
-                                <div className="card-body">
-                                    <h5 className="card-title">Información de la cuenta</h5>
-                                    <br/>
-                                    <div className="card-text"><b>Cuenta:</b> {this.state.account}</div>
-                                    <div className="card-text"><b>Balance:</b> {this.state.accountBalance} eth</div>
+                            <div className="row">
+                                <div className="card bg-light text-dark col-sm-6" id="accountData">
+                                    <div className="card-body">
+                                        <h5 className="card-title">Información de la cuenta</h5>
+                                        <hr />
+                                        <div className="card-text"><b>Cuenta:</b> {this.state.account}</div>
+                                        <div className="card-text"><b>Balance:</b> {this.state.accountBalance} eth</div>
+                                    </div>
                                 </div>
+                                <div className="card bg-light text-dark col-sm-6" id="networkData">
+                                    <div className="card-body">
+                                        <h5 className="card-title">Información de la red
+                                            <div className="float-right">{this.isConectedInfo()}</div>
+                                        </h5>    
+                                        <hr />                         
+                                        <div className="card-text"><b>Nombre de la red:</b> {this.state.network}</div>
+                                        <div className="card-text"><b>Dirección del contrato:</b> {this.state.contract}</div>
+                                        <div className="card-text"><b>Balance del contrato:</b> {this.state.contractBalance} eth</div>
+                                    </div>
+                                </div> 
                             </div>
                             <br/>
-                            <br/>
-                            <div className="card bg-light text-dark" id="networkData">
-                                <div className="card-body">
-                                    <h5 className="card-title">Información de la red
-                                        <div className="float-right">{this.isConectedInfo()}</div>
-                                    </h5>    
-                                    <br/>                         
-                                    <div className="card-text"><b>Nombre de la red:</b> {this.state.network}</div>
-                                    <div className="card-text"><b>Dirección del contrato:</b> {this.state.contract}</div>
-                                    <div className="card-text"><b>Balance del contrato:</b> {this.state.contractBalance} eth</div>
+                            <br />
+                            <div id="electionsByAccount">
+                                <h3>Elecciones</h3>
+                                <hr />
+                                <br/>         
+                                <table className="table border">
+                                    <thead className="thead-dark">
+                                        <tr>
+                                            <th>Número</th>
+                                            <th>Nombre</th>
+                                            <th>Estado</th>
+                                            <th>Ya Voto</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="electionTableByAccount">
+                                        {this.renderTableDataElectionsByAccount()}
+                                    </tbody>
+                                </table>
+                                <br/>
+                                <div className="modal" id="electionByAccountModal">
+                                    <div className="modal-dialog">
+                                        <div className="modal-content">
+                                            <div className="modal-header">
+                                                <h4 className="modal-title">Votar</h4>
+                                                <button type="button" className="close" data-dismiss="modal">&times;</button>
+                                            </div>                                        
+                                            <div className="modal-body">
+                                                <VoteForm BEVService={this.BEVService} account={this.state.account}/>
+                                            </div>                                                                        
+                                        </div>
+                                    </div>
                                 </div>
-                            </div> 
+                            </div>
+                            <br />
                         </div>
 
                         <div id="adminElection" className="container tab-pane fade">
                             <div className="text-left mb-4" id="section">
-                                <h3>Administrar Elecciones</h3>   
+                                <h3>Administración</h3>   
+                                <hr />
                             </div>
                             <div id="elections">
+                                <h4>Elecciones</h4>
+                                <hr />
                                 <div className="input-group row">  
                                     <div className="input-group-append col-sm-1">
                                     </div>                                          
                                     <div className="input-group-append col-sm-8">   
-                                        <input type="text" className="form-control" id="electionInput" placeholder="Search" />                                                              
-                                        <button className="btn btn-primary" type="submit">Clear</button>
+                                        <input type="text" className="form-control" id="electionInput" placeholder="Buscar" />                                                              
+                                        <button className="btn btn-primary" type="submit">Limpiar</button>
                                     </div>
                                     <div className="btn-group col-sm-2">                                
-                                        <button type="button" className="btn btn-success" 
-                                        //data-toggle="modal" data-target="#electionModal"
-                                        >Nuevo</button>
+                                        <button type="button" className="btn btn-success" data-toggle="modal" data-target="#electionModal">Nueva</button>
                                     </div>
                                 </div>
                                 <br/>                    
@@ -543,9 +658,7 @@ export class App extends Component {
                                     </tbody>
                                 </table>
                                 <br/>
-                                <div 
-                                    //className="modal" 
-                                    id="electionModal">
+                                <div className="modal" id="electionModal">
                                     <div className="modal-dialog">
                                         <div className="modal-content">
                                             <div className="modal-header">
@@ -560,20 +673,19 @@ export class App extends Component {
                                 </div>
                             </div>
                             <br />
-                            <hr />
-                            <br />
+                            
                             <div id="candidates">
+                                <h4>Candidatos</h4>
+                                <hr />
                                 <div className="input-group row">  
                                     <div className="input-group-append col-sm-1">
                                     </div>                                          
                                     <div className="input-group-append col-sm-8">   
-                                        <input type="text" className="form-control" id="candidateInput" placeholder="Search" />                                                              
-                                        <button className="btn btn-primary" type="submit">Clear</button>
+                                        <input type="text" className="form-control" id="candidateInput" placeholder="Buscar" />                                                              
+                                        <button className="btn btn-primary" type="submit">Limpiar</button>
                                     </div>
                                     <div className="btn-group col-sm-2">                                
-                                        <button type="button" className="btn btn-success" 
-                                        //data-toggle="modal" data-target="#candidateModal"
-                                        >Nuevo</button>
+                                        <button type="button" className="btn btn-success" data-toggle="modal" data-target="#candidateModal">Nuevo</button>
                                     </div>
                                 </div>
                                 <br/>                    
@@ -591,9 +703,7 @@ export class App extends Component {
                                     </tbody>
                                 </table>
                                 <br/>
-                                <div 
-                                    //className="modal" 
-                                    id="candidateModal">
+                                <div className="modal" id="candidateModal">
                                     <div className="modal-dialog">
                                         <div className="modal-content">
                                             <div className="modal-header">
@@ -608,30 +718,29 @@ export class App extends Component {
                                 </div>
                             </div>
                             <br />
-                            <hr />
-                            <br />
+
                             <div id="voters">
+                                <h4>Votantes</h4>
+                                <hr />
                                 <div className="input-group row">  
                                     <div className="input-group-append col-sm-1">
                                     </div>                                          
                                     <div className="input-group-append col-sm-8">   
-                                        <input type="text" className="form-control" id="voterInput" placeholder="Search" />                                                              
-                                        <button className="btn btn-primary" type="submit">Clear</button>
+                                        <input type="text" className="form-control" id="voterInput" placeholder="Buscar" />                                                              
+                                        <button className="btn btn-primary" type="submit">Limpiar</button>
                                     </div>
                                     <div className="btn-group col-sm-2">                                
-                                        <button type="button" className="btn btn-success" 
-                                        //data-toggle="modal" data-target="#voterModal"
-                                        >Nuevo</button>
+                                        <button type="button" className="btn btn-success" data-toggle="modal" data-target="#voterModal">Nuevo</button>
                                     </div>
                                 </div>
-                                <br/>                    
+                                <br/>                  
                                 <table className="table border">
                                     <thead className="thead-dark">
                                         <tr>
                                             <th>Elección</th>
                                             <th>Cuenta</th>
                                             <th>Nombre</th>
-                                            <th>Voto</th>
+                                            <th>Ya voto</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
@@ -640,9 +749,7 @@ export class App extends Component {
                                     </tbody>
                                 </table>
                                 <br/>
-                                <div 
-                                    //className="modal" 
-                                    id="voterModal">
+                                <div className="modal" id="voterModal">
                                     <div className="modal-dialog">
                                         <div className="modal-content">
                                             <div className="modal-header">
@@ -662,7 +769,8 @@ export class App extends Component {
 
                         <div id="support" className="container tab-pane fade">
                             <div className="text-left mb-4" id="section">
-                                <h3>Soporte</h3>                        
+                                <h3>Soporte</h3>
+                                <hr />                    
                             </div>
                             <div className="text-justify">
                                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras varius, odio eget vulputate iaculis, tellus purus consequat purus, sit amet efficitur libero nulla ut purus. Nunc convallis sem eros, in bibendum metus tempor eget. Praesent eu enim sit amet sem consequat sagittis. Fusce sed fringilla dui, ut malesuada ante. Donec vel lectus id mauris faucibus feugiat. Curabitur varius purus feugiat leo aliquet, vitae tincidunt urna dictum. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque posuere justo in purus tincidunt, nec sollicitudin sapien elementum. Duis sollicitudin, velit eget imperdiet vehicula, massa eros consequat sapien, id euismod nunc lectus non lacus.
