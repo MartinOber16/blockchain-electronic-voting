@@ -119,21 +119,26 @@ contract('BEV', accounts => {
   });
 
   it('Caso 10: Obtener los detalles de un candidato', async() => {
+    
     await instance.addElection("Elección 1", { from: accounts[0], value: valueElection }).then((receipt) => {
       //logTransaction(receipt.tx);
     });
+
     let elecciones = await instance.getTotalElections();
     await instance.addCandidate(elecciones, "Candidato 1").then((receipt) => {
       //logTransaction(receipt.tx);
     });
+
     let candidatos = await instance.getCandidatesCount(1);
     var id, name, voteCount;
     await instance.getCandidate(elecciones, candidatos).then((receipt) => {
       //console.log(receipt);
-      [id, name, voteCount] = receipt; 
+      [election, id, name, voteCount] = receipt; 
     });
-    //log(id + ", " + name + ", " + voteCount);
-    assert(name === "Candidato 1");
+
+    //log(election +", " + id + ", " + name + ", " + voteCount);
+    assert(name === "Candidato 1", "Nombre no es igual a Candidato 1");
+
   });
   
   it('Caso 11: Eliminar un candidato', async() => {
@@ -210,19 +215,19 @@ contract('BEV', accounts => {
 
     await instance.voting(1,1, {from: votante}).then((receipt) => {
       // Data del evento
-      log("Nuevo evento -> " + votante + " ha votado en la elección " + receipt.logs[0].args._idElection.toNumber() + " por el candidato " + receipt.logs[0].args._idCandidate.toNumber()); 
-      logTransaction("Comprobante de voto: " + receipt.tx);
+      //log("Nuevo evento -> " + votante + " ha votado en la elección " + receipt.logs[0].args._idElection.toNumber() + " por el candidato " + receipt.logs[0].args._idCandidate.toNumber()); 
+      //logTransaction("Comprobante de voto: " + receipt.tx);
     });
 
     let yaVoto = await instance.voterHasVoted(1, votante);
     assert(yaVoto);
 
-    var id, name, voteCount;
+    var election, id, name, voteCount;
     await instance.getCandidate(1, 1).then((receipt) => {
       //console.log(receipt);
-      [id, name, voteCount] = receipt; 
+      [election, id, name, voteCount] = receipt; 
     });
-    assert(voteCount >0);
+    assert(voteCount >0),"voteCount <= 0";
   });
 
   it('Caso 16: Resultado de la votación', async() => {
@@ -266,7 +271,7 @@ contract('BEV', accounts => {
       //logTransaction("Votante: " + accounts[2] + " - Comprobante de voto: " + receipt.tx);
     });
   
-    var id, name, voteCount; 
+    var election, id, name, voteCount; 
     await instance.getResultElection(1).then((receipt) => {
       //log(receipt);
       id = receipt;
@@ -274,10 +279,10 @@ contract('BEV', accounts => {
   
     await instance.getCandidate(1, id).then((receipt) => {
       //console.log(receipt);
-      [id, name, voteCount] = receipt;
+      [election, id, name, voteCount] = receipt;
     });
       
-    log("Id: " + id + ", Candidato: "  + name + ", votos: " + voteCount);
+    //log("Elección: " + election + ", Id: " + id + ", Candidato: "  + name + ", votos: " + voteCount);
     assert(id == 3);
 
   });
@@ -336,7 +341,7 @@ contract('BEV', accounts => {
       });
     }
       
-    log("Id: " + id + ", Candidato: "  + name + ", votos: " + voteCount);
+    //log("Id: " + id + ", Candidato: "  + name + ", votos: " + voteCount);
     assert(id == 0);
   });
 
