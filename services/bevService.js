@@ -29,6 +29,10 @@ export class BEVService {
         return isUserAdmin;
     }
 
+    // TODO: Administradores
+
+
+
     // Listado de elecciones
     mapElection(elections) {
         console.log(elections);
@@ -68,11 +72,23 @@ export class BEVService {
         let elections = [];        
         for(var i = 1; i <= total; i++) {
             if(await this.contract.voterIsJoined(i, account)) {
-                let election = await this.contract.getElection(i);
+                let _yaVoto = await this.voterHasVoted(i, account);
+                let e = await this.contract.getElection(i);
+                console.log(e);
+                let election = {
+                    id: e[0].toNumber(),
+                    name: e[1],
+                    active: e[2].toString(),
+                    candidatesCount: e[3].toNumber(),
+                    votersCount: e[4].toNumber(),
+                    yaVoto: _yaVoto.toString()
+                  };
+                
+                console.log(election);
                 elections.push(election);
             }
         }
-        return this.mapElection(elections);
+        return elections;
     }
 
     // Agregar nueva elección
@@ -115,6 +131,16 @@ export class BEVService {
                 let candidate = await this.contract.getCandidate(i,j);
                 candidates.push(candidate);
             }
+        }
+        return this.mapCandidate(candidates);
+    }
+
+    async getCandidatesByElection(election) {        
+        var totalCandidates = await this.contract.getCandidatesCount(election);
+        let candidates = [];                  
+        for(var i = 1 ; i <= totalCandidates; i++) {
+            let candidate = await this.contract.getCandidate(election,i);
+            candidates.push(candidate);
         }
         return this.mapCandidate(candidates);
     }
@@ -197,8 +223,35 @@ export class BEVService {
         console.log(transactionInfo);
     }
 
-    // TODO: Votacion
+    async voterHasVoted(election, account) {
+        let yaVoto = await this.contract.voterHasVoted(election, account);
+        console.log("yaVoto: " + yaVoto);
+        return yaVoto;
+    }
 
-    // TODO: Administradores
+    // TODO: Votación
+    async voting(election, candidate, account) {
+        console.log("bevService.voting");
+        let transaction = "";
+        await this.contract.voting(election, candidate, {from: account}).then((receipt) => {
+            transaction = receipt.tx;
+        });
+        console.log("Transaction: " + transaction);
+        
+        await this.contract.addTransaction(election, transaction, {from: account}).then((receipt) => {
+            console.log("Transaccion registrada");
+        });
+    }
+    
+    async getTransaction(election, account){
+        let transaction = await this.contract.getTransaction(election, account);
+        return transaction;
+    }
 
+    // TODO: Resultado de votación
+    async getResultElection(election) {
+        let ganador = await this.contract.getResultElection(election);
+        return ganador;
+    }
+    
 }

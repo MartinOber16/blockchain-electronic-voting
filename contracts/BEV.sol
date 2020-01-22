@@ -29,6 +29,7 @@ contract BEV {
         mapping(address => Voter) voters; // Lectura/escritura de los votantes
         mapping(address => bool) joinedVoters; // Almacenar cuentas que pueden votar
         mapping(uint => address) allVoters; // Lista de los votantes
+        mapping(address => string) transactions; // Lista con las transacciones de votos por cada votante
     }
 
     mapping(uint => Election) private elections; // Lista de elecciones
@@ -204,7 +205,7 @@ contract BEV {
         return elections[_idElection].votersCount;
     }
 
-    // Votar: Reemplazar voter por msg.sender!
+    // Votar
     function voting (uint _idElection, uint _idCandidate) public {
         require(electionIsValid(_idElection), "Elección no valida"); // Requerir una elección válida
         // Exigir que sea un votante valido y que no haya votado antes
@@ -222,6 +223,24 @@ contract BEV {
         require(electionIsValid(_idElection), "Elección no valida");
         require(voterIsJoined(_idElection, _addr), "Votante no valido");
         return elections[_idElection].voters[_addr].voted;
+    }
+
+    // Actualizo la lista de transacciones
+    function addTransaction(uint _idElection, string _transaction) public {
+        require(electionIsValid(_idElection), "Elección no valida");
+        require(voterIsJoined(_idElection, msg.sender), "Votante no valido");
+        require(voterHasVoted(_idElection, msg.sender), "Votante no emitio voto");
+
+        elections[_idElection].transactions[msg.sender] = _transaction;
+    }
+    
+    // Obtengo detalle de la transaccion
+    function getTransaction(uint _idElection, address _addr) public view returns(string) {
+        require(electionIsValid(_idElection), "Elección no valida");
+        require(voterIsJoined(_idElection, _addr), "Votante no valido");
+        require(voterHasVoted(_idElection, _addr), "Votante no emitio voto");
+
+        return elections[_idElection].transactions[_addr];
     }
 
     // Resultado de la votación

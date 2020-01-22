@@ -1,10 +1,13 @@
 import React, { Component } from "react";
-import Panel from "./Panel";
 import getWeb3 from "../services/getWeb3";
 import BEVContract from "../services/bev";
 import { BEVService } from "../services/bevService";
 import { ToastContainer } from "react-toastr";
 import { useFormik } from 'formik';
+
+// TODO: Organizar logs
+// TODO: Optimizar codigo
+// TODO: Manejar errores
 
 const valueElection = 1000000000000000000; // 1 ether
 
@@ -17,20 +20,15 @@ const converter = (web3) => {
 
 // Formularios
 const ElectionForm = (props) => {
-    // Pass the useFormik() hook initial form values and a submit function that will
-    // be called when the form is submitted
     const formik = useFormik({
         initialValues: {
             electionName: '',
         },
-        onSubmit: values => {
-            //console.log(JSON.stringify(values, null, 2));
-            console.log(values.electionName);
-            console.log(props);
-            
+        onSubmit: values => {           
             console.log("Add Election");
-            let x = props.BEVService.addElection(values.electionName, props.account, valueElection);
-            console.log(x);
+            console.log(props.BEVService);
+            let transactionInfo = props.BEVService.addElection(values.electionName, props.account, valueElection);
+            console.log(transactionInfo);
             values.electionName = "";
         },
     });
@@ -153,6 +151,46 @@ const VoterForm = (props) => {
     );
 };
 
+// TODO: Proceso de votación
+const VotingForm = (props) => {
+    const formik = useFormik({
+        initialValues: {
+            electionIdVote: "",
+            candidateVote: "",
+        },
+        onSubmit: values => {            
+            console.log("Vote Election: " + values.electionIdVote + ", " + props.account + ", " + values.candidateVote);              
+            let x = props.BEVService.voting(values.electionIdVote, values.candidateVote, props.account);
+            console.log(x);
+            values.electionIdVote = "";
+            values.candidateVote = "";
+        },
+    });
+    return (
+        <form onSubmit={formik.handleSubmit}>
+        <label htmlFor="electionIdVote">Elección</label>
+        <input className="form-control" placeholder="Enter electionIdVote"
+            id="electionIdVote"
+            name="electionIdVote"
+            type="number"
+            onChange={formik.handleChange}
+            value={formik.values.electionIdVote}
+        />
+        <label htmlFor="candidateVote">Candidato</label>
+        <input className="form-control" placeholder="Enter candidate"
+            id="candidateVote"
+            name="candidateVote"
+            type="number"
+            onChange={formik.handleChange}
+            value={formik.values.candidateVote}
+        />
+        <br />
+        <div className="modal-footer">
+            <button type="submit" className="btn btn-success">Votar</button>
+        </div>
+        </form>
+    );
+};
 
 // TODO: Administradores
 const adminForm = (props) => {
@@ -189,52 +227,6 @@ const adminForm = (props) => {
     );
 };
 
-// TODO: Proceso de votación
-const VoteForm = (props) => {
-    // Pass the useFormik() hook initial form values and a submit function that will
-    // be called when the form is submitted
-    const formik = useFormik({
-        initialValues: {
-            electionIdVote: '',
-            candidateVote: '',
-        },
-        onSubmit: values => {
-            //console.log(JSON.stringify(values, null, 2));
-            console.log("Vote Election");
-            console.log(values.electionIdVote);
-            console.log(values.candidateVote);
-            //let x = props.BEVService.addElection(values.electionIdVote, props.account, valueElection);
-            //console.log(x);
-            values.electionIdVote = "";
-            values.candidateVote = "";
-        },
-    });
-    return (
-        <form onSubmit={formik.handleSubmit}>
-        <label htmlFor="electionIdVote">Elección</label>
-        <input className="form-control" placeholder="Enter electionIdVote"
-            id="electionIdVote"
-            name="electionIdVote"
-            type="number"
-            onChange={formik.handleChange}
-            value={formik.values.electionIdVote}
-        />
-        <label htmlFor="candidateVote">Candidato</label>
-        <input className="form-control" placeholder="Enter candidate"
-            id="candidateVote"
-            name="candidateVote"
-            type="text"
-            onChange={formik.handleChange}
-            value={formik.values.candidateVote}
-        />
-        <br />
-        <div className="modal-footer">
-            <button type="submit" className="btn btn-success">Votar</button>
-        </div>
-        </form>
-    );
-};
-
 export class App extends Component {
 
     constructor(props) {
@@ -256,6 +248,7 @@ export class App extends Component {
         };
     }
 
+    // TODO: ver que funciones se pueden sacar de aca
     // Despues de que se carga el componente
     async componentDidMount() {        
         // Obtengo la versión 1 de web3
@@ -364,11 +357,13 @@ export class App extends Component {
         console.log(election[0]);
     }
 
+    /*
     async addElection(name){
         console.log("Add Election");
         let x = await this.BEVService.addElection(name, this.state.account, valueElection);
         console.log(x);
     }
+    */
 
     async deleteElection(id) {
         console.log("Delete Election: " + id);
@@ -393,11 +388,12 @@ export class App extends Component {
         console.log(candidate[0]);
     }
 
+    /*
     async addCandidate(election, name){
         console.log("Add Candidate");
         let x = await this.BEVService.addCandidate(election, name, this.state.account);
         console.log(x);
-    }
+    }*/
     
     async deleteCandidate(election, id) {
         console.log("Delete Candidate: " + id);
@@ -421,12 +417,13 @@ export class App extends Component {
         let voter = await this.BEVService.getVoter(election, address);
         console.log(voter[0]);
     }
-
+    /*
     async addVoter(election, address, name){
         console.log("Add Voter");
         let x = await this.BEVService.addVoter(election, address, name, this.state.account);
         console.log(x);
     }
+    */
     
     async deleteVoter(election, address) {
         console.log("Delete Voter: " + address);
@@ -434,6 +431,21 @@ export class App extends Component {
         console.log(x);
     }
 
+    async voterHasVoted(election, address){
+        console.log("voterHasVoted: " + election + ", " + address);
+        let yaVoto = await this.BEVService.voterHasVoted(election, address);
+        console.log(yaVoto);
+        return yaVoto;
+    }
+    /*
+    async voting(election, candidate){
+        console.log("Voting");
+        let x = await this.BEVService.voting(election, candidate, this.state.account);
+        console.log(x);
+        let t = await this.BEVService.getTransaction(election, this.state.account);
+        console.log("Transaction: " + t);
+    }
+    */
 
     // Genero los registros con los datos de las elecciones
     renderTableDataElections() {
@@ -492,15 +504,18 @@ export class App extends Component {
         })
      }
 
+    // TODO: Habilitar los botones segun si ya voto
+    // TODO: Modal para ver el comprobante de voto
+    // TODO: Sección para ver los resultados de la elección
     renderTableDataElectionsByAccount() {
         return this.state.electionsByAccount.map((election   ) => {
-           const { id, name, active, candidatesCount, votersCount } = election //destructuring
+           const { id, name, active, yaVoto } = election //destructuring
            return (
               <tr key={id}>
                  <td>{id}</td>
                  <td>{name}</td>
                  <td>{active}</td>
-                 <td>No</td>
+                 <td>{yaVoto}</td>
                  <td>
                     <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#electionByAccountModal">Votar</button>
                     <button type="button" className="btn btn-info" onClick={async () => {await this.getElection(id);}} >Resultados</button> 
@@ -510,15 +525,20 @@ export class App extends Component {
         })
      }
 
+    // TODO: ver de cargar la información según el perfil
     async load(){
         await this.getContractInfo();
         await this.getUserInfo();
-        await this.getElections();
         await this.getElectionsByAccount();
-        await this.getCandidates();
-        await this.getVoters();
+        console.log("Is admin: " + this.state.admin);
+        if(this.state.admin) {
+            await this.getElections();
+            await this.getCandidates();
+            await this.getVoters();
+        }
     }
 
+    // TODO: Mostrar opciones del menú segun el perfil
     render() {
         return <React.Fragment>        
             <div className="jumbotron jumbotron-fluid bg-dark text-white">
@@ -613,7 +633,7 @@ export class App extends Component {
                                                 <button type="button" className="close" data-dismiss="modal">&times;</button>
                                             </div>                                        
                                             <div className="modal-body">
-                                                <VoteForm BEVService={this.BEVService} account={this.state.account}/>
+                                                <VotingForm BEVService={this.BEVService} account={this.state.account}/>
                                             </div>                                                                        
                                         </div>
                                     </div>
