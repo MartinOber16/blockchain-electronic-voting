@@ -1,6 +1,8 @@
 // Ejecutar truffle test
 // https://web3js.readthedocs.io/en/v1.2.0/web3-eth-contract.html
 
+// TODO: Reorganizar casos de prueba
+
 const chalk = require('chalk');
 const BEV = artifacts.require('BEV');
 let instance;
@@ -345,6 +347,6 @@ contract('BEV', accounts => {
     assert(id == 0);
   });
 
-  // Casos de prueba para probar errores
+  // TODO: Casos de prueba para probar errores
 
 });

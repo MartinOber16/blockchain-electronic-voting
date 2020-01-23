@@ -7,7 +7,7 @@ export class BEVService {
     // Información del contrato
     async getContractBalance(){
         let contractBalance = (await this.contract.getContractBalance()).toNumber();
-        return contractBalance; 
+        return contractBalance;      
     }
 
     async getTotalElections() {
@@ -29,13 +29,25 @@ export class BEVService {
         return isUserAdmin;
     }
 
-    // TODO: Administradores
+    // Solo el propietario del contrato puede agregar o quitar administradores
+    async addAdmin(address, account) {
+        let transactionInfo;
+        await this.contract.addAdmin(address, { from: account }).then((receipt) => {
+            transactionInfo = receipt;
+            });
+        return transactionInfo;
+    }
 
-
+    async deleteAdmin(address, account) {
+        let transactionInfo;
+        await this.contract.deleteAdmin(address, { from: account }).then((receipt) => {
+            transactionInfo = receipt;
+            });
+        return transactionInfo;
+    }
 
     // Listado de elecciones
-    mapElection(elections) {
-        console.log(elections);
+    mapElection(elections) {        
         return elections.map(election => {
             return {
                 id: election[0].toNumber(),
@@ -66,15 +78,13 @@ export class BEVService {
     }
 
     // Comprobar las elecciones en las que esta incluida la cuenta
-    async getElectionsByAccount(account) {
-        console.log("getElectionsByAccount");
+    async getElectionsByAccount(account) {        
         let total = await this.getTotalElections();
         let elections = [];        
         for(var i = 1; i <= total; i++) {
             if(await this.contract.voterIsJoined(i, account)) {
                 let _yaVoto = await this.voterHasVoted(i, account);
-                let e = await this.contract.getElection(i);
-                console.log(e);
+                let e = await this.contract.getElection(i);                
                 let election = {
                     id: e[0].toNumber(),
                     name: e[1],
@@ -82,16 +92,14 @@ export class BEVService {
                     candidatesCount: e[3].toNumber(),
                     votersCount: e[4].toNumber(),
                     yaVoto: _yaVoto.toString()
-                  };
-                
-                console.log(election);
+                  };                                
                 elections.push(election);
             }
         }
         return elections;
     }
 
-    // Agregar nueva elección
+    // Agregar nueva elección y devuelve la información de la transacción
     async addElection(name, account, valueElection) {
         let transactionInfo;
         await this.contract.addElection(name, { from: account, value: valueElection }).then((receipt) => {
@@ -100,14 +108,13 @@ export class BEVService {
         return transactionInfo;
     }
 
-    // Eliminar una elección
+    // Eliminar una elección y devuelve la información de la transacción
     async deleteElection(id, account) {
-        console.log("async deleteElection("+id+")");
         let transactionInfo;
         await this.contract.deleteElection(id, {from: account}).then((receipt) => {
             transactionInfo = receipt;
         });
-        console.log(transactionInfo);
+        return transactionInfo;
     }
 
     // Listado de candidatos
@@ -153,7 +160,7 @@ export class BEVService {
         return this.mapCandidate(candidates);
     }
 
-    // Agregar nuevo candidato
+    // Agregar nuevo candidato y devuelve la información de la transacción
     async addCandidate(election, name, account) {
         let transactionInfo;
         await this.contract.addCandidate(election, name, { from: account }).then((receipt) => {
@@ -168,7 +175,7 @@ export class BEVService {
         await this.contract.deleteCandidate(election, id, {from: account}).then((receipt) => {
             transactionInfo = receipt;
         });
-        console.log(transactionInfo);
+        return transactionInfo;
     }
 
     // Listado de votantes
@@ -205,7 +212,7 @@ export class BEVService {
         return this.mapVoter(voters);
     }
 
-    // Agregar nuevo votante
+    // Agregar nuevo votante y devuelve la información de la transacción
     async addVoter(election, address, name, account) {
         let transactionInfo;
         await this.contract.addVoter(election, address, name, { from: account }).then((receipt) => {
@@ -220,38 +227,50 @@ export class BEVService {
         await this.contract.deleteVoter(election, address, {from: account}).then((receipt) => {
             transactionInfo = receipt;
         });
-        console.log(transactionInfo);
+        return transactionInfo;
     }
 
+    // Consulto si el usuario ya voto
     async voterHasVoted(election, account) {
-        let yaVoto = await this.contract.voterHasVoted(election, account);
-        console.log("yaVoto: " + yaVoto);
+        let yaVoto = await this.contract.voterHasVoted(election, account);        
         return yaVoto;
     }
 
-    // TODO: Votación
-    async voting(election, candidate, account) {
-        console.log("bevService.voting");
-        let transaction = "";
+    // Genera el voto, actualiza el numero de transacción y devuelve la información de la transaccion del voto
+    async voting(election, candidate, account) {        
+        let transactionInfo;
         await this.contract.voting(election, candidate, {from: account}).then((receipt) => {
-            transaction = receipt.tx;
+            transactionInfo = receipt;
         });
-        console.log("Transaction: " + transaction);
         
-        await this.contract.addTransaction(election, transaction, {from: account}).then((receipt) => {
-            console.log("Transaccion registrada");
+        // TODO: addTransaction -> Ver si se puede integrar en el contrato
+        await this.contract.addTransaction(election, transactionInfo.tx, {from: account}).then((receipt) => {
+            console.log("Transaccion registrada!");
         });
+
+        return transactionInfo;
     }
     
+    // Obtengo la información de la transacción
     async getTransaction(election, account){
         let transaction = await this.contract.getTransaction(election, account);
         return transaction;
     }
 
-    // TODO: Resultado de votación
+    // Resultado de votación
     async getResultElection(election) {
         let ganador = await this.contract.getResultElection(election);
-        return ganador;
+        let candidatoGanador = await this.getCandidate(election, ganador);
+        return candidatoGanador;
     }
     
+    // Transferencia de fondos del contrato
+    async transferFromContract(address, etherToRefund, account) {
+        let transactionInfo;
+        await this.contract.transferFromContract(address, etherToRefund, {from: account}).then((receipt) => {
+            transactionInfo = receipt;
+        });
+        return transactionInfo;
+    }
+
 }

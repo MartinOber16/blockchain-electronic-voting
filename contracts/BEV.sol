@@ -233,7 +233,7 @@ contract BEV {
 
         elections[_idElection].transactions[msg.sender] = _transaction;
     }
-    
+
     // Obtengo detalle de la transaccion
     function getTransaction(uint _idElection, address _addr) public view returns(string) {
         require(electionIsValid(_idElection), "Elección no valida");
@@ -267,6 +267,12 @@ contract BEV {
         uint monto = 20000000000000000;
         require(getContractBalance() > monto, "No hay ethers suficientes");
         _addr.transfer(monto);
+    }
+
+    // Transferir los fondos del contrato
+    function transferFromContract(address _addr, uint etherToRefund) public isOwner {
+        require(getContractBalance() > etherToRefund, "No hay ethers suficientes");
+        _addr.transfer(etherToRefund);
     }
 
     // Obtener el balance del SmartContract
