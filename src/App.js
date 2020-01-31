@@ -8,17 +8,18 @@ import Header from "./components/Header";
 import Menu from "./components/Menu";
 import Soporte from "./components/Soporte";
 
+// TODO: Manejar errores
 // TODO: Mostrar información con Alertas o Modals
 // TODO: Transferencia de los fondos del contrato
 // TODO: Activar/Desactivar elección
 // TODO: Prueba de usuario
-// TODO: Manejar errores
 // TODO: Optimizar formularios
 // TODO: Alertas de Toast
 // TODO: Optimizar codigo
 // TODO: Componentes en React js
 
-const valueElection = 1000000000000000000; // Valor a transferir para utilizar en la elección por costo para transacciones = 1 ether
+// Valor a transferir para utilizar en la elección por costo para transacciones = 1 ether
+const valueElection = 1000000000000000000; 
 
 // Funcion para convertir de weis a ethers
 const converter = (web3) => {
@@ -27,17 +28,17 @@ const converter = (web3) => {
     }
 }
 
-// FORMULARIOS
+// ***** FORMULARIOS *****
+// Formulario de elección
 const ElectionForm = (props) => {
     const formik = useFormik({
         initialValues: {
             electionName: "",
         },
         onSubmit: values => {   
-            //console.log(JSON.stringify(values, null, 2));        
-            //console.log("ElectionForm -> add Election(" + values.electionName + ", " + props.account + ", " + valueElection + ")");            
+            //console.log(JSON.stringify(values, null, 2));           
             let transactionInfo = props.BEVService.addElection(values.electionName, props.account, valueElection);
-            //console.log("ElectionForm -> transactionInfo: " + transactionInfo);
+            console.log("Transacción: " + transactionInfo);
             values.electionName = "";
         },
     });
@@ -59,17 +60,16 @@ const ElectionForm = (props) => {
     );
 };
 
+// Formulario de candidato
 const CandidateForm = (props) => {
     const formik = useFormik({
         initialValues: {
             idElectionCandidate: 0,
             candidateName: "",
         },
-        onSubmit: values => {
-            //console.log(JSON.stringify(values, null, 2));
-            //console.log("CandidateForm -> addCandidate(" + values.idElectionCandidate + ", " + values.candidateName + ", " + props.account + ")");               
+        onSubmit: values => {            
             let transactionInfo = props.BEVService.addCandidate(values.idElectionCandidate, values.candidateName, props.account);
-            //console.log("CandidateForm -> transactionInfo: " + transactionInfo);
+            console.log("Transacción: " + transactionInfo);
             values.idElectionCandidate = 0;
             values.candidateName = "";
         },
@@ -100,6 +100,7 @@ const CandidateForm = (props) => {
     );
 };
 
+// Formulario de votante
 const VoterForm = (props) => {
     const formik = useFormik({
         initialValues: {
@@ -108,10 +109,8 @@ const VoterForm = (props) => {
             voterName: "",
         },
         onSubmit: values => {
-            //console.log(JSON.stringify(values, null, 2));            
-            //console.log("VoterForm -> addVoter(" + values.idElectionVoter + ", " + values.voterAddress + ", " + values.voterName + ", " + props.account + ")");
             let transactionInfo = props.BEVService.addVoter(values.idElectionVoter, values.voterAddress, values.voterName, props.account);
-            //console.log("VoterForm -> transactionInfo: " + transactionInfo);
+            console.log("Transacción: " + transactionInfo);
             values.idElectionVoter = 0;
             values.voterAddress = "";
             values.voterName = "";
@@ -151,17 +150,16 @@ const VoterForm = (props) => {
     );
 };
 
+// Formulario de votación
 const VotingForm = (props) => {
     const formik = useFormik({
         initialValues: {
             electionIdVote: "",
             candidateVote: "",
         },
-        onSubmit: values => {     
-            //console.log(JSON.stringify(values, null, 2));                             
-            //console.log("VotingForm -> voting(" + values.electionIdVote + ", " + values.candidateVote + ", " + props.account + ")");          
+        onSubmit: values => {          
             let transactionInfo = props.BEVService.voting(values.electionIdVote, values.candidateVote, props.account);
-            //console.log("VotingForm -> transactionInfo: " + transactionInfo);
+            console.log("Transacción: " + transactionInfo);
             values.electionIdVote = "";
             values.candidateVote = "";
         },
@@ -192,23 +190,24 @@ const VotingForm = (props) => {
     );
 };
 
+
 export class App extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            network: undefined,
+            account: undefined,
+            accountBalance: 0,
+            admin: false,
+            candidates: [],
             conected: false,
             contract: 0,
-            totalElections: 0,
             contractBalance: 0,
-            account: undefined,
-            admin: false,
-            name: undefined,
-            accountBalance: 0,
             elections: [],
             electionsByAccount: [],
-            candidates: [],
+            network: undefined,
+            name: undefined,
+            totalElections: 0,
             voters: []
         };
 
@@ -224,30 +223,25 @@ export class App extends Component {
         this.clearTextVoterInput = this.clearTextVoterInput.bind(this);   
     }
 
-    clearTextAdminInput(){
-        //console.log("clearTextAdminInput");
+    // Limpiar inputs de buscar
+    clearTextAdminInput(){        
         this.adminInput.current.value = "";
     }
 
     clearTextElectionInput(){
-        //console.log("clearTextElectionInput");
         this.electionInput.current.value = "";
     }
 
-    clearTextCandidateInput(){
-        //console.log("clearTextCandidateInput");
+    clearTextCandidateInput(){        
         this.candidateInput.current.value = "";
     }
 
-    clearTextVoterInput(){
-        //console.log("clearTextVoterInput");
+    clearTextVoterInput(){        
         this.voterInput.current.value = "";
     }
 
     // Despues de que se carga el componente
-    async componentDidMount() {    
-        console.log("componentDidMount");
-
+    async componentDidMount() {            
         // Obtengo la versión 1 de web3
         this.web3 = await getWeb3();
         console.log("Versión web3: " + this.web3.version);
@@ -255,15 +249,13 @@ export class App extends Component {
         // Funcion para convertir a ether
         this.toEther = converter(this.web3);
 
-        // Instancia de la BEV
+        // Instancia del contrato
         try{
-            this.BEV = await BEVContract(this.web3.currentProvider);
-            console.log(this.BEV);
-            this.BEVService = new BEVService(this.BEV);
-            console.log(this.BEVService);
+            this.BEV = await BEVContract(this.web3.currentProvider);            
+            this.BEVService = new BEVService(this.BEV);            
         }
         catch(e) {
-            console.log(e);
+            console.error(e);
         }
 
         // Información del usuario actual
@@ -285,31 +277,28 @@ export class App extends Component {
         }, () => {
             this.load();
         } );
+
     }
 
     // Obtengo la información del contrato
     async getContractInfo() {
-        if(this.BEVService) {
-            console.log("getContractInfo");
+        if(this.BEVService) {            
             let networkName = 'Ganache';
-            let contractInfo = await this.BEVService.getContractInfo();
-            console.log(contractInfo);
+            let contractInfo = await this.BEVService.getContractInfo();            
             this.setState({
-                network: networkName,
-                contract: contractInfo.address,
-                totalElections: contractInfo.totalElections, 
+                conected: this.web3.currentProvider.isConnected(),
                 contractBalance: this.toEther(contractInfo.balance),
-                conected: this.web3.currentProvider.isConnected() 
+                contract: contractInfo.address,                
+                network: networkName,                
+                totalElections: contractInfo.totalElections
             });
         }
     }
 
     // Obtengo la información del usuario actual
     async getUserInfo() {
-        if(this.state.conected) {
-            console.log("getUserInfo");
+        if(this.state.conected) {            
             let weiBalance = await this.web3.eth.getBalance(this.state.account);
-            console.log("weiBalance: " + weiBalance);
             let isAdmin = await this.isAdmin(this.state.account);
             let name;
             if(isAdmin)
@@ -318,16 +307,15 @@ export class App extends Component {
                 name = "Usuario actual";
 
             this.setState({
-                name: name,
+                accountBalance: this.toEther(weiBalance),
                 admin: isAdmin,
-                accountBalance: this.toEther(weiBalance)
+                name: name                                
             });
         }
     }
 
     // Obtengo la información si la aplacacción esta conectada
-    isConectedInfo() {
-        console.log("Conected: " + this.state.conected);
+    isConectedInfo() {        
         if (this.state.conected) {
           return <span className="badge badge-success">Conectado</span>;
         }
@@ -336,38 +324,32 @@ export class App extends Component {
     }
     
     async isAdmin(address) {
-        if(this.state.conected) {
-            //console.log("isAdmin("+address+")");
+        if(this.state.conected) {            
             let isAdmin = await this.BEVService.isAdmin(address);
-            console.log("Admin: " + isAdmin);
             return isAdmin;
         }
     }
 
     async addAdmin(address) {
-        if(this.state.conected) {
-            //console.log("addAdmin("+address+")");
+        if(this.state.conected) {            
             let transactionInfo = await this.BEVService.addAdmin(address, this.state.account);        
-            //console.log(transactionInfo);
+            console.log("Transacción: " + transactionInfo);
             return transactionInfo.tx;
         }
     }
 
     async deleteAdmin(address) {
-        if(this.state.conected) {
-            //console.log("deleteAdmin("+address+")");
+        if(this.state.conected) {          
             let transactionInfo = await this.BEVService.deleteAdmin(address, this.state.account);        
-            //console.log(transactionInfo);
+            console.log("Transacción: " + transactionInfo);
             return transactionInfo.tx;
         }
     }
 
     // Obtengo todas las elecciones
     async getElections() {
-        if(this.state.conected) {
-            //console.log("getElections");
-            let allElections = await this.BEVService.getElections();
-            //console.log(allElections);
+        if(this.state.conected) {            
+            let allElections = await this.BEVService.getElections();            
             this.setState({
                 elections: allElections
             });
@@ -376,10 +358,8 @@ export class App extends Component {
 
     // Obtengo todas las elecciones de una cuenta
     async getElectionsByAccount() {
-        if(this.state.conected) {
-            //console.log("getElectionsByAccount");
-            let electionsByAccount = await this.BEVService.getElectionsByAccount(this.state.account);
-            //console.log(electionsByAccount);
+        if(this.state.conected) {            
+            let electionsByAccount = await this.BEVService.getElectionsByAccount(this.state.account);            
             this.setState({
                 electionsByAccount: electionsByAccount
             });
@@ -388,8 +368,7 @@ export class App extends Component {
 
     // Obtengo una eleccion    
     async getElection(id) {
-        if(this.state.conected) {
-            //console.log("getElection("+id+")");
+        if(this.state.conected) {            
             let election = await this.BEVService.getElection(id);
             console.log(election[0]);        
             // return election[0];
@@ -397,20 +376,17 @@ export class App extends Component {
     }
 
     async deleteElection(id) {
-        if(this.state.conected) {
-            //console.log("deleteElection("+id+")");
+        if(this.state.conected) {            
             let transactionInfo = await this.BEVService.deleteElection(id, this.state.account);        
-            console.log(transactionInfo);
+            console.log("Transacción: " + transactionInfo);
             // return transactionInfo;
         }
     }
 
     // Obtengo todos los candidatos
     async getCandidates() {
-        if(this.state.conected) {
-            //console.log("getCandidates");
-            let allCandidates = await this.BEVService.getCandidates();
-            //console.log(allCandidates);
+        if(this.state.conected) {            
+            let allCandidates = await this.BEVService.getCandidates();            
             this.setState({
                 candidates: allCandidates
             });
@@ -418,8 +394,7 @@ export class App extends Component {
     }
 
     async getCandidate(election, id) {
-        if(this.state.conected) {
-            //console.log("getCandidate("+ election + ", " + id +")");      
+        if(this.state.conected) {             
             let candidate = await this.BEVService.getCandidate(election, id);
             console.log(candidate[0]);        
             // return candidate[0];
@@ -427,20 +402,17 @@ export class App extends Component {
     }
     
     async deleteCandidate(election, id) {
-        if(this.state.conected) {
-            //console.log("deleteCandidate("+ election + ", " + id +")");
+        if(this.state.conected) {            
             let transactionInfo = await this.BEVService.deleteCandidate(election, id, this.state.account);
-            console.log(transactionInfo);
+            console.log("Transacción: " + transactionInfo);
             // return transactionInfo;
         }        
     }
 
     // Obtengo todos los votantes
     async getVoters() {
-        if(this.state.conected) {
-            //console.log("getVoters");
-            let allVoters = await this.BEVService.getVoters();
-            //console.log(allVoters);
+        if(this.state.conected) {            
+            let allVoters = await this.BEVService.getVoters();            
             this.setState({
                 voters: allVoters
             });
@@ -448,8 +420,7 @@ export class App extends Component {
     }
 
     async getVoter(election, address) {
-        if(this.state.conected) {
-            //console.log("getVoter("+ election + ", " + address +")");
+        if(this.state.conected) {            
             let voter = await this.BEVService.getVoter(election, address);
             console.log(voter[0]);        
             // return voter[0];
@@ -457,37 +428,25 @@ export class App extends Component {
     }
     
     async deleteVoter(election, address) {
-        if(this.state.conected) {
-            //console.log("deleteVoter("+ election + ", " + address +")");
+        if(this.state.conected) {            
             let transactionInfo = await this.BEVService.deleteVoter(election, address, this.state.account);
-            console.log(transactionInfo);
+            console.log("Transacción: " + transactionInfo);
             // return transactionInfo;    
         }    
     }
 
-    /*
-    async voterHasVoted(election, address){
-        console.log("voterHasVoted("+ election + ", " + address +")");
-        let yaVoto = await this.BEVService.voterHasVoted(election, address);
-        console.log(yaVoto);
-        return yaVoto;
-    }
-    */
-
     // Comprobante de voto
     async getTransaction(election) {
-        if(this.state.conected) {
-            //console.log("getTransaction ->  election: " + election);
-            let transaction = await this.BEVService.getTransaction(election, this.state.account);
-            console.log(transaction);
-            // return transaction;
+        if(this.state.conected) {            
+            let transactionInfo = await this.BEVService.getTransaction(election, this.state.account);
+            console.log("Transacción: " + transactionInfo);
+            // return transactionInfo;
         }
     }
 
     // TODO: Mostrar resultados de la elección
     async getResultElection(election) {
-        if(this.state.conected) {
-            //console.log("getResultElection -> election: " + election);
+        if(this.state.conected) {            
             let candidatoGanador = await this.BEVService.getResultElection(election);
             console.log(candidatoGanador[0]);        
             // return candidatoGanador;
@@ -495,8 +454,7 @@ export class App extends Component {
     }
 
     async getCandidatesByElection(election) {
-        if(this.state.conected) {
-            //console.log("getCandidatesByElection -> election: " + election);
+        if(this.state.conected) {            
             let candidatesByElection = await this.BEVService.getCandidatesByElection(election);
             console.log(candidatesByElection);
             // return candidatesByElection;
@@ -506,10 +464,8 @@ export class App extends Component {
     // Genero los registros con los datos de las elecciones
     renderTableDataElections() {
         if(this.state.conected) {
-            //console.log("renderTableDataElections");
-            //console.log(this.state.elections);
             return this.state.elections.map((election) => {
-            const { id, name, active, candidatesCount, votersCount } = election //destructuring           
+            const { id, name, active, candidatesCount, votersCount } = election
             return (
                 <tr key={id}>
                     <td>{id}</td>
@@ -518,33 +474,51 @@ export class App extends Component {
                     <td>{candidatesCount}</td>
                     <td>{votersCount}</td>
                     <td>
-                        <button type="button" className="btn btn-info" onClick={async () => {await this.getElection(id);}} >Ver</button> 
-                        <button type="button" className="btn btn-danger" onClick={async () => {await this.deleteElection(id);}} >Eliminar</button>
+                        <button 
+                            className="btn btn-info"
+                            onClick={async () => {await this.getElection(id);}}
+                            type="button"                            
+                            >Ver
+                        </button> 
+                        <button 
+                            className="btn btn-danger"                              
+                            onClick={async () => {await this.deleteElection(id);}} 
+                            type="button"
+                            >Eliminar
+                        </button>
                     </td>
                 </tr>
-            )
+                )
             })
         }
      }
 
     // Genero los registros con los datos de los candidatos
     renderTableDataCandidates() {
-        if(this.state.conected) {
-            //console.log("renderTableDataCandidates");
-            //console.log(this.state.candidates);
+        if(this.state.conected) {            
             return this.state.candidates.map((candidate, index ) => {
-            const { election, id, name, voteCount } = candidate //destructuring
+            const { election, id, name, voteCount } = candidate
             return (
                     <tr key={index}>
                         <td>{election}</td>
                         <td>{name}</td>
                         <td>{voteCount}</td>
                         <td>
-                            <button type="button" className="btn btn-info" onClick={async () => {await this.getCandidate(election, id);}} >Ver</button> 
-                            <button type="button" className="btn btn-danger" onClick={async () => {await this.deleteCandidate(election, id);}} >Eliminar</button>
+                            <button 
+                                className="btn btn-info"                                                              
+                                onClick={async () => {await this.getCandidate(election, id);}} 
+                                type="button"
+                                >Ver
+                            </button> 
+                            <button 
+                                className="btn btn-danger"                                  
+                                onClick={async () => {await this.deleteCandidate(election, id);}} 
+                                type="button"
+                                >Eliminar
+                            </button>
                         </td>
                     </tr>
-            )
+                )
             })
         }
      }
@@ -552,10 +526,8 @@ export class App extends Component {
     // Genero los registros con los datos de los votantes
     renderTableDataVoters() {
         if(this.state.conected) {
-            //console.log("renderTableDataVoters");
-            //console.log(this.state.voters);
             return this.state.voters.map((voter, index) => {
-            const { election, address, name, voted } = voter //destructuring
+            const { election, address, name, voted } = voter
             return (
                 <tr key={index}>
                     <td>{election}</td>
@@ -563,11 +535,21 @@ export class App extends Component {
                     <td>{name}</td>
                     <td>{voted}</td>
                     <td>
-                        <button type="button" className="btn btn-info" onClick={async () => {await this.getVoter(election, address);}} >Ver</button> 
-                        <button type="button" className="btn btn-danger" onClick={async () => {await this.deleteVoter(election, address);}} >Eliminar</button>
+                        <button 
+                            className="btn btn-info"                            
+                            onClick={async () => {await this.getVoter(election, address);}} 
+                            type="button"
+                            >Ver
+                        </button> 
+                        <button 
+                            className="btn btn-danger"                            
+                            onClick={async () => {await this.deleteVoter(election, address);}} 
+                            type="button"
+                            >Eliminar
+                        </button>
                     </td>
                 </tr>
-            )
+                )
             })
         }
      }
@@ -575,10 +557,8 @@ export class App extends Component {
     // TODO: renderTableDataElectionsByAccount -> Habilitar los botones segun si ya voto
     renderTableDataElectionsByAccount() {
         if(this.state.conected) {
-            //console.log("renderTableDataElectionsByAccount");
-            //console.log(this.state.electionsByAccount);
             return this.state.electionsByAccount.map((election   ) => {
-            const { id, name, active, yaVoto } = election //destructuring
+            const { id, name, active, yaVoto } = election
             return (
                 <tr key={id}>
                     <td>{id}</td>
@@ -586,25 +566,41 @@ export class App extends Component {
                     <td>{active}</td>
                     <td>{yaVoto}</td>
                     <td>
-                        <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#electionByAccountModal">Votar</button>
-                        <button type="button" className="btn btn-info" onClick={async () => {await this.getTransaction(id);}} >Comprobante</button>
-                        <button type="button" className="btn btn-info" onClick={async () => {await this.getResultElection(id);}} >Resultados</button>
+                        <button 
+                            className="btn btn-primary" 
+                            data-target="#electionByAccountModal"
+                            data-toggle="modal"
+                            type="button"                                                         
+                            >Votar
+                        </button>
+                        <button 
+                            className="btn btn-info"                                                    
+                            onClick={async () => {await this.getTransaction(id);}} 
+                            type="button"
+                            >Comprobante
+                        </button>
+                        <button 
+                            className="btn btn-info"                                                         
+                            onClick={async () => {await this.getResultElection(id);}} 
+                            type="button"
+                            >Resultados
+                        </button>
                     </td>
                 </tr>
-            )
+                )
             })
         }
      }
     
     async load(){
-        console.log("load");
+        console.log("Obteniendo información");
         await this.getContractInfo();
         await this.getUserInfo();
         await this.getElectionsByAccount();
     
         // Cargar la información según el perfil
         if(this.state.admin) {
-            console.log("load admin");
+            console.log("Obteniendo información de administrador");
             await this.getElections();
             await this.getCandidates();
             await this.getVoters();
@@ -674,7 +670,12 @@ export class App extends Component {
                                         <div className="modal-content">
                                             <div className="modal-header">
                                                 <h4 className="modal-title">Votar</h4>
-                                                <button type="button" className="close" data-dismiss="modal">&times;</button>
+                                                <button 
+                                                    className="close" 
+                                                    data-dismiss="modal"
+                                                    type="button" 
+                                                    >&times;
+                                                </button>
                                             </div>                                        
                                             <div className="modal-body">
                                                 <VotingForm BEVService={this.BEVService} account={this.state.account}/>
@@ -697,40 +698,55 @@ export class App extends Component {
                                 <hr />
                                 <div className="input-group row">                                           
                                     <div className="input-group-append col-sm-8">   
-                                        <input ref = { this.adminInput } type="text" className="form-control" id="adminInput" placeholder="Buscar" />
-                                        <button className="btn btn-primary" type="button" onClick={ this.clearTextAdminInput }>Limpiar</button>                                                        
+                                        <input 
+                                            className="form-control"
+                                            id="adminInput"
+                                            placeholder="Buscar"
+                                            ref = { this.adminInput } 
+                                            type="text" />
+                                        <button 
+                                            className="btn btn-primary" 
+                                            onClick={ this.clearTextAdminInput }
+                                            type="button"                                             
+                                        >Limpiar</button>                                                        
                                     </div>
                                     <div className="btn-group col-sm-4">                                
-                                        <button type="button" className="btn btn-info" onClick={
-                                                                                                async () => {
-                                                                                                    //console.log("Comprobar si es admin");
-                                                                                                    let address = document.querySelector('#adminInput').value;
-                                                                                                    //console.log("address: " + address);
-                                                                                                    let result = await this.isAdmin(address); 
-                                                                                                    //console.log("Result: " + result);
-                                                                                                    document.querySelector('#adminResult').innerText = result;
-                                                                                                    }
-                                                                                                } >Comprobar</button> 
-                                        <button type="button" className="btn btn-success" onClick={
-                                                                                                async () => {
-                                                                                                    //console.log("Agregar admin");
-                                                                                                    let address = document.querySelector('#adminInput').value;
-                                                                                                    //console.log("address: " + address);
-                                                                                                    let result = await this.addAdmin(address); 
-                                                                                                    //console.log("Result: " + result);
-                                                                                                    document.querySelector('#adminResult').innerText = result;
-                                                                                                    }
-                                                                                                } >Agregar</button> 
-                                        <button type="button" className="btn btn-danger" onClick={
-                                                                                                async () => {
-                                                                                                    //console.log("Eliminar admin");
-                                                                                                    let address = document.querySelector('#adminInput').value;
-                                                                                                    //console.log("address: " + address);
-                                                                                                    let result = await this.deleteAdmin(address); 
-                                                                                                    //console.log("Result: " + result);
-                                                                                                    document.querySelector('#adminResult').innerText = result;
-                                                                                                    }
-                                                                                                } >Eliminar</button>
+                                        <button 
+                                            className="btn btn-info"                                                                                         
+                                            onClick={ 
+                                                async () => {                                                                                                    
+                                                        let address = document.querySelector('#adminInput').value;                                                                                                    
+                                                        let result = await this.isAdmin(address);                                                                                                     
+                                                        document.querySelector('#adminResult').innerText = result;
+                                                    }
+                                                }
+                                            type="button" 
+                                            >Comprobar
+                                        </button> 
+                                        <button 
+                                            className="btn btn-success"                                            
+                                            onClick={ 
+                                                async () => {                                                                                                    
+                                                        let address = document.querySelector('#adminInput').value;
+                                                        let result = await this.addAdmin(address);                                                                                                     
+                                                        document.querySelector('#adminResult').innerText = result;
+                                                    }
+                                                }
+                                            type="button" 
+                                            >Agregar
+                                        </button> 
+                                        <button 
+                                            className="btn btn-danger"
+                                            type="button"  
+                                            onClick={ 
+                                                async () => {
+                                                        let address = document.querySelector('#adminInput').value;                                                                                                    
+                                                        let result = await this.deleteAdmin(address);                                                                                                     
+                                                        document.querySelector('#adminResult').innerText = result;
+                                                    }
+                                                } 
+                                            >Eliminar
+                                        </button>
                                     </div>
                                 </div>
                                 <br />
@@ -745,11 +761,28 @@ export class App extends Component {
                                     <div className="input-group-append col-sm-1">
                                     </div>                                          
                                     <div className="input-group-append col-sm-8">   
-                                        <input ref={ this.electionInput } type="text" className="form-control" id="electionInput" placeholder="Buscar" />                                                              
-                                        <button className="btn btn-primary" type="button" onClick={ this.clearTextElectionInput }>Limpiar</button>
+                                        <input 
+                                            className="form-control" 
+                                            id="electionInput" 
+                                            placeholder="Buscar" 
+                                            ref={ this.electionInput } 
+                                            type="text" 
+                                        />                                                              
+                                        <button 
+                                            className="btn btn-primary"                                             
+                                            onClick={ this.clearTextElectionInput }
+                                            type="button"
+                                            >Limpiar
+                                        </button>
                                     </div>
                                     <div className="btn-group col-sm-2">                                
-                                        <button type="button" className="btn btn-success" data-toggle="modal" data-target="#electionModal">Nueva</button>
+                                        <button 
+                                            className="btn btn-success" 
+                                            data-target="#electionModal"
+                                            data-toggle="modal"                                         
+                                            type="button"                                             
+                                            >Nueva
+                                        </button>
                                     </div>
                                 </div>
                                 <br/>                    
@@ -774,7 +807,12 @@ export class App extends Component {
                                         <div className="modal-content">
                                             <div className="modal-header">
                                                 <h4 className="modal-title">Nueva Elección</h4>
-                                                <button type="button" className="close" data-dismiss="modal">&times;</button>
+                                                <button 
+                                                    className="close" 
+                                                    data-dismiss="modal"
+                                                    type="button" 
+                                                    >&times;
+                                                </button>
                                             </div>                                        
                                             <div className="modal-body">
                                                 <ElectionForm BEVService={this.BEVService} account={this.state.account}/>
@@ -792,11 +830,28 @@ export class App extends Component {
                                     <div className="input-group-append col-sm-1">
                                     </div>                                          
                                     <div className="input-group-append col-sm-8">   
-                                        <input ref={ this.candidateInput } type="text" className="form-control" id="candidateInput" placeholder="Buscar" />                                                              
-                                        <button className="btn btn-primary" type="button" onClick={ this.clearTextCandidateInput }>Limpiar</button>
+                                        <input 
+                                            className="form-control" 
+                                            id="candidateInput" 
+                                            placeholder="Buscar" 
+                                            ref={ this.candidateInput } 
+                                            type="text" 
+                                            />                                                              
+                                        <button 
+                                            className="btn btn-primary"                                             
+                                            onClick={ this.clearTextCandidateInput }
+                                            type="button"
+                                            >Limpiar
+                                        </button>
                                     </div>
                                     <div className="btn-group col-sm-2">                                
-                                        <button type="button" className="btn btn-success" data-toggle="modal" data-target="#candidateModal">Nuevo</button>
+                                        <button 
+                                            className="btn btn-success" 
+                                            data-target="#candidateModal"
+                                            data-toggle="modal"                                        
+                                            type="button"                                             
+                                            >Nuevo
+                                        </button>
                                     </div>
                                 </div>
                                 <br/>                    
@@ -819,7 +874,12 @@ export class App extends Component {
                                         <div className="modal-content">
                                             <div className="modal-header">
                                                 <h4 className="modal-title">Nuevo Candidato</h4>
-                                                <button type="button" className="close" data-dismiss="modal">&times;</button>
+                                                <button 
+                                                    className="close" 
+                                                    data-dismiss="modal"
+                                                    type="button" 
+                                                    >&times;
+                                                </button>
                                             </div>                                        
                                             <div className="modal-body">
                                                 <CandidateForm BEVService={this.BEVService} account={this.state.account}/>
@@ -837,11 +897,28 @@ export class App extends Component {
                                     <div className="input-group-append col-sm-1">
                                     </div>                                          
                                     <div className="input-group-append col-sm-8">   
-                                        <input ref= { this.voterInput } type="text" className="form-control" id="voterInput" placeholder="Buscar" />                                                              
-                                        <button className="btn btn-primary" type="submit" onClick={ this.clearTextVoterInput }>Limpiar</button>
+                                        <input 
+                                            className="form-control" 
+                                            id="voterInput" 
+                                            placeholder="Buscar" 
+                                            ref= { this.voterInput } 
+                                            type="text" 
+                                            />                                                              
+                                        <button 
+                                            className="btn btn-primary"                                             
+                                            onClick={ this.clearTextVoterInput }
+                                            type="submit"
+                                            >Limpiar
+                                        </button>
                                     </div>
                                     <div className="btn-group col-sm-2">                                
-                                        <button type="button" className="btn btn-success" data-toggle="modal" data-target="#voterModal">Nuevo</button>
+                                        <button
+                                            className="btn btn-success" 
+                                            data-target="#voterModal"
+                                            data-toggle="modal"                                             
+                                            type="button" 
+                                            >Nuevo
+                                        </button>
                                     </div>
                                 </div>
                                 <br/>                  
@@ -865,7 +942,12 @@ export class App extends Component {
                                         <div className="modal-content">
                                             <div className="modal-header">
                                                 <h4 className="modal-title">Nuevo Votante</h4>
-                                                <button type="button" className="close" data-dismiss="modal">&times;</button>
+                                                <button                                                     
+                                                    className="close" 
+                                                    data-dismiss="modal"
+                                                    type="button"
+                                                    >&times;
+                                                </button>
                                             </div>                                        
                                             <div className="modal-body">
                                                 <VoterForm BEVService={this.BEVService} account={this.state.account}/>
