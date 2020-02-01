@@ -252,15 +252,18 @@ export class App extends Component {
         // Instancia del contrato
         try{
             this.BEV = await BEVContract(this.web3.currentProvider);            
-            this.BEVService = new BEVService(this.BEV);            
+            this.BEVService = new BEVService(this.BEV);    
+            // Habilitar acceso a las cuentas en MetaMask
+            ethereum.enable();
+            // Información del usuario actual
+            var account = (await this.web3.eth.getAccounts())[0];
+            console.log("Cuenta actual: " + account);
         }
         catch(e) {
             console.error(e);
         }
 
-        // Información del usuario actual
-        var account = (await this.web3.eth.getAccounts())[0];
-        console.log("Cuenta actual: " + account);
+
 
         // Metodo de metamask para actualizar cuando hay cambio de cuenta
         this.web3.currentProvider.publicConfigStore.on('update', async function(event){
