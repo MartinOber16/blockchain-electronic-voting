@@ -1,0 +1,39 @@
+import React from "react";
+import { useFormik } from 'formik';
+
+// Valor a transferir para utilizar en la elección por costo para transacciones = 1 ether
+const valueElection = 1000000000000000000; 
+
+// Formulario de elección
+const ElectionForm = (props) => {
+    const formik = useFormik({
+        initialValues: {
+            electionName: "",
+        },
+        onSubmit: values => {   
+            //console.log(JSON.stringify(values, null, 2));           
+            props.BEVService.addElection(values.electionName, props.account, valueElection).then((receipt) => {
+                console.log(receipt);
+            });
+            values.electionName = "";
+        },
+    });
+    return (
+        <form onSubmit={formik.handleSubmit}>
+        <label htmlFor="electionName">Nombre de la Elección</label>
+        <input className="form-control" placeholder="Enter name"
+            id="electionName"
+            name="electionName"
+            type="text"
+            onChange={formik.handleChange}
+            value={formik.values.electionName}
+        />
+        <br />
+        <div className="modal-footer">
+            <button type="submit" className="btn btn-success">Guardar</button>
+        </div>
+        </form>
+    );
+};
+
+export default ElectionForm;
