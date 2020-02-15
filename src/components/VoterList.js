@@ -5,72 +5,103 @@ export class VoterList extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            voters: []
-        };
-    }
 
-    // Obtengo todos los votantes
-    async getVoters() {
-        if(this.props.state.conected) {            
-            let allVoters = await this.props.BEVService.getVoters();            
-            this.setState({
-                voters: allVoters
-            });
-        }
     }
 
     // Obtener un votante
-    async getVoter(election, address) {
-        if(this.props.state.conected) {            
-            let voter = await this.props.BEVService.getVoter(election, address);
-            console.log(voter[0]);        
-            // return voter[0];
-        }
+    async getVoter(election, address) {       
+        let voter;
+        await this.props.BEVService.getVoter(election, address).then((receipt) => {
+            console.log(receipt);
+            if(receipt.status == 200)
+                voter = receipt.data;
+        });
+        
+        return voter;
     }
 
     // Eliminar un votante
-    async deleteVoter(election, address) {
-        if(this.props.state.conected) {            
-            let transactionInfo = await this.props.BEVService.deleteVoter(election, address, this.props.state.account);
-            console.log("Transacción: " + transactionInfo);
-            // return transactionInfo;    
-        }    
+    async deleteVoter(election, address) {          
+        let transactionInfo;
+        await this.props.BEVService.deleteVoter(election, address, this.props.state.account).then((receipt) => {
+            console.log(receipt);
+            if(receipt.status == 200)
+                transactionInfo = "Transaccion realizada correctamente: " + receipt.data.tx;
+            else
+                transactionInfo = receipt.data;
+        });
+
+        return transactionInfo;
     }
 
     // Genero los registros con los datos de los votantes
-    renderTableDataVoters () {
-        this.getVoters();
+    renderTableDataVoters() {
+        return this.props.state.voters.map((voter, index) => {
+        const { election, address, name, voted } = voter
+        return (
+            <tr key={index}>
+                <td>{election}</td>
+                <td>{address}</td>
+                <td>{name}</td>
+                <td>{voted}</td>
+                <td>
+                    <button 
+                        className="btn btn-info"                            
+                        onClick={
+                            async () => {
+                                let result = await this.getVoter(election, address);
+                                document.querySelector('#voterResult').innerText = result;
+                            }
+                        } 
+                        type="button"
+                        >Ver
+                    </button> 
+                    <button 
+                        className="btn btn-danger"                            
+                        onClick={
+                            async () => {
+                                let result = await this.deleteVoter(election, address);
+                                document.querySelector('#voterResult').innerText = result;
+                            }
+                        } 
+                        type="button"
+                        >Eliminar
+                    </button>
+                </td>
+            </tr>
+            )
+        })
+    }
+
+    renderTableVoters() {
         if(this.props.state.conected) {
-            return this.state.voters.map((voter, index) => {
-            const { election, address, name, voted } = voter
-            return (
-                <tr key={index}>
-                    <td>{election}</td>
-                    <td>{address}</td>
-                    <td>{name}</td>
-                    <td>{voted}</td>
-                    <td>
-                        <button 
-                            className="btn btn-info"                            
-                            onClick={async () => {await this.getVoter(election, address);}} 
-                            type="button"
-                            >Ver
-                        </button> 
-                        <button 
-                            className="btn btn-danger"                            
-                            onClick={async () => {await this.deleteVoter(election, address);}} 
-                            type="button"
-                            >Eliminar
-                        </button>
-                    </td>
-                </tr>
-                )
-            })
+            if(this.props.state.voters.length == 0)
+                return <p>No hay votantes para mostrar.</p>
+            else {
+                return <table className="table border">
+                <thead className="thead-dark">
+                    <tr>
+                        <th>Elección</th>
+                        <th>Cuenta</th>
+                        <th>Nombre</th>
+                        <th>Ya voto</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="voterTable">
+                    {this.renderTableDataVoters()}
+                </tbody>
+            </table>
+            }
         }
     }
 
-    render () {
+    async loadVoterList(){
+        console.log("load VoterList");
+        await this.getVoters();
+    }
+
+    render() {
         return (<div id="voters">
                 <h4>Votantes</h4>
                 <hr />
@@ -103,20 +134,7 @@ export class VoterList extends Component {
                     </div>
                 </div>
                 <br/>                  
-                <table className="table border">
-                    <thead className="thead-dark">
-                        <tr>
-                            <th>Elección</th>
-                            <th>Cuenta</th>
-                            <th>Nombre</th>
-                            <th>Ya voto</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="voterTable">
-                        {this.renderTableDataVoters()}
-                    </tbody>
-                </table>
+                    {this.renderTableVoters()}
                 <br/>
                 <div className="modal" id="voterModal">
                     <div className="modal-dialog">
@@ -136,6 +154,7 @@ export class VoterList extends Component {
                         </div>
                     </div>
                 </div>
+                <p id="voterResult"></p>
             </div>);
     }
 }

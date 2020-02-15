@@ -5,71 +5,101 @@ export class CandidateList extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            candidates: []
-        };
-    }
 
-    // Obtengo todos los candidatos
-    async getCandidates() {
-        if(this.props.state.conected) {            
-            let allCandidates = await this.props.BEVService.getCandidates();            
-            this.setState({
-                candidates: allCandidates
-            });
-        }
     }
 
     // Obtener un candidato
-    async getCandidate(election, id) {
-        if(this.props.state.conected) {             
-            let candidate = await this.props.BEVService.getCandidate(election, id);
-            console.log(candidate[0]);        
-            // return candidate[0];
-        }
+    async getCandidate(election, id) {           
+        let candidate;
+        await this.props.BEVService.getCandidate(election, id).then((receipt) => {
+            console.log(receipt);
+            if(receipt.status == 200)
+                candidate = receipt.data;
+        });
+              
+        return candidate;
     }
 
     // Eliminar un candidato
-    async deleteCandidate(election, id) {
-        if(this.props.state.conected) {            
-            let transactionInfo = await this.props.BEVService.deleteCandidate(election, id, this.props.state.account);
-            console.log("Transacción: " + transactionInfo);
-            // return transactionInfo;
-        }        
+    async deleteCandidate(election, id) {          
+        let transactionInfo;
+        await this.props.BEVService.deleteCandidate(election, id, this.props.state.account).then((receipt) => {
+            console.log(receipt);
+            if(receipt.status == 200)
+                transactionInfo = "Transaccion realizada correctamente: " + receipt.data.tx;
+            else
+                transactionInfo = receipt.data;
+        });
+        
+        return transactionInfo;       
     }
 
     // Genero los registros con los datos de los candidatos
-    renderTableDataCandidates () {
-        if(this.props.state.conected) { 
-            this.getCandidates();           
-            return this.state.candidates.map((candidate, index ) => {
-            const { election, id, name, voteCount } = candidate
-            return (
-                    <tr key={index}>
-                        <td>{election}</td>
-                        <td>{name}</td>
-                        <td>{voteCount}</td>
-                        <td>
-                            <button 
-                                className="btn btn-info"                                                              
-                                onClick={async () => {await this.getCandidate(election, id);}} 
-                                type="button"
-                                >Ver
-                            </button> 
-                            <button 
-                                className="btn btn-danger"                                  
-                                onClick={async () => {await this.deleteCandidate(election, id);}} 
-                                type="button"
-                                >Eliminar
-                            </button>
-                        </td>
-                    </tr>
-                )
-            })
+    renderTableDataCandidates() {
+        return this.props.state.candidates.map((candidate, index ) => {
+        const { election, id, name, voteCount } = candidate
+        return (
+                <tr key={index}>
+                    <td>{election}</td>
+                    <td>{name}</td>
+                    <td>{voteCount}</td>
+                    <td>
+                        <button 
+                            className="btn btn-info"                                                              
+                            onClick={
+                                async () => {
+                                    let result = await this.getCandidate(election, id);
+                                    document.querySelector('#candidateResult').innerText = result;
+                                }
+                            } 
+                            type="button"
+                            >Ver
+                        </button> 
+                        <button 
+                            className="btn btn-danger"                                  
+                            onClick={
+                                async () => {
+                                    let result = await this.deleteCandidate(election, id);
+                                    document.querySelector('#candidateResult').innerText = result;
+                                }
+                            } 
+                            type="button"
+                            >Eliminar
+                        </button>
+                    </td>
+                </tr>
+            )
+        })
+    }
+
+    renderTableCandidates() {
+        if(this.props.state.conected) {
+            if(this.props.state.candidates.length == 0)
+                return <p>No hay candidatos para mostrar.</p>
+            else {
+                return <table className="table border">
+                        <thead className="thead-dark">
+                            <tr>
+                                <th>Elección</th>
+                                <th>Nombre</th>
+                                <th>Votos</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="candidateTable">
+                            {this.renderTableDataCandidates()}
+                        </tbody>
+                    </table>
+            }
         }
     }
 
-    render () {
+    async loadCandidateList(){
+        console.log("load CandidateList");
+        await this.getCandidates();
+    }
+
+    render() {
         return (<div id="candidates">
                     <h4>Candidatos</h4>
                     <hr />
@@ -102,19 +132,7 @@ export class CandidateList extends Component {
                         </div>
                     </div>
                     <br/>                    
-                    <table className="table border">
-                        <thead className="thead-dark">
-                            <tr>
-                                <th>Elección</th>
-                                <th>Nombre</th>
-                                <th>Votos</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="candidateTable">
-                            {this.renderTableDataCandidates()}
-                        </tbody>
-                    </table>
+                        {this.renderTableCandidates()}
                     <br/>
                     <div className="modal" id="candidateModal">
                         <div className="modal-dialog">
@@ -134,6 +152,7 @@ export class CandidateList extends Component {
                             </div>
                         </div>
                     </div>
+                    <p id="candidateResult"></p>
                 </div>);
     }
 }

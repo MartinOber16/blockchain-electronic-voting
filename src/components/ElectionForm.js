@@ -10,10 +10,10 @@ const ElectionForm = (props) => {
         initialValues: {
             electionName: "",
         },
-        onSubmit: values => {   
-            //console.log(JSON.stringify(values, null, 2));           
+        onSubmit: values => {            
             props.BEVService.addElection(values.electionName, props.account, valueElection).then((receipt) => {
                 console.log(receipt);
+                document.querySelector('#electionResult').innerText = "Transaccion realizada correctamente: " + receipt.data.tx;
             });
             values.electionName = "";
         },

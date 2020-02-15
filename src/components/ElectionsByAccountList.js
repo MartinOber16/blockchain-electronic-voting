@@ -5,53 +5,36 @@ export class ElectionsByAccountList extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            electionsByAccount: []
-        };
+
     }
 
-    // Obtengo todas las elecciones de una cuenta
-    async getElectionsByAccount() {
-        if(this.props.state.conected) {            
-            let electionsByAccount = await this.props.BEVService.getElectionsByAccount(this.props.state.account);            
-            this.setState({
-                electionsByAccount: electionsByAccount
-            });
-        }
-    }
+    async getResultElection (election) {        
+        let candidatoGanador;
+        await this.props.BEVService.getResultElection(election).then((receipt) => {
+            console.log(receipt);
+            if(receipt.status == 200)
+                candidatoGanador = receipt.data;
 
-    // Comprobante de voto
-    async getTransaction (election) {
-        if(this.props.state.conected) {            
-            let transactionInfo = await this.props.BEVService.getTransaction(election, this.props.state.account);
-            console.log("Transacción: " + transactionInfo);
-            // return transactionInfo;
-        }
-    }
+        });
 
-    // TODO: Mostrar resultados de la elección
-    async getResultElection (election) {
-        if(this.props.state.conected) {            
-            let candidatoGanador = await this.props.BEVService.getResultElection(election);
-            console.log(candidatoGanador[0]);        
-            // return candidatoGanador;
-        }
+        return candidatoGanador;
     }
 
     // Obtener todos los candidatos de una elección
-    async getCandidatesByElection(election) {
-        if(this.props.state.conected) {            
-            let candidatesByElection = await this.props.BEVService.getCandidatesByElection(election);
-            console.log(candidatesByElection);
-            // return candidatesByElection;
-        }
+    async getCandidatesByElection(election) {        
+        let candidatesByElection;
+        await this.props.BEVService.getCandidatesByElection(election).this((receipt) => {
+            console.log(receipt);
+            if(receipt.status == 200)
+                candidatesByElection = receipt.data;
+        });
+        
+        return candidatesByElection;
     }
 
-    // TODO: renderTableDataElectionsByAccount -> Habilitar los botones segun si ya voto
     renderTableDataElectionsByAccount () {
-        this.getElectionsByAccount();
         if(this.props.state.conected) {
-            return this.state.electionsByAccount.map((election) => {
+            return this.props.state.electionsByAccount.map((election) => {
             const { id, name, active, yaVoto } = election
             return (
                 <tr key={id}>
@@ -68,14 +51,13 @@ export class ElectionsByAccountList extends Component {
                             >Votar
                         </button>
                         <button 
-                            className="btn btn-info"                                                    
-                            onClick={async () => {await this.getTransaction(id);}} 
-                            type="button"
-                            >Comprobante
-                        </button>
-                        <button 
                             className="btn btn-info"                                                         
-                            onClick={async () => {await this.getResultElection(id);}} 
+                            onClick={
+                                    async () => {
+                                    let result = await this.getResultElection(id);
+                                    document.querySelector('#electionByAccountResult').innerText = JSON.stringify(result);
+                                }
+                            } 
                             type="button"
                             >Resultados
                         </button>
@@ -86,25 +68,35 @@ export class ElectionsByAccountList extends Component {
         }
     }
 
+    renderTableElectionsByAccount () {
+        if(this.props.state.conected) {
+            if(this.props.state.electionsByAccount.length == 0)
+                return <p>No hay elecciones para mostrar.</p>
+            else {  
+                return <table className="table border">
+                <thead className="thead-dark">
+                    <tr>
+                        <th>Número</th>
+                        <th>Nombre</th>
+                        <th>Estado</th>
+                        <th>Ya Voto</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="electionTableByAccount">
+                    {this.renderTableDataElectionsByAccount()}
+                </tbody>
+            </table>
+            }
+        }
+    }
+
     render () {
         return <div id="electionsByAccount">
                 <h3>Elecciones</h3>
                 <hr />
                 <br/>   
-                <table className="table border">
-                    <thead className="thead-dark">
-                        <tr>
-                            <th>Número</th>
-                            <th>Nombre</th>
-                            <th>Estado</th>
-                            <th>Ya Voto</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="electionTableByAccount">
-                        {this.renderTableDataElectionsByAccount()}
-                    </tbody>
-                </table>
+                {this.renderTableElectionsByAccount()}
                 <br/>
                 <div className="modal" id="electionByAccountModal">
                     <div className="modal-dialog">
@@ -124,6 +116,7 @@ export class ElectionsByAccountList extends Component {
                         </div>
                     </div>
                 </div>
+                <p id="electionByAccountResult"></p>
             </div>
     }
 }

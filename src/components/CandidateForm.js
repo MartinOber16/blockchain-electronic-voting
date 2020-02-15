@@ -11,6 +11,7 @@ const CandidateForm = (props) => {
         onSubmit: values => {            
             props.BEVService.addCandidate(values.idElectionCandidate, values.candidateName, props.account).then((receipt) => {
                 console.log(receipt);
+                document.querySelector('#candidateResult').innerText = "Transaccion realizada correctamente: " + receipt.data.tx;
             });
             values.idElectionCandidate = 0;
             values.candidateName = "";

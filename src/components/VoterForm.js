@@ -12,6 +12,7 @@ const VoterForm = (props) => {
         onSubmit: values => {
             props.BEVService.addVoter(values.idElectionVoter, values.voterAddress, values.voterName, props.account).then((receipt) => {
                 console.log(receipt);
+                document.querySelector('#voterResult').innerText = "Transaccion realizada correctamente: " + receipt.data.tx;
             });
             values.idElectionVoter = 0;
             values.voterAddress = "";
