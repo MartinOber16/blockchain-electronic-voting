@@ -21,7 +21,7 @@ import { ToastContainer } from "react-toastr";
 // TODO: Activar/Desactivar elección
 // TODO: Pruebas de usuario
 // TODO: Mejorar formularioss
-// TODO: Alertas de Toast: ver eventos en el contrato
+// TODO: Ver eventos en el contrato
 // TODO: Optimizar codigo
 // TODO: Mejoras look&feel
 
