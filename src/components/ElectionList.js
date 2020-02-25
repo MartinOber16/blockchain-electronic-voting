@@ -11,13 +11,11 @@ export class ElectionList extends Component {
     // Obtengo una eleccion    
     async getElection(id) {         
         let election;
-        await this.props.BEVService.getElection(id).then((receipt) => {
-            console.log(receipt);        
+        await this.props.BEVService.getElection(id).then((receipt) => {       
             if(receipt.status == 200)
                 election = JSON.stringify(receipt.data);
             else
-                election = receipt.data;
-            
+                election = receipt.data; 
         });
         return election;
     }
@@ -26,7 +24,6 @@ export class ElectionList extends Component {
     async deleteElection(id) {
         let transactionInfo;
         await this.props.BEVService.deleteElection(id, this.props.state.account).then((receipt) => {
-            console.log(receipt);
             if(receipt.status == 200)
                 transactionInfo = "Transaccion realizada correctamente: " + receipt.data.tx;
             else
@@ -57,7 +54,7 @@ export class ElectionList extends Component {
                                 }
                             }
                             type="button"                            
-                            >Ver
+                            >Info
                         </button> 
                         <button 
                             className="btn btn-danger"                              
@@ -68,7 +65,7 @@ export class ElectionList extends Component {
                                     }
                                 } 
                             type="button"
-                            >Eliminar
+                            >Borrar
                         </button>
                     </td>
                 </tr>
@@ -111,13 +108,7 @@ export class ElectionList extends Component {
                             placeholder="Buscar" 
                             ref={ this.electionInput } 
                             type="text" 
-                        /> 
-                        <button 
-                            className="btn btn-primary"                                             
-                            onClick={ this.clearTextElectionInput }
-                            type="button"
-                            >Limpiar
-                        </button>                                                           
+                        />                                                        
                     </div>
                     <div className="btn-group col-sm-2">                                
                         <button 
@@ -133,22 +124,7 @@ export class ElectionList extends Component {
                 {this.renderTableElections()}                  
                 <br/>
                 <div className="modal" id="electionModal">
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h4 className="modal-title">Nueva Elección</h4>
-                                <button 
-                                    className="close" 
-                                    data-dismiss="modal"
-                                    type="button" 
-                                    >&times;
-                                </button>
-                            </div>                                        
-                            <div className="modal-body">
-                                <ElectionForm BEVService={this.props.BEVService} account={this.props.state.account}/>
-                            </div>                                                                        
-                        </div>
-                    </div>
+                    <ElectionForm BEVService={this.props.BEVService} account={this.props.state.account}/>
                 </div>
                 <p id="electionResult"></p>
             </div>

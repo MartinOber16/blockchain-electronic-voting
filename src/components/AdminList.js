@@ -54,56 +54,70 @@ export class AdminList extends Component {
             <h4>Administradores</h4>
             <hr />
             <div className="input-group row">                                           
-                <div className="input-group-append col-sm-8">   
-                    <input 
-                        className="form-control"
-                        id="adminInput"
-                        placeholder="Buscar"
-                        ref = { this.adminInput } 
-                        type="text" />
-                    <button 
-                        className="btn btn-primary" 
-                        onClick={ this.clearTextAdminInput }
-                        type="button"                                             
-                    >Limpiar</button>                                                        
+                <div className="input-group-append col-sm-8">  
+                <input 
+                    className="form-control"
+                    id="adminInput"
+                    placeholder="Buscar"
+                    ref = { this.adminInput } 
+                    type="text" />
+                <button 
+                    className="btn btn-primary" 
+                    onClick={ this.clearTextAdminInput }
+                    type="button"                                             
+                    >Limpiar
+                </button>                            
                 </div>
-                <div className="btn-group col-sm-4">                                
-                    <button 
-                        className="btn btn-info"                                                                                         
-                        onClick={ 
-                            async () => {                                                                                                    
-                                    let address = document.querySelector('#adminInput').value;                                                                                                    
-                                    let result = await this.isAdmin(address);
-                                    document.querySelector('#adminResult').innerText = result;
-                                }
-                            }
-                        type="button" 
-                        >Comprobar
-                    </button> 
-                    <button 
-                        className="btn btn-success"                                            
-                        onClick={ 
-                            async () => {                                                                                                    
-                                    let address = document.querySelector('#adminInput').value;
-                                    let result = await this.addAdmin(address); 
-                                    document.querySelector('#adminResult').innerText = result;
-                                }
-                            }
-                        type="button" 
-                        >Agregar
-                    </button> 
-                    <button 
-                        className="btn btn-danger"
-                        type="button"  
-                        onClick={ 
-                            async () => {
-                                    let address = document.querySelector('#adminInput').value;                                                                                                    
-                                    let result = await this.deleteAdmin(address); 
-                                    document.querySelector('#adminResult').innerText = result;
-                                }
-                            } 
-                        >Eliminar
-                    </button>
+                <div className="btn-group col-sm-4">    
+                    <table>
+                        <thead></thead>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <button 
+                                    className="btn btn-info"                                                                                         
+                                    onClick={ 
+                                        async () => {                                                                                                    
+                                                let address = document.querySelector('#adminInput').value;                                                                                                    
+                                                let result = await this.isAdmin(address);
+                                                document.querySelector('#adminResult').innerText = result;
+                                            }
+                                        }
+                                    type="button" 
+                                    >Comprobar
+                                </button> 
+                            </td>    
+                            <td>
+                                <button 
+                                    className="btn btn-success"                                            
+                                    onClick={ 
+                                        async () => {                                                                                                    
+                                                let address = document.querySelector('#adminInput').value;
+                                                let result = await this.addAdmin(address); 
+                                                document.querySelector('#adminResult').innerText = result;
+                                            }
+                                        }
+                                    type="button" 
+                                    >Agregar
+                                </button> 
+                            </td>
+                            <td>
+                                <button 
+                                    className="btn btn-danger"
+                                    type="button"  
+                                    onClick={ 
+                                        async () => {
+                                                let address = document.querySelector('#adminInput').value;                                                                                                    
+                                                let result = await this.deleteAdmin(address); 
+                                                document.querySelector('#adminResult').innerText = result;
+                                            }
+                                        } 
+                                    >Quitar
+                                </button>
+                            </td>
+                        </tr>  
+                        </tbody>  
+                    </table>                            
                 </div>
             </div>
             <br />

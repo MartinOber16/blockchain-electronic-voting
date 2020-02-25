@@ -12,8 +12,9 @@ export class VoterList extends Component {
     async getVoter(election, address) {       
         let voter;
         await this.props.BEVService.getVoter(election, address).then((receipt) => {
-            console.log(receipt);
             if(receipt.status == 200)
+                voter = JSON.stringify(receipt.data);
+            else
                 voter = receipt.data;
         });
         
@@ -24,7 +25,6 @@ export class VoterList extends Component {
     async deleteVoter(election, address) {          
         let transactionInfo;
         await this.props.BEVService.deleteVoter(election, address, this.props.state.account).then((receipt) => {
-            console.log(receipt);
             if(receipt.status == 200)
                 transactionInfo = "Transaccion realizada correctamente: " + receipt.data.tx;
             else
@@ -54,7 +54,7 @@ export class VoterList extends Component {
                             }
                         } 
                         type="button"
-                        >Ver
+                        >Info
                     </button> 
                     <button 
                         className="btn btn-danger"                            
@@ -65,7 +65,7 @@ export class VoterList extends Component {
                             }
                         } 
                         type="button"
-                        >Eliminar
+                        >Borrar
                     </button>
                 </td>
             </tr>
@@ -96,11 +96,6 @@ export class VoterList extends Component {
         }
     }
 
-    async loadVoterList(){
-        console.log("load VoterList");
-        await this.getVoters();
-    }
-
     render() {
         return (<div id="voters">
                 <h4>Votantes</h4>
@@ -116,12 +111,6 @@ export class VoterList extends Component {
                             ref= { this.voterInput } 
                             type="text" 
                             />                                                              
-                        <button 
-                            className="btn btn-primary"                                             
-                            onClick={ this.clearTextVoterInput }
-                            type="submit"
-                            >Limpiar
-                        </button>
                     </div>
                     <div className="btn-group col-sm-2">                                
                         <button
@@ -137,22 +126,7 @@ export class VoterList extends Component {
                     {this.renderTableVoters()}
                 <br/>
                 <div className="modal" id="voterModal">
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h4 className="modal-title">Nuevo Votante</h4>
-                                <button                                                     
-                                    className="close" 
-                                    data-dismiss="modal"
-                                    type="button"
-                                    >&times;
-                                </button>
-                            </div>                                        
-                            <div className="modal-body">
-                                <VoterForm BEVService={this.props.BEVService} account={this.props.state.account}/>
-                            </div>                                                                        
-                        </div>
-                    </div>
+                    <VoterForm BEVService={this.props.BEVService} account={this.props.state.account}/>
                 </div>
                 <p id="voterResult"></p>
             </div>);

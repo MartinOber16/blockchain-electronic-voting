@@ -72,7 +72,7 @@ export class App extends Component {
             console.error(e);
         }
 
-        // Subscribirse a un evento
+        // TODO: Subscribirse a un evento
         let electionCreated = this.BEV.ElectionEvent();
         electionCreated.watch(function(err, result) {
             const {_idElection, _name} = result.args;
@@ -108,6 +108,7 @@ export class App extends Component {
 
     // Obtengo la información del contrato
     async getContractInfo() {
+        console.log('getContractInfo');
         if(this.BEVService) {            
             let contractInfo = await this.BEVService.getContractInfo();            
             this.setState({
@@ -122,6 +123,7 @@ export class App extends Component {
 
     // Obtengo la información del usuario actual
     async getUserInfo() {
+        console.log('getUserInfo');
         if(this.state.conected) {            
             let weiBalance = await this.web3.eth.getBalance(this.state.account);
             let isAdmin = await this.isAdmin(this.state.account);
@@ -143,7 +145,6 @@ export class App extends Component {
     async getElections() {    
         console.log('getElections');         
         await this.BEVService.getElections().then((receipt) => {
-            console.log(receipt);
             if(receipt.status == 200) {
                 this.setState({
                     elections: receipt.data
@@ -156,7 +157,6 @@ export class App extends Component {
     async getCandidates() {     
         console.log('getCandidates');    
         await this.BEVService.getCandidates().then((receipt) => {
-            console.log(receipt);
             if(receipt.status == 200) {
                 this.setState({
                     candidates: receipt.data
@@ -169,7 +169,6 @@ export class App extends Component {
     async getVoters() {  
         console.log('getVoters');   
         await this.BEVService.getVoters().then((receipt) => {
-            console.log(receipt);
             if(receipt.status == 200) {
                 this.setState({
                     voters: receipt.data
@@ -190,7 +189,7 @@ export class App extends Component {
     }
 
     async load(){
-        console.log("load App");
+        console.log("load");
         await this.getContractInfo();
         await this.getUserInfo();
         await this.getElectionsByAccount();

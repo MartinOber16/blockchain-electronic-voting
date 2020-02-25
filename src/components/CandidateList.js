@@ -12,8 +12,9 @@ export class CandidateList extends Component {
     async getCandidate(election, id) {           
         let candidate;
         await this.props.BEVService.getCandidate(election, id).then((receipt) => {
-            console.log(receipt);
             if(receipt.status == 200)
+                candidate = JSON.stringify(receipt.data);
+            else
                 candidate = receipt.data;
         });
               
@@ -24,7 +25,6 @@ export class CandidateList extends Component {
     async deleteCandidate(election, id) {          
         let transactionInfo;
         await this.props.BEVService.deleteCandidate(election, id, this.props.state.account).then((receipt) => {
-            console.log(receipt);
             if(receipt.status == 200)
                 transactionInfo = "Transaccion realizada correctamente: " + receipt.data.tx;
             else
@@ -53,7 +53,7 @@ export class CandidateList extends Component {
                                 }
                             } 
                             type="button"
-                            >Ver
+                            >Info
                         </button> 
                         <button 
                             className="btn btn-danger"                                  
@@ -64,7 +64,7 @@ export class CandidateList extends Component {
                                 }
                             } 
                             type="button"
-                            >Eliminar
+                            >Borrar
                         </button>
                     </td>
                 </tr>
@@ -94,11 +94,6 @@ export class CandidateList extends Component {
         }
     }
 
-    async loadCandidateList(){
-        console.log("load CandidateList");
-        await this.getCandidates();
-    }
-
     render() {
         return (<div id="candidates">
                     <h4>Candidatos</h4>
@@ -114,12 +109,6 @@ export class CandidateList extends Component {
                                 ref={ this.candidateInput } 
                                 type="text" 
                                 />                                                              
-                            <button 
-                                className="btn btn-primary"                                             
-                                onClick={ this.clearTextCandidateInput }
-                                type="button"
-                                >Limpiar
-                            </button>
                         </div>
                         <div className="btn-group col-sm-2">                                
                             <button 
@@ -135,22 +124,7 @@ export class CandidateList extends Component {
                         {this.renderTableCandidates()}
                     <br/>
                     <div className="modal" id="candidateModal">
-                        <div className="modal-dialog">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h4 className="modal-title">Nuevo Candidato</h4>
-                                    <button 
-                                        className="close" 
-                                        data-dismiss="modal"
-                                        type="button" 
-                                        >&times;
-                                    </button>
-                                </div>                                        
-                                <div className="modal-body">
-                                    <CandidateForm BEVService={this.props.BEVService} account={this.props.state.account}/>
-                                </div>                                                                        
-                            </div>
-                        </div>
+                        <CandidateForm BEVService={this.props.BEVService} account={this.props.state.account}/>
                     </div>
                     <p id="candidateResult"></p>
                 </div>);

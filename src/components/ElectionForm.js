@@ -12,27 +12,48 @@ const ElectionForm = (props) => {
         },
         onSubmit: values => {            
             props.BEVService.addElection(values.electionName, props.account, valueElection).then((receipt) => {
-                console.log(receipt);
-                document.querySelector('#electionResult').innerText = "Transaccion realizada correctamente: " + receipt.data.tx;
+                let result;
+                if(receipt.status == 200)
+                    result = "Transaccion realizada correctamente: " + receipt.data.tx;
+                else
+                    result = receipt.data;
+
+                document.querySelector('#electionResult').innerText = result;
             });
             values.electionName = "";
+            $('#electionModal').modal('hide');
         },
     });
-    return (
-        <form onSubmit={formik.handleSubmit}>
-        <label htmlFor="electionName">Nombre de la Elección</label>
-        <input className="form-control" placeholder="Enter name"
-            id="electionName"
-            name="electionName"
-            type="text"
-            onChange={formik.handleChange}
-            value={formik.values.electionName}
-        />
-        <br />
-        <div className="modal-footer">
-            <button type="submit" className="btn btn-success">Guardar</button>
+    return (<div className="modal-dialog">
+            <div className="modal-content">
+                <div className="modal-header">
+                    <h4 className="modal-title">Nueva Elección</h4>
+                    <button 
+                        className="close" 
+                        data-dismiss="modal"
+                        type="button" 
+                        >&times;
+                    </button>
+                </div>                                        
+                <div className="modal-body">
+                    <form onSubmit={formik.handleSubmit}>
+                    <label htmlFor="electionName">Nombre de la Elección</label>
+                    <input className="form-control" placeholder="Enter name"
+                        id="electionName"
+                        name="electionName"
+                        type="text"
+                        onChange={formik.handleChange}
+                        value={formik.values.electionName}
+                    />
+                    <br />
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-light" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" className="btn btn-success">Guardar</button>
+                    </div>
+                    </form>
+                </div>                                                                        
+            </div>
         </div>
-        </form>
     );
 };
 

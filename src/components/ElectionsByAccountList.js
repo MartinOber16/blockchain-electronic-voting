@@ -8,24 +8,26 @@ export class ElectionsByAccountList extends Component {
 
     }
 
-    async getResultElection (election) {        
+    // Obtener el candidato ganador de la elección
+    async getResultElection(election) {       
         let candidatoGanador;
         await this.props.BEVService.getResultElection(election).then((receipt) => {
-            console.log(receipt);
             if(receipt.status == 200)
+                candidatoGanador = JSON.stringify(receipt.data);
+            else
                 candidatoGanador = receipt.data;
-
         });
 
         return candidatoGanador;
     }
 
     // Obtener todos los candidatos de una elección
-    async getCandidatesByElection(election) {        
+    async getDetailsByElection(election) {     
         let candidatesByElection;
-        await this.props.BEVService.getCandidatesByElection(election).this((receipt) => {
-            console.log(receipt);
+        await this.props.BEVService.getDetailsByElection(election).then((receipt) => {
             if(receipt.status == 200)
+                candidatesByElection = JSON.stringify(receipt.data);
+            else
                 candidatesByElection = receipt.data;
         });
         
@@ -51,15 +53,26 @@ export class ElectionsByAccountList extends Component {
                             >Votar
                         </button>
                         <button 
-                            className="btn btn-info"                                                         
+                            className="btn btn-link"                                                         
                             onClick={
                                     async () => {
-                                    let result = await this.getResultElection(id);
-                                    document.querySelector('#electionByAccountResult').innerText = JSON.stringify(result);
+                                        let result = await this.getResultElection(id);
+                                        document.querySelector('#electionByAccountResult').innerText = result;
                                 }
                             } 
                             type="button"
                             >Resultados
+                        </button>
+                        <button 
+                            className="btn btn-link"                                                         
+                            onClick={
+                                    async () => {
+                                        let result = await this.getDetailsByElection(id);
+                                        document.querySelector('#electionByAccountResult').innerText = result;
+                                }
+                            } 
+                            type="button"
+                            >Detalles
                         </button>
                     </td>
                 </tr>
@@ -99,22 +112,7 @@ export class ElectionsByAccountList extends Component {
                 {this.renderTableElectionsByAccount()}
                 <br/>
                 <div className="modal" id="electionByAccountModal">
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h4 className="modal-title">Votar</h4>
-                                <button 
-                                    className="close" 
-                                    data-dismiss="modal"
-                                    type="button" 
-                                    >&times;
-                                </button>
-                            </div>                                        
-                            <div className="modal-body">
-                                <VotingForm BEVService={this.props.BEVService} account={this.props.state.account}/>
-                            </div>                                                                        
-                        </div>
-                    </div>
+                    <VotingForm BEVService={this.props.BEVService} account={this.props.state.account}/>
                 </div>
                 <p id="electionByAccountResult"></p>
             </div>
