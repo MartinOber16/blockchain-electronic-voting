@@ -23,7 +23,7 @@
     "react-scripts": "^3.3.0",
     "react-toastr": "3.0.0",
     "solc": "^0.6.0",
-    "truffle-contract": "^3.0.6",
+    "truffle-contract": "^3.0.8",
     "truffle-hdwallet-provider": "^1.0.17",
     "web3": "1.2.4",
     "webpack": "^4.41.2",

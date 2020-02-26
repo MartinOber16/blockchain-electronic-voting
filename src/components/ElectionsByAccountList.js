@@ -112,7 +112,12 @@ export class ElectionsByAccountList extends Component {
                 {this.renderTableElectionsByAccount()}
                 <br/>
                 <div className="modal" id="electionByAccountModal">
-                    <VotingForm BEVService={this.props.BEVService} account={this.props.state.account}/>
+                    <VotingForm 
+                        account={this.props.state.account}
+                        BEVService={this.props.BEVService}                         
+                        candidates={this.props.state.candidates}
+                        elections={this.props.state.electionsByAccount}
+                    />
                 </div>
                 <p id="electionByAccountResult"></p>
             </div>

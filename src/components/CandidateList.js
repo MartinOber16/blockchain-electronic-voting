@@ -124,7 +124,11 @@ export class CandidateList extends Component {
                         {this.renderTableCandidates()}
                     <br/>
                     <div className="modal" id="candidateModal">
-                        <CandidateForm BEVService={this.props.BEVService} account={this.props.state.account}/>
+                        <CandidateForm 
+                            account={this.props.state.account} 
+                            BEVService={this.props.BEVService} 
+                            elections={this.props.state.elections}
+                        />
                     </div>
                     <p id="candidateResult"></p>
                 </div>);

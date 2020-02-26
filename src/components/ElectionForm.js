@@ -10,18 +10,22 @@ const ElectionForm = (props) => {
         initialValues: {
             electionName: "",
         },
-        onSubmit: values => {            
-            props.BEVService.addElection(values.electionName, props.account, valueElection).then((receipt) => {
-                let result;
-                if(receipt.status == 200)
-                    result = "Transaccion realizada correctamente: " + receipt.data.tx;
-                else
-                    result = receipt.data;
-
-                document.querySelector('#electionResult').innerText = result;
-            });
-            values.electionName = "";
-            $('#electionModal').modal('hide');
+        onSubmit: values => {      
+            if(values.electionName != "") {
+                props.BEVService.addElection(values.electionName, props.account, valueElection).then((receipt) => {
+                    let result;
+                    if(receipt.status == 200)
+                        result = "Transaccion realizada correctamente: " + receipt.data.tx;
+                    else
+                        result = receipt.data;
+    
+                    document.querySelector('#electionResult').innerText = result;
+                });
+                values.electionName = "";
+                $('#electionModal').modal('hide');
+            }
+            else
+                alert("Debe ingresar un nombre para la elección.");
         },
     });
     return (<div className="modal-dialog">
