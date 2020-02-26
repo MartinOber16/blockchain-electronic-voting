@@ -297,17 +297,24 @@ export class BEVService {
     }
 
     // Agregar nuevo votante y devuelve la información de la transacción
-    // TODO: addVoter: Validar que el votante no exista para esa elección.
     async addVoter(election, address, name, account) {
-        let transactionInfo;
-        await this.contract.addVoter(election, address, name, { from: account }).then((receipt) => {
-            transactionInfo = receipt;
-            });
+        let existe = await this.contract.voterIsJoined(election, address);
+        if(existe){
+            return this.response(errorCode, "Error: el votante ya se encuentra registrado.");
+        }
+        else {
+            let transactionInfo;
+            await this.contract.addVoter(election, address, name, { from: account }).then((receipt) => {
+                transactionInfo = receipt;
+                });
+    
+            if(transactionInfo != null)
+                return this.response(okCode, transactionInfo);
+            else
+                return this.response(errorCode, "Error: no se pudo agregar el nuevo votante.");
 
-        if(transactionInfo != null)
-            return this.response(okCode, transactionInfo);
-        else
-            return this.response(errorCode, "Error: no se pudo agregar el nuevo votante.");
+        }
+
     }
 
     // Eliminar un votante
