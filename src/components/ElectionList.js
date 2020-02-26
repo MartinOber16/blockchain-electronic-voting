@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import ElectionForm from "./ElectionForm";
 
+// TODO: Activar/Desactivar elección
+
 export class ElectionList extends Component {
 
     constructor(props) {
         super(props);
-
     }
     
     // Obtengo una eleccion    

@@ -13,16 +13,11 @@ import { VoterList }  from "./components/VoterList";
 import Soporte from "./components/Soporte";
 import { ToastContainer } from "react-toastr";
 
-// TODO: Error al eliminar registros
-// TODO: Mostrar resultados de la elección
-// TODO: Manejar errores
+// TODO: Agregar funcionalidad par transferencia de los fondos del contrato
+// TODO: Ver eventos
 // TODO: Mostrar información con Alertas o Modals
-// TODO: Transferencia de los fondos del contrato
-// TODO: Activar/Desactivar elección
-// TODO: Pruebas de usuario
-// TODO: Mejorar formularioss
-// TODO: Ver eventos en el contrato
 // TODO: Optimizar codigo
+// TODO: Pruebas
 // TODO: Mejoras look&feel
 
 // Funcion para convertir de weis a ethers
@@ -143,14 +138,20 @@ export class App extends Component {
 
     // Obtengo todas las elecciones
     async getElections() {    
-        console.log('getElections');         
+        console.log('getElections');      
         await this.BEVService.getElections().then((receipt) => {
             if(receipt.status == 200) {
                 this.setState({
                     elections: receipt.data
                 });
-            }                
-        }); 
+            }
+            else {
+                this.setState({
+                    elections: []
+                });
+            }
+                               
+        });
     }
 
     // Obtengo todos los candidatos
@@ -160,6 +161,11 @@ export class App extends Component {
             if(receipt.status == 200) {
                 this.setState({
                     candidates: receipt.data
+                });
+            }
+            else {
+                this.setState({
+                    candidates: []
                 });
             }
         });            
@@ -172,6 +178,11 @@ export class App extends Component {
             if(receipt.status == 200) {
                 this.setState({
                     voters: receipt.data
+                });
+            }
+            else {
+                this.setState({
+                    voters: []
                 });
             }
         });

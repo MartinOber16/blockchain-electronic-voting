@@ -92,7 +92,8 @@ export class BEVService {
             let elections = [];        
             for(var i = 1; i <= total; i++) {            
                 let election = await this.contract.getElection(i);
-                elections.push(election);
+                if(election[0]>0)
+                    elections.push(election);
             }
             return this.response(okCode, this.mapElection(elections));
         }
@@ -109,16 +110,18 @@ export class BEVService {
             for(var i = 1; i <= total; i++) {
                 if(await this.contract.voterIsJoined(i, account)) {
                     let _yaVoto = await this.voterHasVoted(i, account);
-                    let e = await this.contract.getElection(i);                
-                    let election = {
-                        id: e[0].toNumber(),
-                        name: e[1],
-                        active: e[2].toString(),
-                        candidatesCount: e[3].toNumber(),
-                        votersCount: e[4].toNumber(),
-                        yaVoto: _yaVoto.toString()
-                      };                                
-                    elections.push(election);
+                    let e = await this.contract.getElection(i);
+                    if(e[0]>0) {          
+                        let election = {
+                            id: e[0].toNumber(),
+                            name: e[1],
+                            active: e[2].toString(),
+                            candidatesCount: e[3].toNumber(),
+                            votersCount: e[4].toNumber(),
+                            yaVoto: _yaVoto.toString()
+                        };                                
+                        elections.push(election);
+                    }
                 }
             }
             return this.response(okCode, elections);
@@ -191,7 +194,8 @@ export class BEVService {
                 let totalCandidates = await this.contract.getCandidatesCount(i);
                 for(var j = 1 ; j <= totalCandidates; j++) {
                     let candidate = await this.contract.getCandidate(i,j);
-                    candidates.push(candidate);
+                    if(candidate[1]>0)
+                        candidates.push(candidate);
                 }   
             }
 
@@ -267,7 +271,8 @@ export class BEVService {
                 for(var j = 1 ; j <= totalVoters; j++) {
                     let addr = await this.contract.getAddressVoter(i,j);
                     let voter = await this.contract.getVoter(i,addr); // Busco el votante por su dirección.
-                    voters.push(voter);
+                    if(voter[2]!="")
+                        voters.push(voter);
                 }
             }
 
@@ -292,7 +297,7 @@ export class BEVService {
     }
 
     // Agregar nuevo votante y devuelve la información de la transacción
-    // TODO: Validar que el votante no exista para esa elección.
+    // TODO: addVoter: Validar que el votante no exista para esa elección.
     async addVoter(election, address, name, account) {
         let transactionInfo;
         await this.contract.addVoter(election, address, name, { from: account }).then((receipt) => {
@@ -306,6 +311,7 @@ export class BEVService {
     }
 
     // Eliminar un votante
+    // TODO: deleteVoter: al eliminar un votante y luego volverlo a agregar lo duplica
     async deleteVoter(election, address, account) {        
         let transactionInfo;
         await this.contract.deleteVoter(election, address, {from: account}).then((receipt) => {
@@ -364,7 +370,8 @@ export class BEVService {
             let candidates = [];                  
             for(var i = 1 ; i <= totalCandidates; i++) {
                 await this.contract.getCandidate(election,i).then((candidate) => {
-                    candidates.push(candidate);
+                    if(candidate[1]>0)
+                        candidates.push(candidate);
                 });
             }
             return this.response(okCode, this.mapCandidate(candidates));

@@ -102,7 +102,7 @@ contract BEV {
         require(elections[_idElection].votersCount == 0,"Hay votantes");
         require(elections[_idElection].candidatesCount == 0, "Hay candidatos");
 
-        electionsCount--;
+        //electionsCount--;
         delete elections[_idElection];
     }
 
@@ -138,7 +138,7 @@ contract BEV {
     function deleteCandidate(uint _idElection, uint _idCandidate) public isAdmin {
         require(electionIsValid(_idElection), "Elección no valida");
         require(candidateIsValid(_idElection, _idCandidate), "Candidato no valido");
-        elections[_idElection].candidatesCount--;
+        //elections[_idElection].candidatesCount--;
         delete elections[_idElection].candidates[_idCandidate];
     }
 
@@ -182,7 +182,7 @@ contract BEV {
     // Obtengo un votante
     function getVoter(uint _idElection, address _addr) public isAdmin view returns(uint, address, string, bool) {
         require(electionIsValid(_idElection), "Elección no valida");
-        require(voterIsJoined(_idElection, _addr), "Votante no valido");
+        //require(voterIsJoined(_idElection, _addr), "Votante no valido");
         Voter memory voter = elections[_idElection].voters[_addr];
         return (_idElection, _addr, voter.name, voter.voted);
     }
@@ -193,7 +193,7 @@ contract BEV {
         require(voterIsJoined(_idElection, _addr),"El usuario no existe!");
         require(!voterHasVoted(_idElection, _addr), "Votante ya voto");
 
-        elections[_idElection].votersCount--;
+        //elections[_idElection].votersCount--;
         elections[_idElection].joinedVoters[_addr] = false;
         delete elections[_idElection].voters[_addr];
     }

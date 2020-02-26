@@ -1,6 +1,8 @@
 import React from "react";
 import { useFormik } from 'formik';
 
+// TODO: input nro eleccion y candidato: mostrar solo las elecciones y candidatos disponibles por cada una
+
 // Formulario de votación
 const VotingForm = (props) => {
     const formik = useFormik({
