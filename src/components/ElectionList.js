@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import ElectionForm from "./ElectionForm";
 
-// TODO: Activar/Desactivar elección
-
 export class ElectionList extends Component {
 
     constructor(props) {
@@ -19,6 +17,23 @@ export class ElectionList extends Component {
                 election = receipt.data; 
         });
         return election;
+    }
+
+    // Activar una elección
+    async activeElection(id, active) {
+        let act = false
+        if(active == "false")
+            act = true;
+
+        let transactionInfo;
+        await this.props.BEVService.activeElection(id, act, this.props.state.account).then((receipt) => {
+            if(receipt.status == 200)
+                transactionInfo = "Transaccion realizada correctamente: " + receipt.data.tx;
+            else
+                transactionInfo = receipt.data;
+
+        });
+        return transactionInfo;
     }
 
     // Eliminar una elección
@@ -56,6 +71,17 @@ export class ElectionList extends Component {
                             }
                             type="button"                            
                             >Info
+                        </button>
+                        <button 
+                            className="btn btn-warning"
+                            onClick={
+                                async () => {
+                                    let result = await this.activeElection(id, active);
+                                    document.querySelector('#electionResult').innerText = result;
+                                }
+                            }
+                            type="button"                            
+                            >Activar
                         </button> 
                         <button 
                             className="btn btn-danger"                              
@@ -101,8 +127,8 @@ export class ElectionList extends Component {
                 <h4>Elecciones</h4>
                 <hr />
                 <div className="input-group row">  
-                    <div className="input-group-append col-sm-1"></div>                                          
-                    <div className="input-group-append col-sm-8">   
+                    <div className="input-group-append col-sm-2"></div>                                          
+                    <div className="input-group-append col-sm-6">   
                         <input 
                             className="form-control" 
                             id="electionInput" 

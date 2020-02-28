@@ -119,7 +119,7 @@ export class BEVService {
                             candidatesCount: e[3].toNumber(),
                             votersCount: e[4].toNumber(),
                             yaVoto: _yaVoto.toString()
-                        };                                
+                        };                
                         elections.push(election);
                     }
                 }
@@ -169,6 +169,19 @@ export class BEVService {
             return this.response(errorCode, "Error: no se pudo eliminar la elección.");
     }
 
+    async activeElection(id, activated, account) {
+        let transactionInfo;
+        await this.contract.activeElection(id, activated, {from: account}).then((receipt) => {
+            transactionInfo = receipt;
+        });
+
+        if(transactionInfo != null)
+            return this.response(okCode, transactionInfo);
+        else
+            return this.response(errorCode, "Error: no se pudo activar/desactivar la elección."); 
+
+    }
+
     // CANDIDATO
     structCandidate(candidate) {
         return {
@@ -191,7 +204,7 @@ export class BEVService {
         if(totalElections > 0) {
             let candidates = [];        
             for(var i = 1; i <= totalElections; i++) {    
-                let totalCandidates = await this.contract.getCandidatesCount(i);
+                let totalCandidates = await this.contract.getCandidatesIndex(i);
                 for(var j = 1 ; j <= totalCandidates; j++) {
                     let candidate = await this.contract.getCandidate(i,j);
                     if(candidate[1]>0)
@@ -267,7 +280,7 @@ export class BEVService {
         if(totalElections > 0) {
             let voters = [];        
             for(var i = 1; i <= totalElections; i++) {    
-                let totalVoters = await this.contract.getVotersCount(i);
+                let totalVoters = await this.contract.getVotersIndex(i);
                 for(var j = 1 ; j <= totalVoters; j++) {
                     let addr = await this.contract.getAddressVoter(i,j);
                     let voter = await this.contract.getVoter(i,addr); // Busco el votante por su dirección.
@@ -318,7 +331,6 @@ export class BEVService {
     }
 
     // Eliminar un votante
-    // TODO: deleteVoter: al eliminar un votante y luego volverlo a agregar lo duplica
     async deleteVoter(election, address, account) {        
         let transactionInfo;
         await this.contract.deleteVoter(election, address, {from: account}).then((receipt) => {
@@ -372,7 +384,7 @@ export class BEVService {
     }
 
     async getDetailsByElection(election) {      
-        let totalCandidates = await this.contract.getCandidatesCount(election);
+        let totalCandidates = await this.contract.getCandidatesIndex(election);
         if(totalCandidates > 0) {
             let candidates = [];                  
             for(var i = 1 ; i <= totalCandidates; i++) {

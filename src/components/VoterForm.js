@@ -61,7 +61,7 @@ const VoterForm = (props) => {
                 </div>                                        
                 <div className="modal-body">
                     <form onSubmit={formik.handleSubmit}>
-                        <div class="form-group">
+                        <div className="form-group">
                             <label htmlFor="idElectionVoter">Elección</label>
                             <select 
                                 className="form-control" 
@@ -74,7 +74,7 @@ const VoterForm = (props) => {
                                 {renderSelectElections()}
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div className="form-group">
                             <label htmlFor="voterAddress">Cuenta del Votante</label>
                             <input className="form-control" placeholder="Enter address"
                                 id="voterAddress"
@@ -84,7 +84,7 @@ const VoterForm = (props) => {
                                 value={formik.values.voterAddress}
                             />
                         </div>
-                        <div class="form-group">
+                        <div className="form-group">
                             <label htmlFor="voterName">Nombre del Votante</label>
                             <input className="form-control" placeholder="Enter name"
                                 id="voterName"

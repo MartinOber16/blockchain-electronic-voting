@@ -46,17 +46,13 @@ export class ElectionsByAccountList extends Component {
                     <td>{yaVoto}</td>
                     <td>
                         <button 
-                            className="btn btn-primary" 
-                            data-target="#electionByAccountModal"
-                            data-toggle="modal"
-                            type="button"                                                         
-                            >Votar
-                        </button>
-                        <button 
                             className="btn btn-link"                                                         
                             onClick={
                                     async () => {
-                                        let result = await this.getResultElection(id);
+                                        let result = "Aun no ha emitido su voto.";
+                                        if(yaVoto != "false") {
+                                            result = await this.getResultElection(id);
+                                        }                                        
                                         document.querySelector('#electionByAccountResult').innerText = result;
                                 }
                             } 
@@ -67,7 +63,10 @@ export class ElectionsByAccountList extends Component {
                             className="btn btn-link"                                                         
                             onClick={
                                     async () => {
-                                        let result = await this.getDetailsByElection(id);
+                                        let result = "Aun no ha emitido su voto.";
+                                        if(yaVoto != "false") {
+                                            result = await this.getDetailsByElection(id);
+                                        }
                                         document.querySelector('#electionByAccountResult').innerText = result;
                                 }
                             } 
@@ -106,8 +105,30 @@ export class ElectionsByAccountList extends Component {
 
     render () {
         return <div id="electionsByAccount">
-                <h3>Elecciones</h3>
-                <hr />
+                <div className="input-group row">  
+                    <div className="input-group-append col-sm-2">
+                    </div>                   
+                    <div className="input-group-append col-sm-6">   
+                        <input 
+                            className="form-control" 
+                            id="votingInput" 
+                            placeholder="Buscar" 
+                            ref= { this.votingInput } 
+                            type="text" 
+                            />                                                              
+                    </div>
+                    <div className="input-group-append col-sm-1">
+                    </div>  
+                    <div className="btn-group col-sm-2">                                
+                        <button 
+                            className="btn btn-primary" 
+                            data-target="#electionByAccountModal"
+                            data-toggle="modal"
+                            type="button"                                                   
+                            >Votar
+                        </button>
+                    </div>
+                </div>
                 <br/>   
                 {this.renderTableElectionsByAccount()}
                 <br/>

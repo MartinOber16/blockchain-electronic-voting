@@ -12,7 +12,10 @@ export default (props) => {
                             <a className="nav-link active" data-toggle="pill" href="#home">Inicio</a>                                
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" data-toggle="pill" href="#adminElection">Administrar Elecciones</a>                                
+                            <a className="nav-link" data-toggle="pill" href="#elections">Mis elecciones</a>                                
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" data-toggle="pill" href="#adminElection">Administración</a>                                
                         </li>
                         <li className="nav-item">
                             <a className="nav-link" data-toggle="pill" href="#support">Soporte</a>                                
@@ -30,6 +33,9 @@ export default (props) => {
                     <li className="nav-item">
                         <a className="nav-link active" data-toggle="pill" href="#home">Inicio</a>                                
                     </li>
+                    <li className="nav-item">
+                            <a className="nav-link" data-toggle="pill" href="#elections">Mis elecciones</a>                                
+                        </li>
                     <li className="nav-item">
                         <a className="nav-link" data-toggle="pill" href="#support">Soporte</a>                                
                     </li>

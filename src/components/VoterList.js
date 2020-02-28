@@ -101,9 +101,9 @@ export class VoterList extends Component {
                 <h4>Votantes</h4>
                 <hr />
                 <div className="input-group row">  
-                    <div className="input-group-append col-sm-1">
+                    <div className="input-group-append col-sm-2">
                     </div>                                          
-                    <div className="input-group-append col-sm-8">   
+                    <div className="input-group-append col-sm-6">   
                         <input 
                             className="form-control" 
                             id="voterInput" 

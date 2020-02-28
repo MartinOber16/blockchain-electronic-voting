@@ -5,10 +5,12 @@ import { useFormik } from 'formik';
 const VotingForm = (props) => {
     const renderSelectElections = () => {
         return props.elections.map((election) => {
-            const { id, name} = election
-            return (
+            const { id, name, active} = election
+            if(active != "false") {
+                return (
                     <option key={id} value={id}>{name}</option>
-            )
+                )
+            }
         })
     }
     const renderSelectCandidates = (e) => {
@@ -63,7 +65,7 @@ const VotingForm = (props) => {
                 </div>                                        
                 <div className="modal-body">
                     <form onSubmit={formik.handleSubmit}>
-                        <div class="form-group">
+                        <div className="form-group">
                             <label htmlFor="electionIdVote">Elección</label>
                             <select 
                                 className="form-control" 
@@ -76,7 +78,7 @@ const VotingForm = (props) => {
                                 {renderSelectElections()}
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div className="form-group">
                             <label htmlFor="candidateVote">Candidato</label>
                             <select 
                                 className="form-control" 

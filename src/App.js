@@ -14,11 +14,11 @@ import Soporte from "./components/Soporte";
 import { ToastContainer } from "react-toastr";
 
 // TODO: Agregar funcionalidad par transferencia de los fondos del contrato
-// TODO: Ver eventos
 // TODO: Mostrar información con Alertas o Modals
+// TODO: Ver eventos
 // TODO: Optimizar codigo
-// TODO: Pruebas
 // TODO: Mejoras look&feel
+// TODO: Pruebas
 
 // Funcion para convertir de weis a ethers
 const converter = (web3) => {
@@ -223,7 +223,7 @@ export class App extends Component {
                     <div className="container tab-content">
 
                         <div id="home" className="container tab-pane active">
-                            <div className="text-left mb-4" id="section">
+                            <div className="text-left mb-4" >
                                 <h3>Inicio</h3>
                                 <hr />                  
                             </div>
@@ -232,6 +232,13 @@ export class App extends Component {
                                 state={this.state}
                             />
                             <br />
+                        </div>
+
+                        <div id="elections" className="container tab-pane fade">
+                            <div className="text-left mb-4" >
+                                <h3>Mis elecciones</h3>
+                                <hr />                  
+                            </div>
                             <ElectionsByAccountList 
                                 BEVService={this.BEVService} 
                                 state={this.state} 
@@ -240,10 +247,11 @@ export class App extends Component {
                         </div>
 
                         <div id="adminElection" className="container tab-pane fade">
-                            <div className="text-left mb-4" id="section">
+                            <div className="text-left mb-4" >
                                 <h3>Administración</h3>   
                                 <hr />
                             </div>
+                            <br />
                             <AdminList 
                                 BEVService={this.BEVService} 
                                 state={this.state}

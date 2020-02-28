@@ -99,9 +99,9 @@ export class CandidateList extends Component {
                     <h4>Candidatos</h4>
                     <hr />
                     <div className="input-group row">  
-                        <div className="input-group-append col-sm-1">
+                        <div className="input-group-append col-sm-2">
                         </div>                                          
-                        <div className="input-group-append col-sm-8">   
+                        <div className="input-group-append col-sm-6">   
                             <input 
                                 className="form-control" 
                                 id="candidateInput" 
@@ -109,7 +109,7 @@ export class CandidateList extends Component {
                                 ref={ this.candidateInput } 
                                 type="text" 
                                 />                                                              
-                        </div>
+                        </div>  
                         <div className="btn-group col-sm-2">                                
                             <button 
                                 className="btn btn-success" 
