@@ -10,15 +10,16 @@ import { AdminList } from "./components/AdminList";
 import { ElectionList } from "./components/ElectionList";
 import { CandidateList } from "./components/CandidateList";
 import { VoterList }  from "./components/VoterList";
+import { TransferList } from "./components/TransferList";
 import Soporte from "./components/Soporte";
 import { ToastContainer } from "react-toastr";
 
-// TODO: Agregar funcionalidad par transferencia de los fondos del contrato
-// TODO: Mostrar información con Alertas o Modals
-// TODO: Ver eventos
-// TODO: Optimizar codigo
-// TODO: Mejoras look&feel
-// TODO: Pruebas
+// TODO: Mostrar información con Modals -> Lunes
+// TODO: Eventos del contrato (transacciones) -> Martes
+// TODO: Optimizar codigo -> Miercoles
+// TODO: Mejoras look&feel -> Jueves
+// TODO: Pruebas -> Viernes
+// TODO: Sección de soporte
 
 // Funcion para convertir de weis a ethers
 const converter = (web3) => {
@@ -51,7 +52,6 @@ export class App extends Component {
     async componentDidMount() {            
         this.web3 = await getWeb3(); // Obtengo la versión 1 de web3
         console.log("Versión web3: " + this.web3.version);
-        
         this.toEther = converter(this.web3); // Funcion para convertir de wei a ether
 
         try{
@@ -259,7 +259,8 @@ export class App extends Component {
                             <br />
                             <ElectionList 
                                 BEVService={this.BEVService} 
-                                state={this.state} 
+                                state={this.state}
+                                web3={this.web3}
                             />
                             <br />
                             <CandidateList 
@@ -271,9 +272,15 @@ export class App extends Component {
                                 BEVService={this.BEVService} 
                                 state={this.state} 
                             />
-                            <br />                            
+                            <br /> 
+                            <TransferList 
+                                BEVService={this.BEVService} 
+                                state={this.state}
+                                web3={this.web3}
+                            />
+                            <br /> 
                         </div>
-
+                        
                         <div id="support" className="container tab-pane fade">
                             <Soporte />
                         </div>
@@ -282,8 +289,10 @@ export class App extends Component {
                     </div>
                 </div>
             </div>  
-            <ToastContainer ref={(input) => this.container = input}
-                    className="toast-top-right"/>
+            <ToastContainer 
+                ref={(input) => this.container = input}
+                className="toast-top-right"
+            />
         </React.Fragment>
     }
 }

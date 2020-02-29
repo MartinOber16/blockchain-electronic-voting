@@ -1,77 +1,77 @@
 import React from "react";
 import { useFormik } from 'formik';
 
-// Valor a transferir para utilizar en la elección por costo para transacciones = 1 ether
-//const valueElection = 1000000000000000000; 
-
-// Formulario de elección
-const ElectionForm = (props) => {
+// Formulario de transferencia
+const TransferForm = (props) => {
     const formik = useFormik({
         initialValues: {
-            electionName: "",
-            valueElection: 1
+            toAddress: "",
+            amount: 0
         },
-        onSubmit: values => {      
-            if(values.electionName != "") {
-                if(values.valueElection > 0) {
-                    let amount = props.web3.utils.toWei(values.valueElection.toString(), 'ether');
-                    props.BEVService.addElection(values.electionName, props.account, amount).then((receipt) => {
+        onSubmit: values => {
+            if(values.toAddress != "") {
+                if(values.amount > 0) {
+                    let amountWei = props.web3.utils.toWei(values.amount.toString(), 'ether');
+                    props.BEVService.transferFromContract(values.toAddress, amountWei, props.account).then((receipt) => {
                         let result;
                         if(receipt.status == 200)
                             result = "Transaccion realizada correctamente: " + receipt.data.tx;
                         else
                             result = receipt.data;
         
-                        document.querySelector('#electionResult').innerText = result;
+                        document.querySelector('#transferResult').innerText = result;
                     });
-                    values.electionName = "";
-                    values.valueElection = 1;
-                    $('#electionModal').modal('hide');
+                    
+                    values.toAddress = "",
+                    values.amount = 0
+                    $('#transferModal').modal('hide');
                 }
                 else
-                    alert("Debe ingresar una cantidad de etheres a utilizar en la elección.");
+                    alert("Debe ingresar la cantidad de etheres a transferir.");
+
             }
             else
-                alert("Debe ingresar un nombre para la elección.");
+                alert("Debe ingresar una cuenta valida.");
+
         },
     });
     return (<div className="modal-dialog">
             <div className="modal-content">
                 <div className="modal-header">
-                    <h4 className="modal-title">Nueva Elección</h4>
-                    <button 
+                    <h4 className="modal-title">Transferencia</h4>
+                    <button                                                     
                         className="close" 
                         data-dismiss="modal"
-                        type="button" 
+                        type="button"
                         >&times;
                     </button>
                 </div>                                        
                 <div className="modal-body">
                     <form onSubmit={formik.handleSubmit}>
                         <div className="form-group">
-                            <label htmlFor="electionName">Nombre de la Elección</label>
-                            <input className="form-control" placeholder="Enter name"
-                                id="electionName"
-                                name="electionName"
+                            <label htmlFor="toAddress">Cuenta destino</label>
+                            <input className="form-control" placeholder="Enter address"
+                                id="toAddress"
+                                name="toAddress"
                                 type="text"
                                 onChange={formik.handleChange}
-                                value={formik.values.electionName}
+                                value={formik.values.toAddress}
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="valueElection">Costo de la elección (ethers)</label>
+                            <label htmlFor="amount">Cantidad (ethers)</label>
                             <input className="form-control" placeholder="Enter value"
-                                id="valueElection"
-                                name="valueElection"
+                                id="amount"
+                                name="amount"
                                 type="text"
                                 onChange={formik.handleChange}
-                                value={formik.values.valueElection}
+                                value={formik.values.amount}
                             />
                         </div>
                         <br />
                         <div className="modal-footer">
                             <button type="button" className="btn btn-light" data-dismiss="modal">Cancelar</button>
-                            <button type="submit" className="btn btn-success">Guardar</button>
+                            <button type="submit" className="btn btn-success">Transferir</button>
                         </div>
                     </form>
                 </div>                                                                        
@@ -80,4 +80,4 @@ const ElectionForm = (props) => {
     );
 };
 
-export default ElectionForm;
+export default TransferForm;

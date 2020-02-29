@@ -77,7 +77,7 @@ contract BEV {
 
     // Agregar una elección
     function addElection(string _name) public isAdmin payable {
-        require(msg.value == 1 ether);
+        require(msg.value > 0 ether);
         electionsCount++;
         elections[electionsCount] = Election(electionsCount, _name, false, 0, 0, 0, 0);
 
@@ -278,9 +278,9 @@ contract BEV {
     }
 
     // Transferir los fondos del contrato
-    function transferFromContract(address _addr, uint etherToRefund) public isOwner {
-        require(getContractBalance() > etherToRefund, "No hay ethers suficientes");
-        _addr.transfer(etherToRefund);
+    function transferFromContract(address _addr, uint amount) public isOwner {
+        require(getContractBalance() > amount, "No hay ethers suficientes");
+        _addr.transfer(amount);
     }
 
     // Obtener el balance del SmartContract

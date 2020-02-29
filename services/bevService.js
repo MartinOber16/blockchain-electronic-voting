@@ -400,9 +400,9 @@ export class BEVService {
     }
     
     // Transferencia de fondos del contrato
-    async transferFromContract(address, etherToRefund, account) {
+    async transferFromContract(toAddress, amount, account) {
         let transactionInfo;
-        await this.contract.transferFromContract(address, etherToRefund, {from: account}).then((receipt) => {
+        await this.contract.transferFromContract(toAddress, amount, {from: account}).then((receipt) => {
             transactionInfo = receipt;
         });
 

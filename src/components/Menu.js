@@ -3,7 +3,7 @@ import React from "react";
 export default (props) => {
 
     if(props.admin) {
-        return <div className="col-sm-2 bg-light text-dark" id="menu">            
+        return <div className="col-sm-2 text-dark" id="menu">            
                 <div className="" id="image" >
                 </div>
                 <div className="">                                          
@@ -25,7 +25,7 @@ export default (props) => {
             </div>
     }
     else {
-        return <div className="col-sm-2 bg-light text-dark" id="menu">            
+        return <div className="col-sm-2 text-dark" id="menu">            
             <div className="" id="image" >
             </div>
             <div className="">                                          
