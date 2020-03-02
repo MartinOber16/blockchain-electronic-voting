@@ -20,13 +20,10 @@ const CandidateForm = (props) => {
             if(values.idElectionCandidate > 0) {
                 if(values.candidateName != "") {
                     props.BEVService.addCandidate(values.idElectionCandidate, values.candidateName, props.account).then((receipt) => {
-                        let result;
                         if(receipt.status == 200)
-                            result = "Transaccion realizada correctamente: " + receipt.data.tx;
+                            swal("Transacción realizada correctamente!", "Comprobante: " + receipt.data.tx, "success");
                         else
-                            result = receipt.data;
-        
-                        document.querySelector('#candidateResult').innerText = result;
+                            swal("Error al realizar la transacción!", receipt.data, "error");
                     });
                     values.idElectionCandidate = 0;
                     values.candidateName = "";

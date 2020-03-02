@@ -1,15 +1,15 @@
 import React, { Component } from "react";
 import VotingForm from "./VotingForm";
+import swal from 'sweetalert';
 
 export class ElectionsByAccountList extends Component {
 
     constructor(props) {
         super(props);
-
     }
 
     // Obtener el candidato ganador de la elección
-    async getResultElection(election) {       
+    async getResultElection(election) {
         let candidatoGanador;
         await this.props.BEVService.getResultElection(election).then((receipt) => {
             if(receipt.status == 200)
@@ -48,12 +48,14 @@ export class ElectionsByAccountList extends Component {
                         <button 
                             className="btn btn-link"                                                         
                             onClick={
-                                    async () => {
-                                        let result = "Aun no ha emitido su voto.";
+                                    async () => {                                        
                                         if(yaVoto != "false") {
-                                            result = await this.getResultElection(id);
-                                        }                                        
-                                        document.querySelector('#electionByAccountResult').innerText = result;
+                                            let result = await this.getResultElection(id);
+                                            document.querySelector('#electionByAccountResult').innerText = result;
+                                        }  
+                                        else
+                                            swal("Error al realizar la transacción!", "Aun no ha emitido su voto.", "error");
+                                        
                                 }
                             } 
                             type="button"
@@ -63,11 +65,12 @@ export class ElectionsByAccountList extends Component {
                             className="btn btn-link"                                                         
                             onClick={
                                     async () => {
-                                        let result = "Aun no ha emitido su voto.";
                                         if(yaVoto != "false") {
-                                            result = await this.getDetailsByElection(id);
+                                            let result = await this.getDetailsByElection(id);
+                                            document.querySelector('#electionByAccountResult').innerText = result;
                                         }
-                                        document.querySelector('#electionByAccountResult').innerText = result;
+                                        else
+                                            swal("Error al realizar la transacción!", "Aun no ha emitido su voto.", "error");
                                 }
                             } 
                             type="button"

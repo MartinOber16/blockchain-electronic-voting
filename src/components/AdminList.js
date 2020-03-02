@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import swal from 'sweetalert';
 
 export class AdminList extends Component {
 
@@ -12,41 +13,34 @@ export class AdminList extends Component {
         this.adminInput.current.value = ""; // Limpiar inputs de buscar
     }
 
+    notify (receipt) {
+        if(receipt.status == 200)
+            swal("Transacción realizada correctamente!", "Comprobante: " + receipt.data.tx, "success");
+        else
+            swal("Error al realizar la transacción!", receipt.data, "error");
+    }
+
     // Verifico si una cuenta es administador
     async isAdmin(address) {         
         let isAdmin = await this.props.BEVService.isAdmin(address);
-        console.log("Is admin: ", isAdmin);
         if(isAdmin)
-            return "El usuario es administrador.";
+            swal("Información", "El usuario " + address + " es administrador.", "info");
         else
-            return "El usuario no es administrador.";
+        swal("Información", "El usuario " + address + " NO es administrador.", "info");
     }
 
     // Agregar un administrador
     async addAdmin(address) {        
-        let transactionInfo;
         await this.props.BEVService.addAdmin(address, this.props.state.account).then((receipt) => {  
-            console.log(receipt);              
-            if(receipt.status == 200)
-                transactionInfo = "Transaccion realizada correctamente: " + receipt.data.tx;
-            else
-                transactionInfo = receipt.data;
-            
+            this.notify(receipt);
         });
-        return transactionInfo;
     }
 
     // Eliminar un administrador
-    async deleteAdmin(address) {
-        let transactionInfo;     
+    async deleteAdmin(address) {   
         await this.props.BEVService.deleteAdmin(address, this.props.state.account).then((receipt) => {  
-            console.log(receipt);               
-            if(receipt.status == 200)
-                transactionInfo = "Transaccion realizada correctamente: " + receipt.data.tx;
-            else
-                transactionInfo = receipt.data;
+            this.notify(receipt);
         });
-        return transactionInfo;
     }
 
     render () {
@@ -79,8 +73,7 @@ export class AdminList extends Component {
                                     onClick={ 
                                         async () => {                                                                                                    
                                                 let address = document.querySelector('#adminInput').value;                                                                                                    
-                                                let result = await this.isAdmin(address);
-                                                document.querySelector('#adminResult').innerText = result;
+                                                await this.isAdmin(address);                                                
                                             }
                                         }
                                     type="button" 
@@ -93,8 +86,7 @@ export class AdminList extends Component {
                                     onClick={ 
                                         async () => {                                                                                                    
                                                 let address = document.querySelector('#adminInput').value;
-                                                let result = await this.addAdmin(address); 
-                                                document.querySelector('#adminResult').innerText = result;
+                                                await this.addAdmin(address); 
                                             }
                                         }
                                     type="button" 
@@ -108,8 +100,7 @@ export class AdminList extends Component {
                                     onClick={ 
                                         async () => {
                                                 let address = document.querySelector('#adminInput').value;                                                                                                    
-                                                let result = await this.deleteAdmin(address); 
-                                                document.querySelector('#adminResult').innerText = result;
+                                                await this.deleteAdmin(address);                                                 
                                             }
                                         } 
                                     >Quitar

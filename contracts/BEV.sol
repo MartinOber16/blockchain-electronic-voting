@@ -24,9 +24,8 @@ contract BEV {
         bool active; // Estado de la elección => activa = true
         uint candidatesCount;// Almacenar el recuento de los candidatos
         uint votersCount; // Almacenar el recuento de los votantes
-
-        uint candidatesIndex;
-        uint votersIndex;
+        uint candidatesIndex; // Indice de candidatos, ya que al eliminar no se borra el objeto
+        uint votersIndex; // Indice de votanes, ya que al eliminar no se borra el objeto
         mapping(uint => Candidate) candidates; // Lectura/escritura de candidatos
         mapping(address => Voter) voters; // Lectura/escritura de los votantes
         mapping(address => bool) joinedVoters; // Almacenar cuentas que pueden votar
@@ -36,14 +35,10 @@ contract BEV {
     mapping(uint => Election) private elections; // Lista de elecciones
     uint private electionsCount; // Almacenar el recuento de las elecciones
 
-    event ElectionEvent (
-        uint indexed _idElection,
-        string _name
-    );
-
+    // evento de voto
     event VotedEvent (
-        uint indexed _idElection,
-        uint indexed _idCandidate
+        address indexed _account,
+        uint indexed _idElection
     );
 
     // Validar si es propietario
@@ -80,8 +75,6 @@ contract BEV {
         require(msg.value > 0 ether);
         electionsCount++;
         elections[electionsCount] = Election(electionsCount, _name, false, 0, 0, 0, 0);
-
-        emit ElectionEvent(electionsCount, _name);
         //elections.push(Election(_name, false, 0, 0));
     }
 
@@ -103,7 +96,6 @@ contract BEV {
         require(electionIsValid(_idElection), "Elección no valida");
         require(elections[_idElection].votersCount == 0,"Hay votantes");
         require(elections[_idElection].candidatesCount == 0, "Hay candidatos");
-
         //electionsCount--;
         delete elections[_idElection];
     }
@@ -201,7 +193,6 @@ contract BEV {
         require(electionIsValid(_idElection), "Elección no valida");
         require(voterIsJoined(_idElection, _addr),"El usuario no existe!");
         require(!voterHasVoted(_idElection, _addr), "Votante ya voto");
-
         elections[_idElection].joinedVoters[_addr] = false;
         delete elections[_idElection].voters[_addr];
 
@@ -238,10 +229,9 @@ contract BEV {
         require(voterIsJoined(_idElection, msg.sender), "Votante no valido");
         require(!voterHasVoted(_idElection, msg.sender), "Votante ya voto");
         require(candidateIsValid(_idElection, _idCandidate), "Candidato no valido"); // Requerir un candidato válido
-
         elections[_idElection].voters[msg.sender].voted = true; // Registro de que el votante ha votado
         elections[_idElection].candidates[_idCandidate].voteCount++; // Registro de que el votante ha votado
-        emit VotedEvent(_idElection, _idCandidate); // Evento desencadenante del voto
+        emit VotedEvent(msg.sender, _idElection); // Evento desencadenante del voto
     }
 
     // Comprobar si el votante ya voto
@@ -256,7 +246,7 @@ contract BEV {
         require(electionIsValid(_idElection), "Elección no valida");
         uint idGanadorActual = elections[_idElection].candidates[1].id;
         uint votosGanadorActual = elections[_idElection].candidates[1].voteCount;
-        for(uint i = 2; i <= elections[_idElection].candidatesCount; i++) {
+        for(uint i = 2; i <= elections[_idElection].candidatesIndex; i++) {
             if(elections[_idElection].candidates[i].voteCount > votosGanadorActual) {
                 idGanadorActual = elections[_idElection].candidates[i].id;
                 votosGanadorActual = elections[_idElection].candidates[i].voteCount;

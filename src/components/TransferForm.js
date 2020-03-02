@@ -13,13 +13,10 @@ const TransferForm = (props) => {
                 if(values.amount > 0) {
                     let amountWei = props.web3.utils.toWei(values.amount.toString(), 'ether');
                     props.BEVService.transferFromContract(values.toAddress, amountWei, props.account).then((receipt) => {
-                        let result;
                         if(receipt.status == 200)
-                            result = "Transaccion realizada correctamente: " + receipt.data.tx;
+                            swal("Transacción realizada correctamente!", "Recibo: " + receipt.data.tx, "success");
                         else
-                            result = receipt.data;
-        
-                        document.querySelector('#transferResult').innerText = result;
+                            swal("Error al realizar la transacción!", receipt.data, "error"); 
                     });
                     
                     values.toAddress = "",

@@ -14,8 +14,7 @@ import { TransferList } from "./components/TransferList";
 import Soporte from "./components/Soporte";
 import { ToastContainer } from "react-toastr";
 
-// TODO: Mostrar información con Modals -> Lunes
-// TODO: Eventos del contrato (transacciones) -> Martes
+// TODO: Mostrar información con Modals -> Martes
 // TODO: Optimizar codigo -> Miercoles
 // TODO: Mejoras look&feel -> Jueves
 // TODO: Pruebas -> Viernes
@@ -67,13 +66,19 @@ export class App extends Component {
             console.error(e);
         }
 
-        // TODO: Subscribirse a un evento
-        let electionCreated = this.BEV.ElectionEvent();
-        electionCreated.watch(function(err, result) {
-            const {_idElection, _name} = result.args;
-            let msj = "Se genero correctamente la elección: " + _name + ", ID: " + _idElection;
-            console.log(msj);
-            this.container.success(msj, "Información");
+        let votedEmited = this.BEV.VotedEvent();
+        votedEmited.watch(function(err, result) {
+            const {_account, _idElection} = result.args;
+            if(_account == this.state.account) {
+                let msj = "Se emitio correctamente el voto para la elección: " + _idElection;
+                console.log(msj);
+                alert(msj);
+                // TODO: toastr: Ver por que no funciona esto!
+                this.container.success(
+                    <strong>"Información"</strong>,
+                    <em>msj</em>
+                );
+            }
         }.bind(this));
 
         // Metodo de metamask para actualizar cuando hay cambio de cuenta
@@ -213,15 +218,12 @@ export class App extends Component {
     }
     
     render() {
-        return <React.Fragment>        
+        return <React.Fragment>    
             <Header name={this.state.name} account={this.state.account}/> 
-
             <div className="container row">
                 <Menu admin={this.state.admin}/>
-
                 <div className="container-fluid pl-4 col-sm-10" id="content">
                     <div className="container tab-content">
-
                         <div id="home" className="container tab-pane active">
                             <div className="text-left mb-4" >
                                 <h3>Inicio</h3>
@@ -233,7 +235,6 @@ export class App extends Component {
                             />
                             <br />
                         </div>
-
                         <div id="elections" className="container tab-pane fade">
                             <div className="text-left mb-4" >
                                 <h3>Mis elecciones</h3>
@@ -245,7 +246,6 @@ export class App extends Component {
                             />
                             <br />
                         </div>
-
                         <div id="adminElection" className="container tab-pane fade">
                             <div className="text-left mb-4" >
                                 <h3>Administración</h3>   
@@ -280,19 +280,15 @@ export class App extends Component {
                             />
                             <br /> 
                         </div>
-                        
                         <div id="support" className="container tab-pane fade">
                             <Soporte />
                         </div>
-
                         <br/>
                     </div>
                 </div>
-            </div>  
-            <ToastContainer 
-                ref={(input) => this.container = input}
-                className="toast-top-right"
-            />
+            </div>
+            <ToastContainer ref={(input) => this.container = input}
+                    className="toast-top-right"/>  
         </React.Fragment>
     }
 }

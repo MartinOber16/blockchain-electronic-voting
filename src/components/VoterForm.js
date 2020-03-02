@@ -22,13 +22,10 @@ const VoterForm = (props) => {
                 if(values.voterAddress != "") {
                     if(values.voterName != "") {
                         props.BEVService.addVoter(values.idElectionVoter, values.voterAddress, values.voterName, props.account).then((receipt) => {
-                            let result;
                             if(receipt.status == 200)
-                                result = "Transaccion realizada correctamente: " + receipt.data.tx;
+                                swal("Transacción realizada correctamente!", "Recibo: " + receipt.data.tx, "success");
                             else
-                                result = receipt.data;
-            
-                            document.querySelector('#voterResult').innerText = result;
+                                swal("Error al realizar la transacción!", receipt.data, "error"); 
                         });
                         values.idElectionVoter = 0;
                         values.voterAddress = "";

@@ -38,6 +38,8 @@
   },
   "homepage": "",
   "dependencies": {
-    "formik": "^2.1.2"
+    "formik": "^2.1.2",
+    "sweetalert": "^2.1.2",
+    "toastr": "^2.1.4"
   }
 }

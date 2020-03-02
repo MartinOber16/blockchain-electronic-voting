@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import ElectionForm from "./ElectionForm";
+import swal from 'sweetalert';
 
 export class ElectionList extends Component {
 
@@ -7,6 +8,13 @@ export class ElectionList extends Component {
         super(props);
     }
     
+    notify (receipt) {
+        if(receipt.status == 200)
+            swal("Transacción realizada correctamente!", "Comprobante: " + receipt.data.tx, "success");
+        else
+            swal("Error al realizar la transacción!", receipt.data, "error");
+    }
+
     // Obtengo una eleccion    
     async getElection(id) {         
         let election;
@@ -25,28 +33,16 @@ export class ElectionList extends Component {
         if(active == "false")
             act = true;
 
-        let transactionInfo;
         await this.props.BEVService.activeElection(id, act, this.props.state.account).then((receipt) => {
-            if(receipt.status == 200)
-                transactionInfo = "Transaccion realizada correctamente: " + receipt.data.tx;
-            else
-                transactionInfo = receipt.data;
-
+            this.notify(receipt);
         });
-        return transactionInfo;
     }
 
     // Eliminar una elección
     async deleteElection(id) {
-        let transactionInfo;
         await this.props.BEVService.deleteElection(id, this.props.state.account).then((receipt) => {
-            if(receipt.status == 200)
-                transactionInfo = "Transaccion realizada correctamente: " + receipt.data.tx;
-            else
-                transactionInfo = receipt.data;
-
+            this.notify(receipt);
         });
-        return transactionInfo;
     }
 
     // Genero los registros con los datos de las elecciones
@@ -74,23 +70,13 @@ export class ElectionList extends Component {
                         </button>
                         <button 
                             className="btn btn-warning"
-                            onClick={
-                                async () => {
-                                    let result = await this.activeElection(id, active);
-                                    document.querySelector('#electionResult').innerText = result;
-                                }
-                            }
+                            onClick={ async () => { await this.activeElection(id, active); } }
                             type="button"                            
                             >Activar
                         </button> 
                         <button 
                             className="btn btn-danger"                              
-                            onClick={
-                                async () => {
-                                    let result = await this.deleteElection(id);
-                                    document.querySelector('#electionResult').innerText = result;
-                                    }
-                                } 
+                            onClick={ async () => { await this.deleteElection(id); } } 
                             type="button"
                             >Borrar
                         </button>

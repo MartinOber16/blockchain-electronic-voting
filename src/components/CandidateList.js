@@ -1,11 +1,18 @@
 import React, { Component } from "react";
 import CandidateForm from "./CandidateForm";
+import swal from 'sweetalert';
 
 export class CandidateList extends Component {
 
     constructor(props) {
         super(props);
+    }
 
+    notify (receipt) {
+        if(receipt.status == 200)
+            swal("Transacción realizada correctamente!", "Comprobante: " + receipt.data.tx, "success");
+        else
+            swal("Error al realizar la transacción!", receipt.data, "error");
     }
 
     // Obtener un candidato
@@ -23,15 +30,9 @@ export class CandidateList extends Component {
 
     // Eliminar un candidato
     async deleteCandidate(election, id) {          
-        let transactionInfo;
         await this.props.BEVService.deleteCandidate(election, id, this.props.state.account).then((receipt) => {
-            if(receipt.status == 200)
-                transactionInfo = "Transaccion realizada correctamente: " + receipt.data.tx;
-            else
-                transactionInfo = receipt.data;
-        });
-        
-        return transactionInfo;       
+            this.notify(receipt);
+        });     
     }
 
     // Genero los registros con los datos de los candidatos
@@ -58,10 +59,7 @@ export class CandidateList extends Component {
                         <button 
                             className="btn btn-danger"                                  
                             onClick={
-                                async () => {
-                                    let result = await this.deleteCandidate(election, id);
-                                    document.querySelector('#candidateResult').innerText = result;
-                                }
+                                async () => { await this.deleteCandidate(election, id); }
                             } 
                             type="button"
                             >Borrar

@@ -1,8 +1,6 @@
 import React from "react";
 import { useFormik } from 'formik';
-
-// Valor a transferir para utilizar en la elección por costo para transacciones = 1 ether
-//const valueElection = 1000000000000000000; 
+import swal from 'sweetalert'; // https://github.com/t4t5/sweetalert/blob/master/README.md
 
 // Formulario de elección
 const ElectionForm = (props) => {
@@ -16,13 +14,10 @@ const ElectionForm = (props) => {
                 if(values.valueElection > 0) {
                     let amount = props.web3.utils.toWei(values.valueElection.toString(), 'ether');
                     props.BEVService.addElection(values.electionName, props.account, amount).then((receipt) => {
-                        let result;
                         if(receipt.status == 200)
-                            result = "Transaccion realizada correctamente: " + receipt.data.tx;
+                            swal("Transacción realizada correctamente!", "Recibo: " + receipt.data.tx, "success");
                         else
-                            result = receipt.data;
-        
-                        document.querySelector('#electionResult').innerText = result;
+                            swal("Error al realizar la transacción!", receipt.data, "error");                
                     });
                     values.electionName = "";
                     values.valueElection = 1;

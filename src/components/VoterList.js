@@ -1,11 +1,18 @@
 import React, { Component } from "react";
 import VoterForm from "./VoterForm";
+import swal from 'sweetalert';
 
 export class VoterList extends Component {
 
     constructor(props) {
         super(props);
+    }
 
+    notify (receipt) {
+        if(receipt.status == 200)
+            swal("Transacción realizada correctamente!", "Comprobante: " + receipt.data.tx, "success");
+        else
+            swal("Error al realizar la transacción!", receipt.data, "error");
     }
 
     // Obtener un votante
@@ -23,15 +30,9 @@ export class VoterList extends Component {
 
     // Eliminar un votante
     async deleteVoter(election, address) {          
-        let transactionInfo;
         await this.props.BEVService.deleteVoter(election, address, this.props.state.account).then((receipt) => {
-            if(receipt.status == 200)
-                transactionInfo = "Transaccion realizada correctamente: " + receipt.data.tx;
-            else
-                transactionInfo = receipt.data;
+            this.notify(receipt);
         });
-
-        return transactionInfo;
     }
 
     // Genero los registros con los datos de los votantes
@@ -58,12 +59,7 @@ export class VoterList extends Component {
                     </button> 
                     <button 
                         className="btn btn-danger"                            
-                        onClick={
-                            async () => {
-                                let result = await this.deleteVoter(election, address);
-                                document.querySelector('#voterResult').innerText = result;
-                            }
-                        } 
+                        onClick={ async () => { await this.deleteVoter(election, address); } } 
                         type="button"
                         >Borrar
                     </button>

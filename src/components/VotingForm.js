@@ -32,13 +32,10 @@ const VotingForm = (props) => {
             if(values.electionIdVote != "") {
                 if(values.candidateVote != "") {
                     props.BEVService.voting(values.electionIdVote, values.candidateVote, props.account).then((receipt) => {
-                        let result;
                         if(receipt.status == 200)
-                            result = "Transaccion realizada correctamente: " + receipt.data.tx;
-                        else   
-                            result = receipt.data;
-        
-                        document.querySelector('#electionByAccountResult').innerText = result;
+                            swal("Transacción realizada correctamente!", "Recibo: " + receipt.data.tx, "success");
+                        else
+                            swal("Error al realizar la transacción!", receipt.data, "error"); 
                     });
                     values.electionIdVote = "";
                     values.candidateVote = "";
