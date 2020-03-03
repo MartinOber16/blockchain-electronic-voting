@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import VoterForm from "./VoterForm";
-import swal from 'sweetalert';
+import swal from '@sweetalert/with-react';
 
 export class VoterList extends Component {
 
@@ -10,7 +10,7 @@ export class VoterList extends Component {
 
     notify (receipt) {
         if(receipt.status == 200)
-            swal("Transacción realizada correctamente!", "Comprobante: " + receipt.data.tx, "success");
+            swal("Transacción realizada correctamente!", receipt.data.tx, "success");
         else
             swal("Error al realizar la transacción!", receipt.data, "error");
     }
@@ -19,9 +19,9 @@ export class VoterList extends Component {
     async getVoter(election, address) {       
         let voter;
         await this.props.BEVService.getVoter(election, address).then((receipt) => {
-            if(receipt.status == 200)
-                voter = JSON.stringify(receipt.data);
-            else
+            /*if(receipt.status == 200)
+                voter = receipt.data;
+            else*/
                 voter = receipt.data;
         });
         
@@ -33,6 +33,34 @@ export class VoterList extends Component {
         await this.props.BEVService.deleteVoter(election, address, this.props.state.account).then((receipt) => {
             this.notify(receipt);
         });
+    }
+
+    // Información del votante
+    voterDisplay(voter) {
+        swal(<div>
+                <h3>{voter.name}</h3>
+                <br/>
+                <br/>
+                <div className="form-group row">
+                    <label className="col-sm-2 control-label text-left"><strong>Cuenta:</strong></label>
+                    <div className="col-sm-4">
+                        <p className="form-control-static">{voter.address}</p>
+                    </div>
+                </div>
+                <div className="form-group row">
+                    <label className="col-sm-2 control-label text-left"><strong>Elección:</strong></label>
+                    <div className="col-sm-4">
+                        <p className="form-control-static">{voter.election}</p>
+                    </div>
+                </div>
+                <div className="form-group row">
+                    <label className="col-sm-2 control-label text-left"><strong>Voto:</strong></label>
+                    <div className="col-sm-4">
+                        <p className="form-control-static">{voter.voted}</p>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     // Genero los registros con los datos de los votantes
@@ -51,7 +79,7 @@ export class VoterList extends Component {
                         onClick={
                             async () => {
                                 let result = await this.getVoter(election, address);
-                                document.querySelector('#voterResult').innerText = result;
+                                this.voterDisplay(result);                                
                             }
                         } 
                         type="button"

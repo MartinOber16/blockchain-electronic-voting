@@ -43,7 +43,7 @@ export class BEVService {
     async addAdmin(address, account) {
         let isUserAdmin = await this.isAdmin(address);
         if(isUserAdmin) {
-            return this.response(errorCode, "Error: El usuario ya es administrador.");
+            return this.response(errorCode, "El usuario ya es administrador.");
         }
         else {
             let transactionInfo;
@@ -57,7 +57,7 @@ export class BEVService {
     async deleteAdmin(address, account) {
         let isUserAdmin = await this.isAdmin(address);
         if(!isUserAdmin) {
-            return this.response(errorCode, "Error: El usuario no es administrador");
+            return this.response(errorCode, "El usuario no es administrador");
         }
         else {
             let transactionInfo;
@@ -140,7 +140,7 @@ export class BEVService {
         if(election != null)
             return this.response(okCode, election);
         else
-            return this.response(errorCode, "Error: no se pudo obtener la elección.");
+            return this.response(errorCode, "No se pudo obtener la elección.");
     }
 
     // Agregar nueva elección y devuelve la información de la transacción
@@ -153,7 +153,7 @@ export class BEVService {
         if(transactionInfo != null)
             return this.response(okCode, transactionInfo);
         else
-            return this.response(errorCode, "Error: no se pudo agregar la nueva elección.");
+            return this.response(errorCode, "No se pudo agregar la nueva elección.");
     }
 
     // Eliminar una elección y devuelve la información de la transacción
@@ -166,7 +166,7 @@ export class BEVService {
         if(transactionInfo != null)
             return this.response(okCode, transactionInfo);
         else
-            return this.response(errorCode, "Error: no se pudo eliminar la elección.");
+            return this.response(errorCode, "No se pudo eliminar la elección.");
     }
 
     async activeElection(id, activated, account) {
@@ -178,7 +178,7 @@ export class BEVService {
         if(transactionInfo != null)
             return this.response(okCode, transactionInfo);
         else
-            return this.response(errorCode, "Error: no se pudo activar/desactivar la elección."); 
+            return this.response(errorCode, "No se pudo activar/desactivar la elección."); 
 
     }
 
@@ -229,7 +229,7 @@ export class BEVService {
         if(candidate != null)
             return this.response(okCode, candidate);
         else
-            return this.response(errorCode, "Error: no se pudo obtener el candidato.");
+            return this.response(errorCode, "No se pudo obtener el candidato.");
     }
 
     // Agregar nuevo candidato y devuelve la información de la transacción
@@ -242,7 +242,7 @@ export class BEVService {
         if(transactionInfo != null)
             return this.response(okCode, transactionInfo);
         else
-            return this.response(errorCode, "Error: no se pudo agregar el candidato.");
+            return this.response(errorCode, "No se pudo agregar el candidato.");
     }
 
     // Eliminar un candidato
@@ -255,7 +255,7 @@ export class BEVService {
         if(transactionInfo != null)
             return this.response(okCode, transactionInfo);
         else
-            return this.response(errorCode, "Error: no se pudo eliminar el candidato.");
+            return this.response(errorCode, "No se pudo eliminar el candidato.");
     }
 
     // VOTANTE
@@ -306,14 +306,14 @@ export class BEVService {
         if(voter != null) 
             return this.response(okCode, voter);
         else
-            return this.response(errorCode, "Error: no se pudo obtener el votante.");
+            return this.response(errorCode, "No se pudo obtener el votante.");
     }
 
     // Agregar nuevo votante y devuelve la información de la transacción
     async addVoter(election, address, name, account) {
         let existe = await this.contract.voterIsJoined(election, address);
         if(existe){
-            return this.response(errorCode, "Error: el votante ya se encuentra registrado.");
+            return this.response(errorCode, "El votante ya se encuentra registrado.");
         }
         else {
             let transactionInfo;
@@ -324,7 +324,7 @@ export class BEVService {
             if(transactionInfo != null)
                 return this.response(okCode, transactionInfo);
             else
-                return this.response(errorCode, "Error: no se pudo agregar el nuevo votante.");
+                return this.response(errorCode, "No se pudo agregar el nuevo votante.");
 
         }
 
@@ -340,7 +340,7 @@ export class BEVService {
         if(transactionInfo != null) 
             return this.response(okCode, transactionInfo);
         else
-            return this.response(errorCode, "Error: no se pudo eliminar el votante.");
+            return this.response(errorCode, "No se pudo eliminar el votante.");
     }
 
     // Consulto si el usuario ya voto
@@ -353,7 +353,7 @@ export class BEVService {
     async voting(election, candidate, account) {  
         let yaVoto = await this.voterHasVoted(election, account);
         if(yaVoto)
-            return this.response(errorCode, "Error: el usuario ya voto.");
+            return this.response(errorCode, "El usuario ya voto.");
         else {
             let transactionInfo;
             await this.contract.voting(election, candidate, {from: account}).then((receipt) => {
@@ -363,7 +363,7 @@ export class BEVService {
             if(transactionInfo != null)
                 return this.response(okCode, transactionInfo);
             else
-                return this.response(errorCode, "Error: no se pudo registrar el voto.");
+                return this.response(errorCode, "No se pudo registrar el voto.");
         }
     }
     
@@ -373,14 +373,14 @@ export class BEVService {
         let candidatoGanador;
         if(id > 0) {
             await this.contract.getCandidate(election, id).then((receipt) => {
-                candidatoGanador = receipt;
+                candidatoGanador = this.structCandidate(receipt);
             });
         }
 
         if(candidatoGanador != null)
             return this.response(okCode, candidatoGanador);
         else
-            return this.response(errorCode, "Error: no se pudo obtener el candidato ganador.");
+            return this.response(errorCode, "No se puede determinar el candidato ganador.");
     }
 
     async getDetailsByElection(election) {      
@@ -409,7 +409,7 @@ export class BEVService {
         if(transactionInfo != null)
             return this.response(okCode, transactionInfo);
         else
-            return this.response(errorCode, "Error: no se pudo realizar la transferencia.");
+            return this.response(errorCode, "No se pudo realizar la transferencia.");
     }
 
 }

@@ -21,7 +21,7 @@ const CandidateForm = (props) => {
                 if(values.candidateName != "") {
                     props.BEVService.addCandidate(values.idElectionCandidate, values.candidateName, props.account).then((receipt) => {
                         if(receipt.status == 200)
-                            swal("Transacción realizada correctamente!", "Comprobante: " + receipt.data.tx, "success");
+                            swal("Transacción realizada correctamente!", receipt.data.tx, "success");
                         else
                             swal("Error al realizar la transacción!", receipt.data, "error");
                     });

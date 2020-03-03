@@ -33,7 +33,7 @@ const VotingForm = (props) => {
                 if(values.candidateVote != "") {
                     props.BEVService.voting(values.electionIdVote, values.candidateVote, props.account).then((receipt) => {
                         if(receipt.status == 200)
-                            swal("Transacción realizada correctamente!", "Recibo: " + receipt.data.tx, "success");
+                            swal("Transacción realizada correctamente!", receipt.data.tx, "success");
                         else
                             swal("Error al realizar la transacción!", receipt.data, "error"); 
                     });

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import CandidateForm from "./CandidateForm";
-import swal from 'sweetalert';
+import swal from '@sweetalert/with-react';
 
 export class CandidateList extends Component {
 
@@ -10,7 +10,7 @@ export class CandidateList extends Component {
 
     notify (receipt) {
         if(receipt.status == 200)
-            swal("Transacción realizada correctamente!", "Comprobante: " + receipt.data.tx, "success");
+            swal("Transacción realizada correctamente!", receipt.data.tx, "success");
         else
             swal("Error al realizar la transacción!", receipt.data, "error");
     }
@@ -19,9 +19,9 @@ export class CandidateList extends Component {
     async getCandidate(election, id) {           
         let candidate;
         await this.props.BEVService.getCandidate(election, id).then((receipt) => {
-            if(receipt.status == 200)
-                candidate = JSON.stringify(receipt.data);
-            else
+            /*if(receipt.status == 200)
+                candidate = receipt.data;
+            else*/
                 candidate = receipt.data;
         });
               
@@ -33,6 +33,37 @@ export class CandidateList extends Component {
         await this.props.BEVService.deleteCandidate(election, id, this.props.state.account).then((receipt) => {
             this.notify(receipt);
         });     
+    }
+
+    // Información del candidato
+    candidateDisplay(candidate) {
+        swal(<div>
+                <h3>{candidate.name}</h3>
+                <br/>
+                <br/>
+                <div className="form-group row">
+                    <div className="col-sm-2"></div>
+                    <label className="col-sm-2 control-label text-left"><strong>Número:</strong></label>
+                    <div className="col-sm-4">
+                        <p className="form-control-static">{candidate.id}</p>
+                    </div>
+                </div>
+                <div className="form-group row">
+                    <div className="col-sm-2"></div>
+                    <label className="col-sm-2 control-label text-left"><strong>Elección:</strong></label>
+                    <div className="col-sm-4">
+                        <p className="form-control-static">{candidate.election}</p>
+                    </div>
+                </div>
+                <div className="form-group row">
+                    <div className="col-sm-2"></div>
+                    <label className="col-sm-2 control-label text-left"><strong>Votos:</strong></label>
+                    <div className="col-sm-4">
+                        <p className="form-control-static">{candidate.voteCount}</p>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     // Genero los registros con los datos de los candidatos
@@ -50,7 +81,7 @@ export class CandidateList extends Component {
                             onClick={
                                 async () => {
                                     let result = await this.getCandidate(election, id);
-                                    document.querySelector('#candidateResult').innerText = result;
+                                    this.candidateDisplay(result);
                                 }
                             } 
                             type="button"
@@ -128,7 +159,6 @@ export class CandidateList extends Component {
                             elections={this.props.state.elections}
                         />
                     </div>
-                    <p id="candidateResult"></p>
                 </div>);
     }
 }

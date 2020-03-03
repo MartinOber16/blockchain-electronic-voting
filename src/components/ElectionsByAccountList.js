@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import VotingForm from "./VotingForm";
-import swal from 'sweetalert';
+import swal from '@sweetalert/with-react';
 
 export class ElectionsByAccountList extends Component {
 
@@ -10,28 +10,68 @@ export class ElectionsByAccountList extends Component {
 
     // Obtener el candidato ganador de la elección
     async getResultElection(election) {
-        let candidatoGanador;
+        let response;
         await this.props.BEVService.getResultElection(election).then((receipt) => {
-            if(receipt.status == 200)
-                candidatoGanador = JSON.stringify(receipt.data);
-            else
-                candidatoGanador = receipt.data;
+            response = receipt;
         });
 
-        return candidatoGanador;
+        return response;
     }
 
     // Obtener todos los candidatos de una elección
     async getDetailsByElection(election) {     
         let candidatesByElection;
         await this.props.BEVService.getDetailsByElection(election).then((receipt) => {
-            if(receipt.status == 200)
-                candidatesByElection = JSON.stringify(receipt.data);
-            else
+            /*if(receipt.status == 200)
+                candidatesByElection = receipt.data;
+            else*/
                 candidatesByElection = receipt.data;
         });
         
         return candidatesByElection;
+    }
+
+    // Información del candidato
+    candidateWinDisplay(candidate) {
+        swal(<div>
+                <h3>Candidato ganador</h3>
+                <br/>
+                <br/>
+                <div className="form-group row">
+                    <div className="col-sm-2"></div>
+                    <label className="col-sm-2 control-label text-left"><strong>Nombre:</strong></label>
+                    <div className="col-sm-4">
+                        <p className="form-control-static">{candidate.name}</p>
+                    </div>
+                </div>
+                <div className="form-group row">
+                    <div className="col-sm-2"></div>
+                    <label className="col-sm-2 control-label text-left"><strong>Votos:</strong></label>
+                    <div className="col-sm-4">
+                        <p className="form-control-static">{candidate.voteCount}</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    electionDetailsDisplay(result){
+        let component = result.map((candidate ) => {
+            const {id, name, voteCount } = candidate
+            return (<li key={id}>{name}: {voteCount} votos.</li>);
+        });
+
+        swal(<div>
+                <h3>Detalles de la votación</h3>
+                <br/>
+                <div className="form-group row">
+                    <div className="col-sm-2"></div>
+                    <ul className="col-sm-6">
+                        {component}
+                    </ul>
+                </div>
+            </div>
+        );
     }
 
     renderTableDataElectionsByAccount () {
@@ -51,7 +91,11 @@ export class ElectionsByAccountList extends Component {
                                     async () => {                                        
                                         if(yaVoto != "false") {
                                             let result = await this.getResultElection(id);
-                                            document.querySelector('#electionByAccountResult').innerText = result;
+                                            if(result.status == 200)
+                                                this.candidateWinDisplay(result.data);
+                                            else
+                                                swal(result.data, "Para mas información seleccionar la opcion 'Detalles'", "info");             
+                                            
                                         }  
                                         else
                                             swal("Error al realizar la transacción!", "Aun no ha emitido su voto.", "error");
@@ -67,7 +111,7 @@ export class ElectionsByAccountList extends Component {
                                     async () => {
                                         if(yaVoto != "false") {
                                             let result = await this.getDetailsByElection(id);
-                                            document.querySelector('#electionByAccountResult').innerText = result;
+                                            this.electionDetailsDisplay(result);
                                         }
                                         else
                                             swal("Error al realizar la transacción!", "Aun no ha emitido su voto.", "error");

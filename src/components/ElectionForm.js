@@ -15,7 +15,7 @@ const ElectionForm = (props) => {
                     let amount = props.web3.utils.toWei(values.valueElection.toString(), 'ether');
                     props.BEVService.addElection(values.electionName, props.account, amount).then((receipt) => {
                         if(receipt.status == 200)
-                            swal("Transacción realizada correctamente!", "Recibo: " + receipt.data.tx, "success");
+                            swal("Transacción realizada correctamente!", receipt.data.tx, "success");
                         else
                             swal("Error al realizar la transacción!", receipt.data, "error");                
                     });

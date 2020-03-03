@@ -14,12 +14,11 @@ import { TransferList } from "./components/TransferList";
 import Soporte from "./components/Soporte";
 import { ToastContainer } from "react-toastr";
 
-// TODO: Mostrar información con Modals -> Martes
 // TODO: Optimizar codigo -> Miercoles
-// TODO: Mejoras look&feel -> Jueves
-// TODO: Pruebas -> Viernes
-// TODO: Sección de soporte
-// TODO: Implementar en Rinkeby
+// TODO: Mejoras look&feel -> Miercoles
+// TODO: Pruebas -> Jueves
+// TODO: Sección de soporte -> Viernes
+// TODO: Implementar en Rinkeby -> Lunes
 
 // Funcion para convertir de weis a ethers
 const converter = (web3) => {
@@ -51,7 +50,7 @@ export class App extends Component {
     // Despues de que se carga el componente
     async componentDidMount() {            
         this.web3 = await getWeb3(); // Obtengo la versión 1 de web3
-        console.log("Versión web3: " + this.web3.version);
+        //console.log("Versión web3: " + this.web3.version);
         this.toEther = converter(this.web3); // Funcion para convertir de wei a ether
 
         try{
@@ -60,7 +59,7 @@ export class App extends Component {
             ethereum.enable(); // Habilitar acceso a las cuentas en MetaMask
             ethereum.autoRefreshOnNetworkChange = false;
             var account = (await this.web3.eth.getAccounts())[0]; // Información del usuario actual
-            console.log("Cuenta actual: " + account);
+            //console.log("Cuenta actual: " + account);
         }
         catch(e) {
             console.log("Error obteniendo instancia del contrato");
@@ -106,7 +105,7 @@ export class App extends Component {
 
     // Obtengo la información del contrato
     async getContractInfo() {
-        console.log('getContractInfo');
+        //console.log('getContractInfo');
         if(this.BEVService) {            
             let contractInfo = await this.BEVService.getContractInfo();            
             this.setState({
@@ -121,7 +120,7 @@ export class App extends Component {
 
     // Obtengo la información del usuario actual
     async getUserInfo() {
-        console.log('getUserInfo');
+        //console.log('getUserInfo');
         if(this.state.conected) {            
             let weiBalance = await this.web3.eth.getBalance(this.state.account);
             let isAdmin = await this.isAdmin(this.state.account);
@@ -141,7 +140,7 @@ export class App extends Component {
 
     // Obtengo todas las elecciones
     async getElections() {    
-        console.log('getElections');      
+        //console.log('getElections');      
         await this.BEVService.getElections().then((receipt) => {
             if(receipt.status == 200) {
                 this.setState({
@@ -159,7 +158,7 @@ export class App extends Component {
 
     // Obtengo todos los candidatos
     async getCandidates() {     
-        console.log('getCandidates');    
+        //console.log('getCandidates');    
         await this.BEVService.getCandidates().then((receipt) => {
             if(receipt.status == 200) {
                 this.setState({
@@ -176,7 +175,7 @@ export class App extends Component {
 
     // Obtengo todos los votantes
     async getVoters() {  
-        console.log('getVoters');   
+        //console.log('getVoters');   
         await this.BEVService.getVoters().then((receipt) => {
             if(receipt.status == 200) {
                 this.setState({
@@ -203,7 +202,6 @@ export class App extends Component {
     }
 
     async load(){
-        console.log("load");
         await this.getContractInfo();
         await this.getUserInfo();
         await this.getElectionsByAccount();

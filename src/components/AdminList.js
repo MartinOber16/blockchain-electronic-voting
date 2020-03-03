@@ -21,12 +21,20 @@ export class AdminList extends Component {
     }
 
     // Verifico si una cuenta es administador
-    async isAdmin(address) {         
-        let isAdmin = await this.props.BEVService.isAdmin(address);
-        if(isAdmin)
-            swal("Información", "El usuario " + address + " es administrador.", "info");
+    async isAdmin(address) { 
+        let msj = "";
+        if(address != ""){
+            let isAdmin = await this.props.BEVService.isAdmin(address);
+            if(isAdmin)
+                msj = "El usuario " + address + " es administrador.";
+            else
+                msj = "El usuario " + address + " NO es administrador.";
+                
+            swal("",msj, "info");
+        }
         else
-        swal("Información", "El usuario " + address + " NO es administrador.", "info");
+            swal("Error","Debe ingresar una cuenta valida.", "error");
+
     }
 
     // Agregar un administrador

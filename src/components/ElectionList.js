@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import ElectionForm from "./ElectionForm";
-import swal from 'sweetalert';
+import swal from '@sweetalert/with-react'; // https://www.npmjs.com/package/@sweetalert/with-react
 
 export class ElectionList extends Component {
 
@@ -8,9 +8,10 @@ export class ElectionList extends Component {
         super(props);
     }
     
+    // Notificaciones de trasacciones
     notify (receipt) {
         if(receipt.status == 200)
-            swal("Transacción realizada correctamente!", "Comprobante: " + receipt.data.tx, "success");
+            swal("Transacción realizada correctamente!", receipt.data.tx, "success");
         else
             swal("Error al realizar la transacción!", receipt.data, "error");
     }
@@ -19,9 +20,9 @@ export class ElectionList extends Component {
     async getElection(id) {         
         let election;
         await this.props.BEVService.getElection(id).then((receipt) => {       
-            if(receipt.status == 200)
-                election = JSON.stringify(receipt.data);
-            else
+            /*if(receipt.status == 200)
+                election = receipt.data;
+            else*/
                 election = receipt.data; 
         });
         return election;
@@ -45,6 +46,44 @@ export class ElectionList extends Component {
         });
     }
 
+    // Información de la elección
+    electionDisplay(election) {
+        swal(<div>
+                <h3>{election.name}</h3>
+                <br/>
+                <br/>
+                <div className="form-group row">
+                    <div className="col-sm-2"></div>
+                    <label className="col-sm-2 control-label text-left"><strong>Número:</strong></label>
+                    <div className="col-sm-4">
+                        <p className="form-control-static">{election.id}</p>
+                    </div>
+                </div>
+                <div className="form-group row">
+                    <div className="col-sm-2"></div>
+                    <label className="col-sm-2 control-label text-left"><strong>Activada:</strong></label>
+                    <div className="col-sm-4">
+                        <p className="form-control-static">{election.active}</p>
+                    </div>
+                </div>
+                <div className="form-group row">
+                    <div className="col-sm-2"></div>
+                    <label className="col-sm-2 control-label text-left"><strong>Cadidatos:</strong></label>
+                    <div className="col-sm-4">
+                        <p className="form-control-static">{election.candidatesCount}</p>
+                    </div>
+                </div>
+                <div className="form-group row">
+                    <div className="col-sm-2"></div>
+                    <label className="col-sm-2 control-label text-left"><strong>Votantes:</strong></label>
+                    <div className="col-sm-4">
+                        <p className="form-control-static">{election.votersCount}</p>
+                    </div>
+                </div>
+            </div>
+          );
+    }
+
     // Genero los registros con los datos de las elecciones
     renderTableDataElections() {                      
         return this.props.state.elections.map((election) => {
@@ -61,8 +100,8 @@ export class ElectionList extends Component {
                             className="btn btn-info"
                             onClick={
                                 async () => {
-                                    let result = await this.getElection(id);
-                                    document.querySelector('#electionResult').innerText = result;
+                                    let result = await this.getElection(id);                                
+                                    this.electionDisplay(result);
                                 }
                             }
                             type="button"                            
@@ -143,7 +182,6 @@ export class ElectionList extends Component {
                         web3={this.props.web3}
                     />
                 </div>
-                <p id="electionResult"></p>
             </div>
     }
 }
