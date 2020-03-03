@@ -35,11 +35,7 @@ contract BEV {
     mapping(uint => Election) private elections; // Lista de elecciones
     uint private electionsCount; // Almacenar el recuento de las elecciones
 
-    // evento de voto
-    event VotedEvent (
-        address indexed _account,
-        uint indexed _idElection
-    );
+    event VotedEvent(address indexed _account, uint _idElection); // evento de voto
 
     // Validar si es propietario
     modifier isOwner(){

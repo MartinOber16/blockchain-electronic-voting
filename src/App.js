@@ -19,6 +19,7 @@ import { ToastContainer } from "react-toastr";
 // TODO: Mejoras look&feel -> Jueves
 // TODO: Pruebas -> Viernes
 // TODO: Sección de soporte
+// TODO: Implementar en Rinkeby
 
 // Funcion para convertir de weis a ethers
 const converter = (web3) => {
@@ -66,18 +67,15 @@ export class App extends Component {
             console.error(e);
         }
 
+        // Subscribirse a un evento
         let votedEmited = this.BEV.VotedEvent();
         votedEmited.watch(function(err, result) {
             const {_account, _idElection} = result.args;
+
             if(_account == this.state.account) {
                 let msj = "Se emitio correctamente el voto para la elección: " + _idElection;
                 console.log(msj);
-                alert(msj);
-                // TODO: toastr: Ver por que no funciona esto!
-                this.container.success(
-                    <strong>"Información"</strong>,
-                    <em>msj</em>
-                );
+                //this.container.success(msj,"Información",{closeButton: true, onClick: this.container.clear()});
             }
         }.bind(this));
 
@@ -288,7 +286,7 @@ export class App extends Component {
                 </div>
             </div>
             <ToastContainer ref={(input) => this.container = input}
-                    className="toast-top-right"/>  
+                    className="toast-top-right"/>
         </React.Fragment>
     }
 }
