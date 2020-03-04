@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import swal from 'sweetalert';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlusCircle, faUserCheck, faBroom, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 export class AdminList extends Component {
 
@@ -38,17 +40,25 @@ export class AdminList extends Component {
     }
 
     // Agregar un administrador
-    async addAdmin(address) {        
-        await this.props.BEVService.addAdmin(address, this.props.state.account).then((receipt) => {  
-            this.notify(receipt);
-        });
+    async addAdmin(address) {      
+        if(address != ""){  
+            await this.props.BEVService.addAdmin(address, this.props.state.account).then((receipt) => {  
+                this.notify(receipt);
+            });
+        }
+        else
+            swal("Error","Debe ingresar una cuenta valida.", "error");
     }
 
     // Eliminar un administrador
-    async deleteAdmin(address) {   
-        await this.props.BEVService.deleteAdmin(address, this.props.state.account).then((receipt) => {  
-            this.notify(receipt);
-        });
+    async deleteAdmin(address) {
+        if(address != ""){     
+            await this.props.BEVService.deleteAdmin(address, this.props.state.account).then((receipt) => {  
+                this.notify(receipt);
+            });
+        }
+        else
+            swal("Error","Debe ingresar una cuenta valida.", "error");
     }
 
     render () {
@@ -64,10 +74,10 @@ export class AdminList extends Component {
                     ref = { this.adminInput } 
                     type="text" />
                 <button 
-                    className="btn btn-primary" 
+                    className="btn btn-secondary" 
                     onClick={ this.clearTextAdminInput }
-                    type="button"                                             
-                    >Limpiar
+                    type="button">
+                    <FontAwesomeIcon icon={faBroom} />
                 </button>                            
                 </div>
                 <div className="btn-group col-sm-4">    
@@ -84,8 +94,8 @@ export class AdminList extends Component {
                                                 await this.isAdmin(address);                                                
                                             }
                                         }
-                                    type="button" 
-                                    >Comprobar
+                                    type="button">
+                                    <FontAwesomeIcon icon={faUserCheck} />
                                 </button> 
                             </td>    
                             <td>
@@ -97,8 +107,8 @@ export class AdminList extends Component {
                                                 await this.addAdmin(address); 
                                             }
                                         }
-                                    type="button" 
-                                    >Agregar
+                                    type="button">
+                                    <FontAwesomeIcon icon={faPlusCircle} />
                                 </button> 
                             </td>
                             <td>
@@ -111,7 +121,8 @@ export class AdminList extends Component {
                                                 await this.deleteAdmin(address);                                                 
                                             }
                                         } 
-                                    >Quitar
+                                    >
+                                    <FontAwesomeIcon icon={faTrashAlt} />
                                 </button>
                             </td>
                         </tr>  

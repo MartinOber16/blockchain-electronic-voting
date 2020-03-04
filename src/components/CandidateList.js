@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import CandidateForm from "./CandidateForm";
 import swal from '@sweetalert/with-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlusCircle, faAddressCard, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 export class CandidateList extends Component {
 
@@ -39,7 +41,7 @@ export class CandidateList extends Component {
     candidateDisplay(candidate) {
         swal(<div>
                 <h3>{candidate.name}</h3>
-                <br/>
+                <hr/>
                 <br/>
                 <div className="form-group row">
                     <div className="col-sm-2"></div>
@@ -85,7 +87,7 @@ export class CandidateList extends Component {
                                 }
                             } 
                             type="button"
-                            >Info
+                            ><FontAwesomeIcon icon={faAddressCard} />
                         </button> 
                         <button 
                             className="btn btn-danger"                                  
@@ -93,7 +95,7 @@ export class CandidateList extends Component {
                                 async () => { await this.deleteCandidate(election, id); }
                             } 
                             type="button"
-                            >Borrar
+                            ><FontAwesomeIcon icon={faTrashAlt} />
                         </button>
                     </td>
                 </tr>
@@ -145,7 +147,7 @@ export class CandidateList extends Component {
                                 data-target="#candidateModal"
                                 data-toggle="modal"                                        
                                 type="button"                                             
-                                >Nuevo
+                                ><FontAwesomeIcon icon={faPlusCircle} />
                             </button>
                         </div>
                     </div>

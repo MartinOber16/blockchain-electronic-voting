@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import ElectionForm from "./ElectionForm";
 import swal from '@sweetalert/with-react'; // https://www.npmjs.com/package/@sweetalert/with-react
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlusCircle, faFileAlt, faCheckCircle, faTrashAlt } from '@fortawesome/free-solid-svg-icons'; // https://www.npmjs.com/package/@fortawesome/free-solid-svg-icons https://fontawesome.com/icons?d=gallery
 
 export class ElectionList extends Component {
 
@@ -50,7 +52,7 @@ export class ElectionList extends Component {
     electionDisplay(election) {
         swal(<div>
                 <h3>{election.name}</h3>
-                <br/>
+                <hr/>
                 <br/>
                 <div className="form-group row">
                     <div className="col-sm-2"></div>
@@ -61,7 +63,7 @@ export class ElectionList extends Component {
                 </div>
                 <div className="form-group row">
                     <div className="col-sm-2"></div>
-                    <label className="col-sm-2 control-label text-left"><strong>Activada:</strong></label>
+                    <label className="col-sm-2 control-label text-left"><strong>Activa:</strong></label>
                     <div className="col-sm-4">
                         <p className="form-control-static">{election.active}</p>
                     </div>
@@ -104,20 +106,20 @@ export class ElectionList extends Component {
                                     this.electionDisplay(result);
                                 }
                             }
-                            type="button"                            
-                            >Info
+                            type="button">
+                            <FontAwesomeIcon icon={faFileAlt} />
                         </button>
                         <button 
                             className="btn btn-warning"
                             onClick={ async () => { await this.activeElection(id, active); } }
-                            type="button"                            
-                            >Activar
+                            type="button">
+                            <FontAwesomeIcon icon={faCheckCircle} />
                         </button> 
                         <button 
                             className="btn btn-danger"                              
                             onClick={ async () => { await this.deleteElection(id); } } 
-                            type="button"
-                            >Borrar
+                            type="button">
+                            <FontAwesomeIcon icon={faTrashAlt} />
                         </button>
                     </td>
                 </tr>
@@ -134,7 +136,7 @@ export class ElectionList extends Component {
                         <tr>
                             <th>Número</th>
                             <th>Nombre</th>
-                            <th>Estado</th>
+                            <th>Activa</th>
                             <th>Candidatos</th>
                             <th>Votantes</th>
                             <th>Acciones</th>
@@ -149,7 +151,7 @@ export class ElectionList extends Component {
 
     render() {
         return <div id="elections">
-                <h4>Elecciones</h4>
+                <h4>Elecciones</h4>                
                 <hr />
                 <div className="input-group row">  
                     <div className="input-group-append col-sm-2"></div>                                          
@@ -167,8 +169,8 @@ export class ElectionList extends Component {
                             className="btn btn-success" 
                             data-target="#electionModal"
                             data-toggle="modal"                                         
-                            type="button"                                             
-                            >Nueva
+                            type="button"
+                            ><FontAwesomeIcon icon={faPlusCircle} />
                         </button>
                     </div>
                 </div>

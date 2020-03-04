@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import TransferForm from "./TransferForm";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
 
 export class TransferList extends Component {
 
@@ -15,15 +17,13 @@ export class TransferList extends Component {
                 <div className="col-sm-4">
                     <b>Balance del contrato:</b> {this.props.state.contractBalance} ethers
                 </div>
-                <div className="col-sm-1">
-                </div>
                 <div className="col-sm-2">
                     <button
                         className="btn btn-primary" 
                         data-target="#transferModal"
                         data-toggle="modal"                                             
                         type="button" 
-                    >Transferir
+                    > <FontAwesomeIcon icon={faExchangeAlt} />
                     </button>
                 </div>                           
             </div>
@@ -35,7 +35,6 @@ export class TransferList extends Component {
                     web3={this.props.web3}
                 />
             </div>
-            <p id="transferResult"></p> 
         </div>);
     }
 }

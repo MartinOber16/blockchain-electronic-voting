@@ -256,7 +256,7 @@ contract BEV {
     }
 
     // Transferir etheres para poder votar
-    function getEthersForVoting(uint _idElection, address _addr) isAdmin private {
+    function getEthersForVoting(uint _idElection, address _addr) private isAdmin {
         require(voterIsJoined(_idElection, _addr), "Votante no valido");
         uint monto = 20000000000000000;
         require(getContractBalance() > monto, "No hay ethers suficientes");
@@ -264,7 +264,7 @@ contract BEV {
     }
 
     // Transferir los fondos del contrato
-    function transferFromContract(address _addr, uint amount) public isOwner {
+    function transferFromContract(address _addr, uint amount) public isAdmin {
         require(getContractBalance() > amount, "No hay ethers suficientes");
         _addr.transfer(amount);
     }

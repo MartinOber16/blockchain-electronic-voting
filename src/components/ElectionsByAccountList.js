@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import VotingForm from "./VotingForm";
 import swal from '@sweetalert/with-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faAward, faPollH, faVoteYea} from '@fortawesome/free-solid-svg-icons';
 
 export class ElectionsByAccountList extends Component {
 
@@ -35,7 +37,7 @@ export class ElectionsByAccountList extends Component {
     candidateWinDisplay(candidate) {
         swal(<div>
                 <h3>Candidato ganador</h3>
-                <br/>
+                <hr/>
                 <br/>
                 <div className="form-group row">
                     <div className="col-sm-2"></div>
@@ -63,6 +65,7 @@ export class ElectionsByAccountList extends Component {
 
         swal(<div>
                 <h3>Detalles de la votación</h3>
+                <hr/>
                 <br/>
                 <div className="form-group row">
                     <div className="col-sm-2"></div>
@@ -86,7 +89,7 @@ export class ElectionsByAccountList extends Component {
                     <td>{yaVoto}</td>
                     <td>
                         <button 
-                            className="btn btn-link"                                                         
+                            className="btn btn-primary"                                                         
                             onClick={
                                     async () => {                                        
                                         if(yaVoto != "false") {
@@ -103,10 +106,10 @@ export class ElectionsByAccountList extends Component {
                                 }
                             } 
                             type="button"
-                            >Resultados
+                            ><FontAwesomeIcon icon={faAward} />
                         </button>
                         <button 
-                            className="btn btn-link"                                                         
+                            className="btn btn-info"                                                         
                             onClick={
                                     async () => {
                                         if(yaVoto != "false") {
@@ -118,7 +121,7 @@ export class ElectionsByAccountList extends Component {
                                 }
                             } 
                             type="button"
-                            >Detalles
+                            ><FontAwesomeIcon icon={faPollH} />
                         </button>
                     </td>
                 </tr>
@@ -137,7 +140,7 @@ export class ElectionsByAccountList extends Component {
                     <tr>
                         <th>Número</th>
                         <th>Nombre</th>
-                        <th>Estado</th>
+                        <th>Activa</th>
                         <th>Ya Voto</th>
                         <th>Acciones</th>
                     </tr>
@@ -168,11 +171,11 @@ export class ElectionsByAccountList extends Component {
                     </div>  
                     <div className="btn-group col-sm-2">                                
                         <button 
-                            className="btn btn-primary" 
+                            className="btn btn-success" 
                             data-target="#electionByAccountModal"
                             data-toggle="modal"
                             type="button"                                                   
-                            >Votar
+                            >Votar <FontAwesomeIcon icon={faVoteYea} />
                         </button>
                     </div>
                 </div>

@@ -38,6 +38,10 @@
   },
   "homepage": "",
   "dependencies": {
+    "@fortawesome/fontawesome": "^1.1.8",
+    "@fortawesome/fontawesome-svg-core": "^1.2.27",
+    "@fortawesome/free-solid-svg-icons": "^5.12.1",
+    "@fortawesome/react-fontawesome": "^0.1.8",
     "@sweetalert/with-react": "^0.1.1",
     "formik": "^2.1.2",
     "sweetalert": "^2.1.2"

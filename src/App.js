@@ -13,12 +13,14 @@ import { VoterList }  from "./components/VoterList";
 import { TransferList } from "./components/TransferList";
 import Soporte from "./components/Soporte";
 import { ToastContainer } from "react-toastr";
+import swal from 'sweetalert';
 
-// TODO: Optimizar codigo -> Miercoles
-// TODO: Mejoras look&feel -> Miercoles
 // TODO: Pruebas -> Jueves
-// TODO: Sección de soporte -> Viernes
-// TODO: Implementar en Rinkeby -> Lunes
+// TODO: Sección de soporte -> Jueves
+// TODO: Implementar en Rinkeby -> Viernes
+// TODO: Actuaizar documentación -> Lunes
+
+const networkName = 'Ganache';
 
 // Funcion para convertir de weis a ethers
 const converter = (web3) => {
@@ -41,28 +43,45 @@ export class App extends Component {
             elections: [],
             electionsByAccount: [], 
             name: undefined,  
-            network: 'Ganache',                
+            network: networkName,    
             totalElections: 0,
             voters: []
         };
     }
 
     // Despues de que se carga el componente
-    async componentDidMount() {            
-        this.web3 = await getWeb3(); // Obtengo la versión 1 de web3
-        //console.log("Versión web3: " + this.web3.version);
-        this.toEther = converter(this.web3); // Funcion para convertir de wei a ether
-
+    async componentDidMount() {
         try{
+            this.web3 = await getWeb3(); // Obtengo la versión 1 de web3
+            this.toEther = converter(this.web3); // Funcion para convertir de wei a ether
             this.BEV = await BEVContract(this.web3.currentProvider); // Instancia del contrato  
             this.BEVService = new BEVService(this.BEV);
             ethereum.enable(); // Habilitar acceso a las cuentas en MetaMask
             ethereum.autoRefreshOnNetworkChange = false;
             var account = (await this.web3.eth.getAccounts())[0]; // Información del usuario actual
-            //console.log("Cuenta actual: " + account);
+
+            // Metodo de metamask para actualizar cuando hay cambio de cuenta
+            this.web3.currentProvider.publicConfigStore.on('update', async function(event){
+                if(event.selectedAddress != null) {
+                    this.setState({
+                        account: event.selectedAddress.toLowerCase()
+                    }, () => {
+                        this.load();
+                    });
+                }
+            }.bind(this));
+
+            // Guardo en el estado la información de la cuenta y cuando esta lista ejecuto la funcion load
+            if(account != undefined){
+                this.setState({
+                    account: account.toLowerCase()
+                }, () => {
+                    this.load();
+                } );
+            }
         }
         catch(e) {
-            console.log("Error obteniendo instancia del contrato");
+            swal("Error!", "Error obteniendo instancia del contrato.", "error");
             console.error(e);
         }
 
@@ -76,23 +95,7 @@ export class App extends Component {
                 console.log(msj);
                 //this.container.success(msj,"Información",{closeButton: true, onClick: this.container.clear()});
             }
-        }.bind(this));
-
-        // Metodo de metamask para actualizar cuando hay cambio de cuenta
-        this.web3.currentProvider.publicConfigStore.on('update', async function(event){
-            this.setState({
-                account: event.selectedAddress.toLowerCase()
-            }, () => {
-                this.load();
-            });
-        }.bind(this));
-
-        // Guardo en el estado la información de la cuenta y cuando esta lista ejecuto la funcion load
-        this.setState({
-            account: account.toLowerCase()
-        }, () => {
-            this.load();
-        } );
+        }.bind(this));        
     }
 
     // Verifico si una cuenta es administador
@@ -105,7 +108,6 @@ export class App extends Component {
 
     // Obtengo la información del contrato
     async getContractInfo() {
-        //console.log('getContractInfo');
         if(this.BEVService) {            
             let contractInfo = await this.BEVService.getContractInfo();            
             this.setState({
@@ -120,7 +122,6 @@ export class App extends Component {
 
     // Obtengo la información del usuario actual
     async getUserInfo() {
-        //console.log('getUserInfo');
         if(this.state.conected) {            
             let weiBalance = await this.web3.eth.getBalance(this.state.account);
             let isAdmin = await this.isAdmin(this.state.account);
@@ -139,8 +140,7 @@ export class App extends Component {
     }
 
     // Obtengo todas las elecciones
-    async getElections() {    
-        //console.log('getElections');      
+    async getElections() {      
         await this.BEVService.getElections().then((receipt) => {
             if(receipt.status == 200) {
                 this.setState({
@@ -158,7 +158,6 @@ export class App extends Component {
 
     // Obtengo todos los candidatos
     async getCandidates() {     
-        //console.log('getCandidates');    
         await this.BEVService.getCandidates().then((receipt) => {
             if(receipt.status == 200) {
                 this.setState({
@@ -175,7 +174,6 @@ export class App extends Component {
 
     // Obtengo todos los votantes
     async getVoters() {  
-        //console.log('getVoters');   
         await this.BEVService.getVoters().then((receipt) => {
             if(receipt.status == 200) {
                 this.setState({
@@ -221,10 +219,6 @@ export class App extends Component {
                 <div className="container-fluid pl-4 col-sm-10" id="content">
                     <div className="container tab-content">
                         <div id="home" className="container tab-pane active">
-                            <div className="text-left mb-4" >
-                                <h3>Inicio</h3>
-                                <hr />                  
-                            </div>
                             <Information 
                                 BEVService={this.BEVService} 
                                 state={this.state}
@@ -232,10 +226,6 @@ export class App extends Component {
                             <br />
                         </div>
                         <div id="elections" className="container tab-pane fade">
-                            <div className="text-left mb-4" >
-                                <h3>Mis elecciones</h3>
-                                <hr />                  
-                            </div>
                             <ElectionsByAccountList 
                                 BEVService={this.BEVService} 
                                 state={this.state} 
@@ -243,16 +233,6 @@ export class App extends Component {
                             <br />
                         </div>
                         <div id="adminElection" className="container tab-pane fade">
-                            <div className="text-left mb-4" >
-                                <h3>Administración</h3>   
-                                <hr />
-                            </div>
-                            <br />
-                            <AdminList 
-                                BEVService={this.BEVService} 
-                                state={this.state}
-                            />
-                            <br />
                             <ElectionList 
                                 BEVService={this.BEVService} 
                                 state={this.state}
@@ -267,6 +247,11 @@ export class App extends Component {
                             <VoterList 
                                 BEVService={this.BEVService} 
                                 state={this.state} 
+                            />
+                            <br />
+                            <AdminList 
+                                BEVService={this.BEVService} 
+                                state={this.state}
                             />
                             <br /> 
                             <TransferList 

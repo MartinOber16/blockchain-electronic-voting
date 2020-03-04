@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import VoterForm from "./VoterForm";
 import swal from '@sweetalert/with-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlusCircle, faUser, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 export class VoterList extends Component {
 
@@ -39,21 +41,24 @@ export class VoterList extends Component {
     voterDisplay(voter) {
         swal(<div>
                 <h3>{voter.name}</h3>
-                <br/>
+                <hr/>
                 <br/>
                 <div className="form-group row">
+                    <div className="col-sm-1"></div>
                     <label className="col-sm-2 control-label text-left"><strong>Cuenta:</strong></label>
                     <div className="col-sm-4">
-                        <p className="form-control-static">{voter.address}</p>
+                        <p className="form-control-static small">{voter.address}</p>
                     </div>
                 </div>
                 <div className="form-group row">
+                    <div className="col-sm-1"></div>
                     <label className="col-sm-2 control-label text-left"><strong>Elección:</strong></label>
                     <div className="col-sm-4">
                         <p className="form-control-static">{voter.election}</p>
                     </div>
                 </div>
                 <div className="form-group row">
+                    <div className="col-sm-1"></div>
                     <label className="col-sm-2 control-label text-left"><strong>Voto:</strong></label>
                     <div className="col-sm-4">
                         <p className="form-control-static">{voter.voted}</p>
@@ -83,13 +88,13 @@ export class VoterList extends Component {
                             }
                         } 
                         type="button"
-                        >Info
+                        ><FontAwesomeIcon icon={faUser} />
                     </button> 
                     <button 
                         className="btn btn-danger"                            
                         onClick={ async () => { await this.deleteVoter(election, address); } } 
                         type="button"
-                        >Borrar
+                        ><FontAwesomeIcon icon={faTrashAlt} />
                     </button>
                 </td>
             </tr>
@@ -142,7 +147,7 @@ export class VoterList extends Component {
                             data-target="#voterModal"
                             data-toggle="modal"                                             
                             type="button" 
-                            >Nuevo
+                            ><FontAwesomeIcon icon={faPlusCircle} />
                         </button>
                     </div>
                 </div>
