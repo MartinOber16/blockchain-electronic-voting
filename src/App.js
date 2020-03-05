@@ -16,8 +16,6 @@ import Soporte from "./components/Soporte";
 import { ToastContainer } from "react-toastr";
 import swal from 'sweetalert';
 
-// TODO: Ver de insertar logos e imagenes
-// TODO: Sección de soporte -> Jueves
 // TODO: Actuaizar documentación -> Viernes
 // TODO: Implementar en Rinkeby -> Lunes
 
@@ -129,7 +127,7 @@ export class App extends Component {
             if(isAdmin)
                 name = "Administrador";
             else
-                name = "Cuenta";
+                name = "";
 
             this.setState({
                 accountBalance: this.toEther(weiBalance),
@@ -213,7 +211,7 @@ export class App extends Component {
     
     render() {
         return <React.Fragment>    
-            <Header name={this.state.name} account={this.state.account}/> 
+            <Header name={this.state.name} account={this.state.account}/>        
             <div className="container row">
                 <Menu admin={this.state.admin}/>
                 <div className="container-fluid pl-4 col-sm-10" id="content">
