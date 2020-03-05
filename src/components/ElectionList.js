@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import {okCode, errorCode} from "../../services/GlobalVariables";
 import ElectionForm from "./ElectionForm";
 import swal from '@sweetalert/with-react'; // https://www.npmjs.com/package/@sweetalert/with-react
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,7 +13,7 @@ export class ElectionList extends Component {
     
     // Notificaciones de trasacciones
     notify (receipt) {
-        if(receipt.status == 200)
+        if(receipt.status == okCode)
             swal("Transacción realizada correctamente!", receipt.data.tx, "success");
         else
             swal("Error al realizar la transacción!", receipt.data, "error");
@@ -22,7 +23,7 @@ export class ElectionList extends Component {
     async getElection(id) {         
         let election;
         await this.props.BEVService.getElection(id).then((receipt) => {       
-            /*if(receipt.status == 200)
+            /*if(receipt.status == okCode)
                 election = receipt.data;
             else*/
                 election = receipt.data; 

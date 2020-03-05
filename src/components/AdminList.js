@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import {okCode, errorCode} from "../../services/GlobalVariables";
 import swal from 'sweetalert';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle, faUserCheck, faBroom, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
@@ -16,7 +17,7 @@ export class AdminList extends Component {
     }
 
     notify (receipt) {
-        if(receipt.status == 200)
+        if(receipt.status == okCode)
             swal("Transacción realizada correctamente!", "Comprobante: " + receipt.data.tx, "success");
         else
             swal("Error al realizar la transacción!", receipt.data, "error");

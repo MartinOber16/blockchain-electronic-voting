@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import getWeb3 from "../services/getWeb3";
 import BEVContract from "../services/bev";
 import { BEVService } from "../services/bevService";
+import {okCode, errorCode , networkName} from "../services/GlobalVariables";
 import Header from "./components/Header";
 import Menu from "./components/Menu";
 import { Information } from "./components/Information";
@@ -15,12 +16,10 @@ import Soporte from "./components/Soporte";
 import { ToastContainer } from "react-toastr";
 import swal from 'sweetalert';
 
-// TODO: Pruebas -> Jueves
+// TODO: Ver de insertar logos e imagenes
 // TODO: Sección de soporte -> Jueves
-// TODO: Implementar en Rinkeby -> Viernes
-// TODO: Actuaizar documentación -> Lunes
-
-const networkName = 'Ganache';
+// TODO: Actuaizar documentación -> Viernes
+// TODO: Implementar en Rinkeby -> Lunes
 
 // Funcion para convertir de weis a ethers
 const converter = (web3) => {
@@ -43,7 +42,7 @@ export class App extends Component {
             elections: [],
             electionsByAccount: [], 
             name: undefined,  
-            network: networkName,    
+            network: undefined,    
             totalElections: 0,
             voters: []
         };
@@ -79,23 +78,24 @@ export class App extends Component {
                     this.load();
                 } );
             }
+
+            // Subscribirse a un evento
+            let votedEmited = this.BEV.VotedEvent();
+            votedEmited.watch(function(err, result) {
+                const {_account, _idElection} = result.args;
+
+                if(_account == this.state.account) {
+                    let msj = "Se emitio correctamente el voto para la elección: " + _idElection;
+                    console.log(msj);
+                    //this.container.success(msj,"Información",{closeButton: true, onClick: this.container.clear()});
+                }
+            }.bind(this));  
+
         }
         catch(e) {
-            swal("Error!", "Error obteniendo instancia del contrato.", "error");
+            swal("Error obteniendo instancia del contrato.", e.toString(), "error");
             console.error(e);
         }
-
-        // Subscribirse a un evento
-        let votedEmited = this.BEV.VotedEvent();
-        votedEmited.watch(function(err, result) {
-            const {_account, _idElection} = result.args;
-
-            if(_account == this.state.account) {
-                let msj = "Se emitio correctamente el voto para la elección: " + _idElection;
-                console.log(msj);
-                //this.container.success(msj,"Información",{closeButton: true, onClick: this.container.clear()});
-            }
-        }.bind(this));        
     }
 
     // Verifico si una cuenta es administador
@@ -114,7 +114,7 @@ export class App extends Component {
                 conected: this.web3.currentProvider.isConnected(),
                 contractBalance: this.toEther(contractInfo.balance),
                 contract: contractInfo.address,                
-                network: 'Ganache',                
+                network: networkName,        
                 totalElections: contractInfo.totalElections
             });
         }
@@ -142,7 +142,7 @@ export class App extends Component {
     // Obtengo todas las elecciones
     async getElections() {      
         await this.BEVService.getElections().then((receipt) => {
-            if(receipt.status == 200) {
+            if(receipt.status == okCode) {
                 this.setState({
                     elections: receipt.data
                 });
@@ -159,7 +159,7 @@ export class App extends Component {
     // Obtengo todos los candidatos
     async getCandidates() {     
         await this.BEVService.getCandidates().then((receipt) => {
-            if(receipt.status == 200) {
+            if(receipt.status == okCode) {
                 this.setState({
                     candidates: receipt.data
                 });
@@ -175,7 +175,7 @@ export class App extends Component {
     // Obtengo todos los votantes
     async getVoters() {  
         await this.BEVService.getVoters().then((receipt) => {
-            if(receipt.status == 200) {
+            if(receipt.status == okCode) {
                 this.setState({
                     voters: receipt.data
                 });
@@ -191,7 +191,7 @@ export class App extends Component {
     // Obtengo todas las elecciones de una cuenta
     async getElectionsByAccount() {
         await this.BEVService.getElectionsByAccount(this.state.account).then((receipt) => {
-            if(receipt.status == 200) {
+            if(receipt.status == okCode) {
                 this.setState({
                     electionsByAccount: receipt.data
                 });

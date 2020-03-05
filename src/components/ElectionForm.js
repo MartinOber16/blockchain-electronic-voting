@@ -1,4 +1,5 @@
 import React from "react";
+import {okCode, errorCode} from "../../services/GlobalVariables";
 import { useFormik } from 'formik';
 import swal from 'sweetalert'; // https://github.com/t4t5/sweetalert/blob/master/README.md
 
@@ -14,7 +15,7 @@ const ElectionForm = (props) => {
                 if(values.valueElection > 0) {
                     let amount = props.web3.utils.toWei(values.valueElection.toString(), 'ether');
                     props.BEVService.addElection(values.electionName, props.account, amount).then((receipt) => {
-                        if(receipt.status == 200)
+                        if(receipt.status == okCode)
                             swal("Transacción realizada correctamente!", receipt.data.tx, "success");
                         else
                             swal("Error al realizar la transacción!", receipt.data, "error");                
@@ -24,10 +25,10 @@ const ElectionForm = (props) => {
                     $('#electionModal').modal('hide');
                 }
                 else
-                    alert("Debe ingresar una cantidad de etheres a utilizar en la elección.");
+                    swal("Error!", "Debe ingresar una cantidad de etheres a utilizar en la elección.", "error");
             }
             else
-                alert("Debe ingresar un nombre para la elección.");
+                swal("Error!", "Debe ingresar un nombre para la elección.", "error");
         },
     });
     return (<div className="modal-dialog">

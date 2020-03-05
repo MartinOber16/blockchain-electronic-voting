@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import {okCode, errorCode} from "../../services/GlobalVariables";
 import VotingForm from "./VotingForm";
 import swal from '@sweetalert/with-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -24,7 +25,7 @@ export class ElectionsByAccountList extends Component {
     async getDetailsByElection(election) {     
         let candidatesByElection;
         await this.props.BEVService.getDetailsByElection(election).then((receipt) => {
-            /*if(receipt.status == 200)
+            /*if(receipt.status == okCode)
                 candidatesByElection = receipt.data;
             else*/
                 candidatesByElection = receipt.data;
@@ -94,7 +95,7 @@ export class ElectionsByAccountList extends Component {
                                     async () => {                                        
                                         if(yaVoto != "false") {
                                             let result = await this.getResultElection(id);
-                                            if(result.status == 200)
+                                            if(result.status == okCode)
                                                 this.candidateWinDisplay(result.data);
                                             else
                                                 swal(result.data, "Para mas información seleccionar la opcion 'Detalles'", "info");             

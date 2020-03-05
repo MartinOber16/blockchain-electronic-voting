@@ -1,5 +1,7 @@
 import React from "react";
+import {okCode, errorCode} from "../../services/GlobalVariables";
 import { useFormik } from 'formik';
+import swal from 'sweetalert';
 
 // Formulario de votación
 const VotingForm = (props) => {
@@ -32,7 +34,7 @@ const VotingForm = (props) => {
             if(values.electionIdVote != "") {
                 if(values.candidateVote != "") {
                     props.BEVService.voting(values.electionIdVote, values.candidateVote, props.account).then((receipt) => {
-                        if(receipt.status == 200)
+                        if(receipt.status == okCode)
                             swal("Transacción realizada correctamente!", receipt.data.tx, "success");
                         else
                             swal("Error al realizar la transacción!", receipt.data, "error"); 
@@ -42,10 +44,10 @@ const VotingForm = (props) => {
                     $('#electionByAccountModal').modal('hide');
                 }
                 else
-                    alert("Debe seleccionar un candidato.");
+                    swal("Error!", "Debe seleccionar un candidato.", "error");
             }   
             else
-                alert("Debe seleccionar una elección.");
+                swal("Error!", "Debe seleccionar una elección.", "error");
                  
         },
     });

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import {okCode, errorCode} from "../../services/GlobalVariables";
 import VoterForm from "./VoterForm";
 import swal from '@sweetalert/with-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,7 +12,7 @@ export class VoterList extends Component {
     }
 
     notify (receipt) {
-        if(receipt.status == 200)
+        if(receipt.status == okCode)
             swal("Transacción realizada correctamente!", receipt.data.tx, "success");
         else
             swal("Error al realizar la transacción!", receipt.data, "error");
@@ -21,7 +22,7 @@ export class VoterList extends Component {
     async getVoter(election, address) {       
         let voter;
         await this.props.BEVService.getVoter(election, address).then((receipt) => {
-            /*if(receipt.status == 200)
+            /*if(receipt.status == okCode)
                 voter = receipt.data;
             else*/
                 voter = receipt.data;
