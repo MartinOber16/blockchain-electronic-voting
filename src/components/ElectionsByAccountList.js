@@ -59,8 +59,10 @@ export class ElectionsByAccountList extends Component {
     }
 
     electionDetailsDisplay(result){
-        let component = result.map((candidate ) => {
+        let totalVotos = 0;
+        let electionDetails = result.map((candidate ) => {
             const {id, name, voteCount } = candidate
+            totalVotos += voteCount;
             return (<li key={id}>{name}: {voteCount} votos.</li>);
         });
 
@@ -70,9 +72,16 @@ export class ElectionsByAccountList extends Component {
                 <br/>
                 <div className="form-group row">
                     <div className="col-sm-2"></div>
-                    <ul className="col-sm-6">
-                        {component}
-                    </ul>
+                    <ol className="col-sm-6">
+                        {electionDetails}
+                    </ol>
+                </div>
+                <hr/>
+                <div className="row">
+                    <div className="col-sm-2"></div>
+                    <div className="col-sm-6">
+                        <span className="text-center">Total de votos: {totalVotos}</span> 
+                    </div>
                 </div>
             </div>
         );
@@ -81,12 +90,14 @@ export class ElectionsByAccountList extends Component {
     renderTableDataElectionsByAccount () {
         if(this.props.state.conected) {
             return this.props.state.electionsByAccount.map((election) => {
-            const { id, name, active, yaVoto } = election
+            const { id, name, active, candidatesCount, votersCount, yaVoto } = election
             return (
                 <tr key={id}>
-                    <td>{id}</td>
+                    <td className="text-center">{id}</td>
                     <td>{name}</td>
                     <td>{active}</td>
+                    <td className="text-center">{candidatesCount}</td>
+                    <td className="text-center">{votersCount}</td>
                     <td>{yaVoto}</td>
                     <td>
                         <button 
@@ -142,6 +153,8 @@ export class ElectionsByAccountList extends Component {
                         <th>Número</th>
                         <th>Nombre</th>
                         <th>Activa</th>
+                        <th>Candidatos</th>
+                        <th>Votantes</th>
                         <th>Ya Voto</th>
                         <th>Acciones</th>
                     </tr>

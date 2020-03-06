@@ -258,7 +258,7 @@ contract BEV {
     // Transferir etheres para poder votar
     function getEthersForVoting(uint _idElection, address _addr) private isAdmin {
         require(voterIsJoined(_idElection, _addr), "Votante no valido");
-        uint monto = 20000000000000000;
+        uint monto = 20000000000000000; // 0,02 ethers
         require(getContractBalance() > monto, "No hay ethers suficientes");
         _addr.transfer(monto);
     }

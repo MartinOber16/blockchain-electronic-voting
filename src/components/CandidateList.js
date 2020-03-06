@@ -75,9 +75,9 @@ export class CandidateList extends Component {
         const { election, id, name, voteCount } = candidate
         return (
                 <tr key={index}>
-                    <td>{election}</td>
+                    <td className="text-center">{election}</td>
                     <td>{name}</td>
-                    <td>{voteCount}</td>
+                    <td className="text-center">{voteCount}</td>
                     <td>
                         <button 
                             className="btn btn-info"                                                              

@@ -16,8 +16,8 @@ import Soporte from "./components/Soporte";
 import { ToastContainer } from "react-toastr";
 import swal from 'sweetalert';
 
-// TODO: Actuaizar documentación -> Viernes
-// TODO: Implementar en Rinkeby -> Lunes
+// TODO: Cambiar lo que se muestra en los campos boolean (true => Si / false => No)
+// TODO: Implementar en Rinkeby
 
 // Funcion para convertir de weis a ethers
 const converter = (web3) => {

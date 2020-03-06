@@ -75,7 +75,7 @@ export class VoterList extends Component {
         const { election, address, name, voted } = voter
         return (
             <tr key={index}>
-                <td>{election}</td>
+                <td className="text-center">{election}</td>
                 <td>{address}</td>
                 <td>{name}</td>
                 <td>{voted}</td>
