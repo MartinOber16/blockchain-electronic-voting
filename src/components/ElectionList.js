@@ -49,6 +49,13 @@ export class ElectionList extends Component {
         });
     }
 
+    renderBoolean(value) {
+        if(value == "true")
+            return "Si";
+        else
+            return "No";
+    }
+
     // Información de la elección
     electionDisplay(election) {
         swal(<div>
@@ -66,7 +73,7 @@ export class ElectionList extends Component {
                     <div className="col-sm-2"></div>
                     <label className="col-sm-2 control-label text-left"><strong>Activa:</strong></label>
                     <div className="col-sm-4">
-                        <p className="form-control-static">{election.active}</p>
+                        <p className="form-control-static">{this.renderBoolean(election.active)}</p>
                     </div>
                 </div>
                 <div className="form-group row">
@@ -95,7 +102,7 @@ export class ElectionList extends Component {
                 <tr key={id}>
                     <td className="text-center">{id}</td>
                     <td>{name}</td>
-                    <td>{active}</td>
+                    <td>{this.renderBoolean(active)}</td>
                     <td className="text-center">{candidatesCount}</td>
                     <td className="text-center">{votersCount}</td>
                     <td>

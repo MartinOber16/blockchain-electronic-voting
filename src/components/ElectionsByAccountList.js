@@ -34,6 +34,13 @@ export class ElectionsByAccountList extends Component {
         return candidatesByElection;
     }
 
+    renderBoolean(value) {
+        if(value == "true")
+            return "Si";
+        else
+            return "No";
+    }
+
     // Información del candidato
     candidateWinDisplay(candidate) {
         swal(<div>
@@ -95,10 +102,10 @@ export class ElectionsByAccountList extends Component {
                 <tr key={id}>
                     <td className="text-center">{id}</td>
                     <td>{name}</td>
-                    <td>{active}</td>
+                    <td>{this.renderBoolean(active)}</td>
                     <td className="text-center">{candidatesCount}</td>
                     <td className="text-center">{votersCount}</td>
-                    <td>{yaVoto}</td>
+                    <td>{this.renderBoolean(yaVoto)}</td>
                     <td>
                         <button 
                             className="btn btn-primary"                                                         

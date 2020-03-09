@@ -38,6 +38,13 @@ export class VoterList extends Component {
         });
     }
 
+    renderBoolean(value) {
+        if(value == "true")
+            return "Si";
+        else
+            return "No";
+    }
+
     // Información del votante
     voterDisplay(voter) {
         swal(<div>
@@ -62,7 +69,7 @@ export class VoterList extends Component {
                     <div className="col-sm-1"></div>
                     <label className="col-sm-2 control-label text-left"><strong>Voto:</strong></label>
                     <div className="col-sm-4">
-                        <p className="form-control-static">{voter.voted}</p>
+                        <p className="form-control-static">{this.renderBoolean(voter.voted)}</p>
                     </div>
                 </div>
             </div>
@@ -78,7 +85,7 @@ export class VoterList extends Component {
                 <td className="text-center">{election}</td>
                 <td>{address}</td>
                 <td>{name}</td>
-                <td>{voted}</td>
+                <td>{this.renderBoolean(voted)}</td>
                 <td>
                     <button 
                         className="btn btn-info"                            

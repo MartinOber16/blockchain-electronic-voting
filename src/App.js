@@ -16,7 +16,6 @@ import Soporte from "./components/Soporte";
 import { ToastContainer } from "react-toastr";
 import swal from 'sweetalert';
 
-// TODO: Cambiar lo que se muestra en los campos boolean (true => Si / false => No)
 // TODO: Implementar en Rinkeby
 
 // Funcion para convertir de weis a ethers
