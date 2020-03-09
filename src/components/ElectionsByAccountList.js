@@ -50,14 +50,14 @@ export class ElectionsByAccountList extends Component {
                 <div className="form-group row">
                     <div className="col-sm-2"></div>
                     <label className="col-sm-2 control-label text-left"><strong>Nombre:</strong></label>
-                    <div className="col-sm-4">
+                    <div className="col-sm-6">
                         <p className="form-control-static">{candidate.name}</p>
                     </div>
                 </div>
                 <div className="form-group row">
                     <div className="col-sm-2"></div>
                     <label className="col-sm-2 control-label text-left"><strong>Votos:</strong></label>
-                    <div className="col-sm-4">
+                    <div className="col-sm-6">
                         <p className="form-control-static">{candidate.voteCount}</p>
                     </div>
                 </div>
@@ -70,23 +70,36 @@ export class ElectionsByAccountList extends Component {
         let electionDetails = result.map((candidate ) => {
             const {id, name, voteCount } = candidate
             totalVotos += voteCount;
-            return (<li key={id}>{name}: {voteCount} votos.</li>);
+            return (<tr key={id}><td>{id}</td><td className="text-left">&nbsp;{name}</td><td className="text-right">{voteCount}</td></tr>);
         });
 
         swal(<div>
                 <h3>Detalles de la votación</h3>
                 <hr/>
                 <br/>
-                <div className="form-group row">
-                    <div className="col-sm-2"></div>
-                    <ol className="col-sm-6">
-                        {electionDetails}
-                    </ol>
+                <div className="row">
+                    <div className="col-sm-1"></div>
+                    <div className="col-sm-10">
+                        <table>
+                            <thead className="thead-dark">
+                                <tr>
+                                    <th>Número</th>                                
+                                    <th>Nombre</th>
+                                    <th>Votos</th>
+                                </tr>
+                            </thead>
+                            <tbody id="electionTableByAccount">
+                                {electionDetails}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+                
+                <br/>
                 <hr/>
                 <div className="row">
                     <div className="col-sm-2"></div>
-                    <div className="col-sm-6">
+                    <div className="col-sm-8">
                         <span className="text-center">Total de votos: {totalVotos}</span> 
                     </div>
                 </div>

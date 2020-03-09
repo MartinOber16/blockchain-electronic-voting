@@ -1,5 +1,7 @@
 import React from "react";
 
+// TODO: Completar información.
+
 export default (props) => {
     return <div>
                 <div className="text-left">

@@ -16,8 +16,6 @@ import Soporte from "./components/Soporte";
 import { ToastContainer } from "react-toastr";
 import swal from 'sweetalert';
 
-// TODO: Completar información de la sección de Soporte.
-
 // Funcion para convertir de weis a ethers
 const converter = (web3) => {
     return (value) => {
@@ -48,7 +46,7 @@ export class App extends Component {
     // Despues de que se carga el componente
     async componentDidMount() {
         try{
-            this.web3 = await getWeb3(); // Obtengo la versión 1 de web3
+            this.web3 = await getWeb3(); // Obtengo la versión 1 de web3            
             this.toEther = converter(this.web3); // Funcion para convertir de wei a ether
             this.BEV = await BEVContract(this.web3.currentProvider); // Instancia del contrato  
             this.BEVService = new BEVService(this.BEV);
