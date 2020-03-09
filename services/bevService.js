@@ -1,5 +1,4 @@
-const okCode = 200;
-const errorCode = 204;
+import {okCode, errorCode, ethersForVoter} from "./GlobalVariables";
 
 export class BEVService {
 
@@ -317,7 +316,7 @@ export class BEVService {
         }
         else {
             let transactionInfo;
-            await this.contract.addVoter(election, address, name, { from: account }).then((receipt) => {
+            await this.contract.addVoter(election, address, name, ethersForVoter, { from: account }).then((receipt) => {
                 transactionInfo = receipt;
                 });
     

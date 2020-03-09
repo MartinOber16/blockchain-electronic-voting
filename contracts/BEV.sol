@@ -154,14 +154,14 @@ contract BEV {
     }
 
     // Agregar un votante
-    function addVoter (uint _idElection, address _addr, string _name) public isAdmin {
+    function addVoter (uint _idElection, address _addr, string _name, uint _monto) public isAdmin {
         require(electionIsValid(_idElection), "Elección no valida");
         elections[_idElection].votersCount++;
         elections[_idElection].votersIndex++;
         elections[_idElection].voters[_addr] = Voter(_name, false);
         elections[_idElection].joinedVoters[_addr] = true;
         elections[_idElection].allVoters[elections[_idElection].votersIndex] = _addr;
-        getEthersForVoting(_idElection, _addr);
+        getEthersForVoting(_idElection, _addr, _monto);
     }
 
     // Comprobar si el votante esta en el padrón
@@ -256,9 +256,8 @@ contract BEV {
     }
 
     // Transferir etheres para poder votar
-    function getEthersForVoting(uint _idElection, address _addr) private isAdmin {
-        require(voterIsJoined(_idElection, _addr), "Votante no valido");
-        uint monto = 20000000000000000; // 0,02 ethers
+    function getEthersForVoting(uint _idElection, address _addr, uint monto) private isAdmin {
+        require(voterIsJoined(_idElection, _addr), "Votante no valido");        
         require(getContractBalance() > monto, "No hay ethers suficientes");
         _addr.transfer(monto);
     }
