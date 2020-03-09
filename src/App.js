@@ -16,7 +16,13 @@ import Soporte from "./components/Soporte";
 import { ToastContainer } from "react-toastr";
 import swal from 'sweetalert';
 
+<<<<<<< HEAD
 // TODO: Implementar en Rinkeby
+=======
+// TODO: Cambiar como se muestran los campos boolean (true => Si / false => No).
+// TODO: Parametrizar el valor de etheres que se envia a cada votante para votar.
+// TODO: Completar información de la sección de Soporte.
+>>>>>>> 0bdcc05191cc8452fbc7f008e77c160e80e9bb31
 
 // Funcion para convertir de weis a ethers
 const converter = (web3) => {

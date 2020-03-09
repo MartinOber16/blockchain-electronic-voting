@@ -12,28 +12,28 @@ const TransferForm = (props) => {
         },
         onSubmit: values => {
             if(values.toAddress != "") {
-                if(values.amount > 0) {
+                let amount = props.web3.utils.toWei(values.amount.toString(), 'ether');
+                if(amount > 0) {
                     let contractBalance = 0; 
                     props.BEVService.getContractBalance().then((receipt) => {
                         contractBalance = receipt;
-                    });
-
-                    if(values.amount < contractBalance) {
-                        let amountWei = props.web3.utils.toWei(values.amount.toString(), 'ether');
-                        props.BEVService.transferFromContract(values.toAddress, amountWei, props.account).then((receipt) => {
-                            if(receipt.status == okCode)
-                                swal("Transacción realizada correctamente!", receipt.data.tx, "success");
-                            else
-                                swal("Error al realizar la transacción!", receipt.data, "error"); 
-                        });
+                                                
+                        if(amount < contractBalance) {
+                            props.BEVService.transferFromContract(values.toAddress, amount, props.account).then((receipt) => {
+                                if(receipt.status == okCode)
+                                    swal("Transacción realizada correctamente!", receipt.data.tx, "success");
+                                else
+                                    swal("Error al realizar la transacción!", receipt.data, "error"); 
+                            });
+                            
+                            values.toAddress = "",
+                            values.amount = 0
+                            $('#transferModal').modal('hide');
+                        }
+                        else
+                            swal("Error!", "No hay saldo suficiente para la transferencia.", "error"); 
                         
-                        values.toAddress = "",
-                        values.amount = 0
-                        $('#transferModal').modal('hide');
-                    }
-                    else
-                        swal("Error!", "No hay saldo suficiente para la transferencia.", "error"); 
-
+                    });
                 }
                 else
                     swal("Error!", "Debe ingresar la cantidad de etheres a transferir.", "error");
