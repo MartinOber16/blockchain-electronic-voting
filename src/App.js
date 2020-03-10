@@ -16,6 +16,12 @@ import Soporte from "./components/Soporte";
 import { ToastContainer } from "react-toastr";
 import swal from 'sweetalert';
 
+// MetaMask: https://docs.metamask.io/guide/getting-started.html#basic-considerations
+// Hex to ASCII Text Converter: https://www.rapidtables.com/convert/number/hex-to-ascii.html
+// https://karl.tech/learning-solidity-part-2-voting/
+// https://cryptozombies.io/
+// https://infura.io/   
+
 // Funcion para convertir de weis a ethers
 const converter = (web3) => {
     return (value) => {
