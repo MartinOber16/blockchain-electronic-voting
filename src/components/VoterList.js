@@ -21,7 +21,7 @@ export class VoterList extends Component {
     // Obtener un votante
     async getVoter(election, address) {       
         let voter;
-        await this.props.BEVService.getVoter(election, address).then((receipt) => {
+        await this.props.BEVService.getVoter(election, address, this.props.state.account).then((receipt) => {
             /*if(receipt.status == okCode)
                 voter = receipt.data;
             else*/

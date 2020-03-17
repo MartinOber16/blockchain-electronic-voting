@@ -175,7 +175,7 @@ export class App extends Component {
 
     // Obtengo todos los votantes
     async getVoters() {  
-        await this.BEVService.getVoters().then((receipt) => {
+        await this.BEVService.getVoters(this.state.account).then((receipt) => {
             if(receipt.status == okCode) {
                 this.setState({
                     voters: receipt.data

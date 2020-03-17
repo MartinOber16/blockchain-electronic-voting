@@ -274,20 +274,27 @@ export class BEVService {
         })
     }
 
-    async getVoters() {
+    async getVoters(account) {
         let totalElections = await this.getTotalElections();
         if(totalElections > 0) {
             let voters = [];        
             for(var i = 1; i <= totalElections; i++) {    
-                let totalVoters = await this.contract.getVotersIndex(i);
+                let totalVoters = (await this.contract.getVotersIndex(i)).toNumber();
+                let addr = '0x';
                 for(var j = 1 ; j <= totalVoters; j++) {
-                    let addr = await this.contract.getAddressVoter(i,j);
-                    let voter = await this.contract.getVoter(i,addr); // Busco el votante por su dirección.
-                    if(voter[2]!="")
-                        voters.push(voter);
+                    await this.contract.getAddressVoter(i, j, {from: account}).then((receipt)=> {
+                        addr = receipt;
+                    });
+
+                    // Busco el votante por su dirección.
+                    await this.contract.getVoter(i, addr, {from: account}).then((receipt) => {
+                        let voter = receipt;
+                        if(voter[2]!="")
+                            voters.push(voter);
+                    }); 
                 }
             }
-
+            
             if(voters.length > 0)
                 return this.response(okCode, this.mapVoter(voters));
         }
@@ -296,9 +303,9 @@ export class BEVService {
     }
 
     // Ver un votante
-    async getVoter(election, address) {        
+    async getVoter(election, address, account) {        
         let voter;            
-        await this.contract.getVoter(election, address).then((receipt) => {
+        await this.contract.getVoter(election, address, { from: account }).then((receipt) => {
             voter = this.structVoter(receipt);
         });
         
@@ -309,7 +316,7 @@ export class BEVService {
     }
 
     // Agregar nuevo votante y devuelve la información de la transacción
-    async addVoter(election, address, name, account) {
+    async addVoter(election, address, name, account) {        
         let existe = await this.contract.voterIsJoined(election, address);
         if(existe){
             return this.response(errorCode, "El votante ya se encuentra registrado.");
@@ -326,7 +333,6 @@ export class BEVService {
                 return this.response(errorCode, "No se pudo agregar el nuevo votante.");
 
         }
-
     }
 
     // Eliminar un votante
