@@ -1,9 +1,19 @@
 const webpack = require('webpack');
+const path = require('path');
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 
 module.exports = {
   devtool: 'sourcemap',
   entry: ['babel-polyfill', './src/index.js'],
+  output: {
+    path: path.resolve(__dirname, 'build'), // change this
+    publicPath: '/',
+    filename: 'bundle.js'
+  },
+  devServer: {
+    contentBase: "./build",
+    hot: true
+  },
   module: {
     rules: [
       {
@@ -17,12 +27,8 @@ module.exports = {
   },
   plugins: [
     new HtmlWebPackPlugin({
-      template: "./src/index.html",
-      filename: "./index.html"
+      template: path.resolve('./src/index.html'),
     }),
     new webpack.HotModuleReplacementPlugin()
-  ],
-  devServer: {
-    hot: true
-  }
+  ]
 };
