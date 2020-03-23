@@ -7,8 +7,8 @@ export default (props) => {
             <img 
                 src="https://ps.w.org/ethereum-wallet/assets/icon-256x256.png?rev=1945165" 
                 alt="ethereum"
-                width="128px" 
-                height="128px"
+                width="128" 
+                height="128"
             /> 
         </div>
             <div className="col-sm-8" id="title">

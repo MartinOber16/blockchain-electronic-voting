@@ -88,6 +88,19 @@ export default (props) => {
                     </ol>
                     <br />
                 </div>
+                <hr />
+                <br />
+                <div className="text-left">
+                    <h4>Documentación</h4>
+                </div>
+                <div className="text-justify">
+                    <ul>
+                        <li><a href="https://github.com/MartinOber16/blockchain-electronic-voting/blob/master/ManualUsuario.md" target="_blank" >Manual del usuario</a></li>
+                        <li><a href="https://github.com/MartinOber16/blockchain-electronic-voting/blob/master/ManualAdministrador.md" target="_blank" >Manual del administrador</a></li>
+                        <li><a href="https://github.com/MartinOber16/blockchain-electronic-voting/blob/master/DocumentacionTecnica.md" target="_blank" >Documentación tecnica</a></li>
+                    </ul>
+                    <br />
+                </div>
                 <br />
             </div>
 }
