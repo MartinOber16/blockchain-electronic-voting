@@ -95,9 +95,9 @@ export default (props) => {
                 </div>
                 <div className="text-justify">
                     <ul>
-                        <li><a href="https://github.com/MartinOber16/blockchain-electronic-voting/blob/master/Docs/ManualUsuario.md" target="_blank" >Manual del usuario</a></li>
-                        <li><a href="https://github.com/MartinOber16/blockchain-electronic-voting/blob/master/Docs/ManualAdministrador.md" target="_blank" >Manual del administrador</a></li>
-                        <li><a href="https://github.com/MartinOber16/blockchain-electronic-voting/blob/master/Docs/DocumentacionTecnica.md" target="_blank" >Documentación tecnica</a></li>
+                        <li><a href="https://drive.google.com/file/d/1TWH3cQScuSqbM6Mq4MzalNCJI1k-7TEi/view?usp=sharing" target="_blank" >Manual del usuario</a></li>
+                        <li><a href="https://drive.google.com/file/d/1886a7bXW6XDKiiDiqnd_Qw3uj3wF_-TR/view?usp=sharing" target="_blank" >Manual del administrador</a></li>
+                        <li><a href="https://github.com/MartinOber16/blockchain-electronic-voting/blob/master/README.md" target="_blank" >Documentación tecnica</a></li>
                     </ul>
                     <br />
                 </div>
