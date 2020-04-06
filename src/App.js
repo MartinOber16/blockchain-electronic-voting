@@ -22,6 +22,9 @@ import swal from 'sweetalert';
 // https://cryptozombies.io/
 // https://infura.io/   
 
+// TODO: Validar que para ver los resultados haya votado y la elección haya finalizado (no activa).
+
+
 // Funcion para convertir de weis a ethers
 const converter = (web3) => {
     return (value) => {
