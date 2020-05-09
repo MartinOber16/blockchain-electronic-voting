@@ -43,25 +43,27 @@ export class CandidateList extends Component {
         swal(<div>
                 <h3>{candidate.name}</h3>
                 <hr/>
+                <p>{candidate.description}</p>
+                <hr/>
                 <br/>
                 <div className="form-group row">
                     <div className="col-sm-2"></div>
-                    <label className="col-sm-2 control-label text-left"><strong>Número:</strong></label>
-                    <div className="col-sm-4">
+                    <label className="col-sm-4 control-label text-left"><strong>ID Candidato:</strong></label>
+                    <div className="col-sm-2">
                         <p className="form-control-static">{candidate.id}</p>
                     </div>
                 </div>
                 <div className="form-group row">
                     <div className="col-sm-2"></div>
-                    <label className="col-sm-2 control-label text-left"><strong>Elección:</strong></label>
-                    <div className="col-sm-4">
+                    <label className="col-sm-4 control-label text-left"><strong>ID Elección:</strong></label>
+                    <div className="col-sm-2">
                         <p className="form-control-static">{candidate.election}</p>
                     </div>
                 </div>
                 <div className="form-group row">
                     <div className="col-sm-2"></div>
-                    <label className="col-sm-2 control-label text-left"><strong>Votos:</strong></label>
-                    <div className="col-sm-4">
+                    <label className="col-sm-4 control-label text-left"><strong>Votos:</strong></label>
+                    <div className="col-sm-2">
                         <p className="form-control-static">{candidate.voteCount}</p>
                     </div>
                 </div>

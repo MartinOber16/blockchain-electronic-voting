@@ -17,13 +17,14 @@ const VoterForm = (props) => {
         initialValues: {
             idElectionVoter: 0,
             voterAddress: "",
-            voterName: "",
+            voterIdentification: "",
+            voterDescription: ""
         },
         onSubmit: values => {
             if(values.idElectionVoter > 0) {
                 if(values.voterAddress != "") {
-                    if(values.voterName != "") {
-                        props.BEVService.addVoter(values.idElectionVoter, values.voterAddress, values.voterName, props.account).then((receipt) => {
+                    if(values.voterIdentification != "") {
+                        props.BEVService.addVoter(values.idElectionVoter, values.voterAddress, values.voterIdentification, values.voterDescription, props.account).then((receipt) => {
                             if(receipt.status == okCode)
                                 swal("Transacción realizada correctamente!", receipt.data.tx, "success");
                             else
@@ -31,11 +32,12 @@ const VoterForm = (props) => {
                         });
                         values.idElectionVoter = 0;
                         values.voterAddress = "";
-                        values.voterName = "";
+                        values.voterIdentification = "";
+                        values.voterDescription = "";
                         $('#voterModal').modal('hide');
                     }
                     else
-                        swal("Error!","Debe ingresar un nombre para el votante.", "error");
+                        swal("Error!","Debe ingresar una identificación para el votante.", "error");
 
                 }
                 else
@@ -84,13 +86,23 @@ const VoterForm = (props) => {
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="voterName">Nombre del Votante</label>
-                            <input className="form-control" placeholder="Enter name"
-                                id="voterName"
-                                name="voterName"
+                            <label htmlFor="voterIdentification">Identificación personal</label>
+                            <input className="form-control" placeholder="Enter personal identification"
+                                id="voterIdentification"
+                                name="voterIdentification"
                                 type="text"
                                 onChange={formik.handleChange}
-                                value={formik.values.voterName}
+                                value={formik.values.voterIdentification}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="voterDescription">Descripción</label>
+                            <input className="form-control" placeholder="Enter description"
+                                id="voterDescription"
+                                name="voterDescription"
+                                type="text"
+                                onChange={formik.handleChange}
+                                value={formik.values.voterDescription}
                             />
                         </div>
                     <br />

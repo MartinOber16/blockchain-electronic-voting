@@ -61,32 +61,34 @@ export class ElectionList extends Component {
         swal(<div>
                 <h3>{election.name}</h3>
                 <hr/>
+                <p>{election.description}</p>
+                <hr/>
                 <br/>
                 <div className="form-group row">
-                    <div className="col-sm-2"></div>
-                    <label className="col-sm-2 control-label text-left"><strong>Número:</strong></label>
-                    <div className="col-sm-4">
+                    <div className="col-sm-1"></div>
+                    <label className="col-sm-5 control-label text-left"><strong>ID Elección:</strong></label>
+                    <div className="col-sm-2">
                         <p className="form-control-static">{election.id}</p>
                     </div>
                 </div>
                 <div className="form-group row">
-                    <div className="col-sm-2"></div>
-                    <label className="col-sm-2 control-label text-left"><strong>Activa:</strong></label>
-                    <div className="col-sm-4">
+                    <div className="col-sm-1"></div>
+                    <label className="col-sm-5 control-label text-left"><strong>Votación Activa:</strong></label>
+                    <div className="col-sm-2">
                         <p className="form-control-static">{this.renderBoolean(election.active)}</p>
                     </div>
                 </div>
                 <div className="form-group row">
-                    <div className="col-sm-2"></div>
-                    <label className="col-sm-2 control-label text-left"><strong>Cadidatos:</strong></label>
-                    <div className="col-sm-4">
+                    <div className="col-sm-1"></div>
+                    <label className="col-sm-5 control-label text-left"><strong>Nro. de Cadidatos:</strong></label>
+                    <div className="col-sm-2">
                         <p className="form-control-static">{election.candidatesCount}</p>
                     </div>
                 </div>
                 <div className="form-group row">
-                    <div className="col-sm-2"></div>
-                    <label className="col-sm-2 control-label text-left"><strong>Votantes:</strong></label>
-                    <div className="col-sm-4">
+                    <div className="col-sm-1"></div>
+                    <label className="col-sm-5 control-label text-left"><strong>Nro. de Votantes:</strong></label>
+                    <div className="col-sm-2">
                         <p className="form-control-static">{election.votersCount}</p>
                     </div>
                 </div>

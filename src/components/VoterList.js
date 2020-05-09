@@ -50,6 +50,8 @@ export class VoterList extends Component {
         swal(<div>
                 <h3>{voter.name}</h3>
                 <hr/>
+                <p>{voter.description}</p>
+                <hr/>
                 <br/>
                 <div className="form-group row">
                     <div className="col-sm-1"></div>
@@ -60,15 +62,15 @@ export class VoterList extends Component {
                 </div>
                 <div className="form-group row">
                     <div className="col-sm-1"></div>
-                    <label className="col-sm-2 control-label text-left"><strong>Elección:</strong></label>
-                    <div className="col-sm-4">
+                    <label className="col-sm-5 control-label text-left"><strong>ID Elección:</strong></label>
+                    <div className="col-sm-2">
                         <p className="form-control-static">{voter.election}</p>
                     </div>
                 </div>
                 <div className="form-group row">
                     <div className="col-sm-1"></div>
-                    <label className="col-sm-2 control-label text-left"><strong>Voto:</strong></label>
-                    <div className="col-sm-4">
+                    <label className="col-sm-5 control-label text-left"><strong>Ya Voto:</strong></label>
+                    <div className="col-sm-2">
                         <p className="form-control-static">{this.renderBoolean(voter.voted)}</p>
                     </div>
                 </div>
@@ -79,7 +81,7 @@ export class VoterList extends Component {
     // Genero los registros con los datos de los votantes
     renderTableDataVoters() {
         return this.props.state.voters.map((voter, index) => {
-        const { election, address, name, voted } = voter
+        const { election, address, name, description, voted } = voter
         return (
             <tr key={index}>
                 <td className="text-center">{election}</td>

@@ -16,12 +16,13 @@ const CandidateForm = (props) => {
     const formik = useFormik({
         initialValues: {
             idElectionCandidate: 0,
-            candidateName: ""
+            candidateName: "",
+            candidateProposal: ""
         },
         onSubmit: values => {    
             if(values.idElectionCandidate > 0) {
                 if(values.candidateName != "") {
-                    props.BEVService.addCandidate(values.idElectionCandidate, values.candidateName, props.account).then((receipt) => {
+                    props.BEVService.addCandidate(values.idElectionCandidate, values.candidateName, values.candidateProposal, props.account).then((receipt) => {
                         if(receipt.status == okCode)
                             swal("Transacción realizada correctamente!", receipt.data.tx, "success");
                         else
@@ -29,6 +30,7 @@ const CandidateForm = (props) => {
                     });
                     values.idElectionCandidate = 0;
                     values.candidateName = "";
+                    values.candidateProposal = "";
                     $('#candidateModal').modal('hide');
                 }
                 else
@@ -74,6 +76,16 @@ const CandidateForm = (props) => {
                                 type="text"
                                 onChange={formik.handleChange}
                                 value={formik.values.candidateName}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="candidateProposal">Propuesta del candidato</label>
+                            <input className="form-control" placeholder="Enter proposal"
+                                id="candidateProposal"
+                                name="candidateProposal"
+                                type="text"
+                                onChange={formik.handleChange}
+                                value={formik.values.candidateProposal}
                             />
                         </div>
                         <br />

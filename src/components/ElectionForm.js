@@ -8,19 +8,21 @@ const ElectionForm = (props) => {
     const formik = useFormik({
         initialValues: {
             electionName: "",
+            electionDescription: "",
             valueElection: 1
         },
         onSubmit: values => {      
             if(values.electionName != "") {
                 if(values.valueElection > 0) {
                     let amount = props.web3.utils.toWei(values.valueElection.toString(), 'ether');
-                    props.BEVService.addElection(values.electionName, props.account, amount).then((receipt) => {
+                    props.BEVService.addElection(values.electionName, values.electionDescription, props.account, amount).then((receipt) => {
                         if(receipt.status == okCode)
                             swal("Transacción realizada correctamente!", receipt.data.tx, "success");
                         else
                             swal("Error al realizar la transacción!", receipt.data, "error");                
                     });
                     values.electionName = "";
+                    values.electionDescription = "";
                     values.valueElection = 1;
                     $('#electionModal').modal('hide');
                 }
@@ -52,6 +54,16 @@ const ElectionForm = (props) => {
                                 type="text"
                                 onChange={formik.handleChange}
                                 value={formik.values.electionName}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="electionDescription">Descripción de la Elección</label>
+                            <input className="form-control" placeholder="Enter description"
+                                id="electionDescription"
+                                name="electionDescription"
+                                type="text"
+                                onChange={formik.handleChange}
+                                value={formik.values.electionDescription}
                             />
                         </div>
                         <div className="form-group">

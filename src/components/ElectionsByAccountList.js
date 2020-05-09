@@ -110,7 +110,7 @@ export class ElectionsByAccountList extends Component {
     renderTableDataElectionsByAccount () {
         if(this.props.state.conected) {
             return this.props.state.electionsByAccount.map((election) => {
-            const { id, name, active, candidatesCount, votersCount, yaVoto } = election
+            const { id, name, description, active, candidatesCount, votersCount, yaVoto } = election
             return (
                 <tr key={id}>
                     <td className="text-center">{id}</td>
@@ -123,8 +123,8 @@ export class ElectionsByAccountList extends Component {
                         <button 
                             className="btn btn-primary"                                                         
                             onClick={
-                                    async () => {                                        
-                                        if(yaVoto != "false") {
+                                    async () => {                       
+                                        if(yaVoto != "false" && active == "false") {
                                             let result = await this.getResultElection(id);
                                             if(result.status == okCode)
                                                 this.candidateWinDisplay(result.data);
@@ -133,7 +133,7 @@ export class ElectionsByAccountList extends Component {
                                             
                                         }  
                                         else
-                                            swal("Error al realizar la transacción!", "Aun no ha emitido su voto.", "error");
+                                            swal("Error al realizar la transacción!", "Aun no ha emitido su voto o el periodo de votación esta activo.", "error");
                                         
                                 }
                             } 
@@ -144,12 +144,12 @@ export class ElectionsByAccountList extends Component {
                             className="btn btn-info"                                                         
                             onClick={
                                     async () => {
-                                        if(yaVoto != "false") {
+                                        if(yaVoto != "false" && active == "false") {
                                             let result = await this.getDetailsByElection(id);
                                             this.electionDetailsDisplay(result);
                                         }
                                         else
-                                            swal("Error al realizar la transacción!", "Aun no ha emitido su voto.", "error");
+                                            swal("Error al realizar la transacción!", "Aun no ha emitido su voto o el periodo de votación esta activo.", "error");
                                 }
                             } 
                             type="button"

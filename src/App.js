@@ -16,14 +16,10 @@ import Soporte from "./components/Soporte";
 import { ToastContainer } from "react-toastr";
 import swal from 'sweetalert';
 
-// MetaMask: https://docs.metamask.io/guide/getting-started.html#basic-considerations
-// Hex to ASCII Text Converter: https://www.rapidtables.com/convert/number/hex-to-ascii.html
-// https://karl.tech/learning-solidity-part-2-voting/
-// https://cryptozombies.io/
-// https://infura.io/   
-
+// TODO: Agregar la descripción de la elección y de los candidatos en formulario de votación.
 // TODO: Validar que para ver los resultados haya votado y la elección haya finalizado (no activa).
-
+// TODO: Transferencias entre cuentas y al contrato.
+// TODO: Error con usuario que no es administrador. No afecta a la funcionalidad.
 
 // Funcion para convertir de weis a ethers
 const converter = (web3) => {
