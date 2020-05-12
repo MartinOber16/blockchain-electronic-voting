@@ -91,7 +91,7 @@ Esta aplicación fue desarrollada como una propuesta de sistema para la implemen
 
 
 ## Autor
-** Martin Obermeier. **  
+**Martin Obermeier.**  
 *martin.obermeier@gmail.com*
 
-** Fecha de actualización: ** 12/05/2020 14:00.
+**Fecha de actualización:** 12/05/2020 14:00.
