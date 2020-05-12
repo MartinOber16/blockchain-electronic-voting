@@ -4,8 +4,10 @@
 
 ## Introducción
 BEVDApp es una aplicación web de votación electrónica implementada con la tecnología de Blockchain. El front-end esta desarrollado en React, mientras que el back-end se encuentra implementado en un Smart Contract de Ethereum desarrollado en lenguaje Solidity. 
-Esta aplicación fue desarrollada como una propuesta de sistema para la implementación de Blockchain para un proyecto de tesis de la universidad de Morón.
-
+Esta aplicación fue desarrollada como una propuesta de sistema para la implementación de Blockchain para un proyecto de tesis de la universidad de Morón.  
+Actualmente, la aplicación se encuentra publicada en https://bevdapp.surge.sh/.  
+  
+  
 ## Preparar el ambiente para desarrollo
 
 1. Descargar e instalar [Node JS y NPM](https://nodejs.org/).
@@ -53,15 +55,18 @@ Esta aplicación fue desarrollada como una propuesta de sistema para la implemen
 12. En la consola, comprobar si web3 esta disponible.
     ~~~
     web3
-    ~~~
+    ~~~  
+
 
 ## Implementación del sistema en Ethereum
 
 1. Crear una cuenta en [Infura.io](https://infura.io) para poder conectarse a la red sin tener que implementar un nodo Ethereum.
     
 2. Configurar los datos de conexión a infura.io en el archivo "truffle-config.js".
+    ~~~
     const mnemonic = ['Frase para recuperación de la cuenta'];
     const infuraAPI = ['api de infura']; // 
+    ~~~
 
 3. Desplegar el Smart Contract en la red de testeo Rinkeby:
     ~~~
@@ -82,16 +87,17 @@ Esta aplicación fue desarrollada como una propuesta de sistema para la implemen
     ~~~
     surge build
     ~~~  
-  
+
 
 ## Utilidades
 
 * Se pueden obtener Ethers en el ambiente testeo en el sitio de [Rinkeby Authenticated Faucet](https://faucet.rinkeby.io/).  
 
 * Para ver las transacciones y código del Smart Contract en la red se puede utilizar el explorador [EtherScan.io](https://rinkeby.etherscan.io/).  
+  
 
 ## Autor
 **Martin Obermeier**  
-*martin.obermeier@gmail.com*
+*martin.obermeier@gmail.com*  
 
 **Fecha de actualización:** 12/05/2020 14:00
