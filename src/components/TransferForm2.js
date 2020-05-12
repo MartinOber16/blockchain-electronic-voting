@@ -7,10 +7,10 @@ import swal from 'sweetalert';
 const TransferForm = (props) => {
     const formik = useFormik({
         initialValues: {
-            amount: 0
+            amount2: 0
         },
         onSubmit: values => {
-                let amount = props.web3.utils.toWei(values.amount.toString(), 'ether');
+                let amount = props.web3.utils.toWei(values.amount2.toString(), 'ether');
                 if(amount > 0) {
                     props.BEVService.transferToContract(amount, props.account).then((receipt) => {
                         if(receipt.status == okCode)
@@ -19,7 +19,7 @@ const TransferForm = (props) => {
                             swal("Error al realizar la transacción!", receipt.data, "error"); 
                     });
 
-                    values.amount = 0
+                    values.amount2 = 0
                     $('#transferModal2').modal('hide');
                 }
                 else
@@ -40,13 +40,13 @@ const TransferForm = (props) => {
                 <div className="modal-body">
                     <form onSubmit={formik.handleSubmit}>
                         <div className="form-group">
-                            <label htmlFor="amount">Cantidad (ethers)</label>
+                            <label htmlFor="amount2">Cantidad (ethers)</label>
                             <input className="form-control" placeholder="Enter value"
-                                id="amount"
-                                name="amount"
+                                id="amount2"
+                                name="amount2"
                                 type="text"
                                 onChange={formik.handleChange}
-                                value={formik.values.amount}
+                                value={formik.values.amount2}
                             />
                         </div>
                         <br />

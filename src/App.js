@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import getWeb3 from "../services/getWeb3";
 import BEVContract from "../services/bev";
 import { BEVService } from "../services/bevService";
-import {okCode, errorCode , networkName} from "../services/GlobalVariables";
+import {okCode} from "../services/GlobalVariables";
 import Header from "./components/Header";
 import Menu from "./components/Menu";
 import { Information } from "./components/Information";
@@ -40,8 +40,7 @@ export class App extends Component {
             contract: 0,
             elections: [],
             electionsByAccount: [], 
-            name: undefined,  
-            network: undefined,    
+            name: undefined,    
             totalElections: 0,
             voters: []
         };
@@ -112,8 +111,7 @@ export class App extends Component {
             this.setState({
                 conected: this.web3.currentProvider.isConnected(),
                 contractBalance: this.toEther(contractInfo.balance),
-                contract: contractInfo.address,                
-                network: networkName,        
+                contract: contractInfo.address,                        
                 totalElections: contractInfo.totalElections
             });
         }

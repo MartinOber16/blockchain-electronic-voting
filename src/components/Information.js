@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import {smartContractVersion, appVersion, networkName} from "../../services/GlobalVariables";
 
 export class Information extends Component {
 
@@ -33,11 +34,13 @@ export class Information extends Component {
                     <div className="col-sm-1"></div>
                     <div className="card bg-light text-dark col-sm-10" id="networkData">
                         <div className="card-body">
-                            <h5 className="card-title">Información de la red
+                            <h5 className="card-title">Información de la aplicación
                                 <div className="float-right">{this.isConectedInfo()}</div>
                             </h5>    
-                            <hr />                         
-                            <div className="card-text"><b>Nombre de la red:</b> {this.props.state.network}</div>
+                            <hr />    
+                            <div className="card-text"><b>Versión de la aplicación:</b> {appVersion}</div>
+                            <div className="card-text"><b>Versión del contrato:</b> {smartContractVersion}</div>                     
+                            <div className="card-text"><b>Nombre de la red:</b> {networkName}</div>
                             <div className="card-text"><b>Dirección del contrato:</b> {this.props.state.contract}</div>
                             <div className="card-text"><b>Balance del contrato:</b> {this.props.state.contractBalance} eth</div>
                         </div>
