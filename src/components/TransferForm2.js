@@ -7,47 +7,29 @@ import swal from 'sweetalert';
 const TransferForm = (props) => {
     const formik = useFormik({
         initialValues: {
-            toAddress: "",
             amount: 0
         },
         onSubmit: values => {
-            if(values.toAddress != "") {
                 let amount = props.web3.utils.toWei(values.amount.toString(), 'ether');
                 if(amount > 0) {
-                    let contractBalance = 0; 
-                    props.BEVService.getContractBalance().then((receipt) => {
-                        contractBalance = receipt;
-                                                
-                        if(amount < contractBalance) {
-                            props.BEVService.transferFromContract(values.toAddress, amount, props.account).then((receipt) => {
-                                if(receipt.status == okCode)
-                                    swal("Transacción realizada correctamente!", receipt.data.tx, "success");
-                                else
-                                    swal("Error al realizar la transacción!", receipt.data, "error"); 
-                            });
-                            
-                            values.toAddress = "",
-                            values.amount = 0
-                            $('#transferModal').modal('hide');
-                        }
+                    props.BEVService.transferToContract(amount, props.account).then((receipt) => {
+                        if(receipt.status == okCode)
+                            swal("Transacción realizada correctamente!", receipt.data.tx, "success");
                         else
-                            swal("Error!", "No hay saldo suficiente para la transferencia.", "error"); 
-                        
+                            swal("Error al realizar la transacción!", receipt.data, "error"); 
                     });
+
+                    values.amount = 0
+                    $('#transferModal2').modal('hide');
                 }
                 else
                     swal("Error!", "Debe ingresar la cantidad de etheres a transferir.", "error");
-
-            }
-            else
-                swal("Error!", "Debe ingresar una cuenta valida.", "error");
-
-        },
+            },
     });
     return (<div className="modal-dialog">
             <div className="modal-content">
                 <div className="modal-header">
-                    <h4 className="modal-title">Transferencia a una cuenta</h4>
+                    <h4 className="modal-title">Transferencia al contrato</h4>
                     <button                                                     
                         className="close" 
                         data-dismiss="modal"
@@ -57,16 +39,6 @@ const TransferForm = (props) => {
                 </div>                                        
                 <div className="modal-body">
                     <form onSubmit={formik.handleSubmit}>
-                        <div className="form-group">
-                            <label htmlFor="toAddress">Cuenta destino</label>
-                            <input className="form-control" placeholder="Enter address"
-                                id="toAddress"
-                                name="toAddress"
-                                type="text"
-                                onChange={formik.handleChange}
-                                value={formik.values.toAddress}
-                            />
-                        </div>
                         <div className="form-group">
                             <label htmlFor="amount">Cantidad (ethers)</label>
                             <input className="form-control" placeholder="Enter value"

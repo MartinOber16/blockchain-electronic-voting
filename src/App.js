@@ -16,9 +16,8 @@ import Soporte from "./components/Soporte";
 import { ToastContainer } from "react-toastr";
 import swal from 'sweetalert';
 
-// TODO: Agregar la descripción de la elección y de los candidatos en formulario de votación.
-// TODO: Validar que para ver los resultados haya votado y la elección haya finalizado (no activa).
-// TODO: Transferencias entre cuentas y al contrato.
+// TODO: Mejorar la presentación de los resultados.
+// TODO: Manejar errores de validación. Por ejemplo, no se puede eliminar una elección si tiene datos.
 // TODO: Error con usuario que no es administrador. No afecta a la funcionalidad.
 
 // Funcion para convertir de weis a ethers

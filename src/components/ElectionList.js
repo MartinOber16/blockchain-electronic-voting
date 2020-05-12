@@ -32,12 +32,8 @@ export class ElectionList extends Component {
     }
 
     // Activar una elección
-    async activeElection(id, active) {
-        let act = false
-        if(active == "false")
-            act = true;
-
-        await this.props.BEVService.activeElection(id, act, this.props.state.account).then((receipt) => {
+    async activeElection(id) {
+        await this.props.BEVService.activeElection(id, this.props.state.account).then((receipt) => {
             this.notify(receipt);
         });
     }
@@ -49,11 +45,14 @@ export class ElectionList extends Component {
         });
     }
 
-    renderBoolean(value) {
-        if(value == "true")
-            return "Si";
+    renderEstado(value) {
+        if(value == 0)
+            return "Nueva";
         else
-            return "No";
+            if(value == 1)
+                return "Iniciada";
+            else
+                return "Finalizada";
     }
 
     // Información de la elección
@@ -73,9 +72,9 @@ export class ElectionList extends Component {
                 </div>
                 <div className="form-group row">
                     <div className="col-sm-1"></div>
-                    <label className="col-sm-5 control-label text-left"><strong>Votación Activa:</strong></label>
+                    <label className="col-sm-5 control-label text-left"><strong>Estado:</strong></label>
                     <div className="col-sm-2">
-                        <p className="form-control-static">{this.renderBoolean(election.active)}</p>
+                        <p className="form-control-static">{this.renderEstado(election.estado)}</p>
                     </div>
                 </div>
                 <div className="form-group row">
@@ -99,12 +98,12 @@ export class ElectionList extends Component {
     // Genero los registros con los datos de las elecciones
     renderTableDataElections() {                      
         return this.props.state.elections.map((election) => {
-            const { id, name, active, candidatesCount, votersCount } = election
+            const { id, name, estado, candidatesCount, votersCount } = election
             return (
                 <tr key={id}>
                     <td className="text-center">{id}</td>
                     <td>{name}</td>
-                    <td>{this.renderBoolean(active)}</td>
+                    <td>{this.renderEstado(estado)}</td>
                     <td className="text-center">{candidatesCount}</td>
                     <td className="text-center">{votersCount}</td>
                     <td>
@@ -121,7 +120,13 @@ export class ElectionList extends Component {
                         </button>
                         <button 
                             className="btn btn-warning"
-                            onClick={ async () => { await this.activeElection(id, active); } }
+                            onClick={ async () => { 
+                                if(estado < 2)
+                                    await this.activeElection(id);
+                                else
+                                    swal("Error al realizar la transacción!", "La elección ya esta finalizada.", "error");
+                                }
+                            }
                             type="button">
                             <FontAwesomeIcon icon={faCheckCircle} />
                         </button> 
@@ -146,7 +151,7 @@ export class ElectionList extends Component {
                         <tr>
                             <th>Número</th>
                             <th>Nombre</th>
-                            <th>Activa</th>
+                            <th>Estado</th>
                             <th>Candidatos</th>
                             <th>Votantes</th>
                             <th>Acciones</th>

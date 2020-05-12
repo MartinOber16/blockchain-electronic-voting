@@ -59,11 +59,11 @@ contract('BEV', accounts => {
     assert(total>0, "No se agrego la elección");
 
     log('Caso 06: Obtener los detalles de una elección');
-    var id, name, active, candidatesCount, votersCount;
+    var id, name, estado, candidatesCount, votersCount;
     await instance.getElection(total).then((receipt) => {      
-      [id, name, active, candidatesCount, votersCount] = receipt; 
+      [id, name, estado, candidatesCount, votersCount] = receipt; 
     });
-    logResult(id + ", " + name + ", " + active + ", " + candidatesCount + ", " + votersCount);
+    logResult(id + ", " + name + ", " + estado + ", " + candidatesCount + ", " + votersCount);
     assert(name === "Elección 1", "No se obtuvo el detalle de la elección.");
 
     log('Caso 07: Activar una elección');
@@ -71,10 +71,10 @@ contract('BEV', accounts => {
       logResult(receipt.tx);
     });
     await instance.getElection(total).then((receipt) => {      
-      [id, name, active, candidatesCount, votersCount] = receipt; 
+      [id, name, estado, candidatesCount, votersCount] = receipt; 
     });
-    logResult(id + ", " + name + ", " + active + ", " + candidatesCount + ", " + votersCount);
-    assert(active, "No se puedo activar la elección.");
+    logResult(id + ", " + name + ", " + estado + ", " + candidatesCount + ", " + votersCount);
+    assert(estado > 0, "No se puedo activar la elección.");
 
     log('Caso 08: Eliminar una elección');
     await instance.deleteElection(total).then((receipt) => {

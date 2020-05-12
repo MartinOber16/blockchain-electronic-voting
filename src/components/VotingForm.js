@@ -7,14 +7,26 @@ import swal from 'sweetalert';
 const VotingForm = (props) => {
     const renderSelectElections = () => {
         return props.elections.map((election) => {
-            const { id, name, active} = election
-            if(active != "false") {
+            const { id, name, estado} = election
+            if(estado == 1) {
                 return (
                     <option key={id} value={id}>{name}</option>
                 )
             }
         })
     }
+
+    const renderElectionDescription = (e) => {
+        return props.elections.map((election) => {
+            const {id, description} = election
+            if(id == e){
+                return (
+                    <p key={id}>{description}</p>
+                )
+            }
+        })
+    }
+
     const renderSelectCandidates = (e) => {
         return props.candidates.map((candidate) => {
             const { election, id, name} = candidate
@@ -25,10 +37,24 @@ const VotingForm = (props) => {
             }
         })
     }
+
+    const renderCandidateDescription = (e, c) => {
+        return props.candidates.map((candidate) => {
+            const {election, id, description} = candidate
+            if(election == e && id == c){
+                return (
+                    <p key={id}>{description}</p>
+                )
+            }
+        })
+    }
+
     const formik = useFormik({
         initialValues: {
             electionIdVote: "",
+            electionDescription: "",
             candidateVote: "",
+            candidateDescription: ""
         },
         onSubmit: values => {
             if(values.electionIdVote != "") {
@@ -78,6 +104,10 @@ const VotingForm = (props) => {
                             </select>
                         </div>
                         <div className="form-group">
+                            {renderElectionDescription(formik.values.electionIdVote)}
+                        </div>
+                        <br />
+                        <div className="form-group">
                             <label htmlFor="candidateVote">Candidato</label>
                             <select 
                                 className="form-control" 
@@ -89,6 +119,9 @@ const VotingForm = (props) => {
                                 <option key="0" value="0">Seleccione candidato</option>
                                 {renderSelectCandidates(formik.values.electionIdVote)}
                             </select>
+                        </div>
+                        <div className="form-group">
+                            {renderCandidateDescription(formik.values.electionIdVote, formik.values.candidateVote)}
                         </div>
                         <br />
                         <div className="modal-footer">

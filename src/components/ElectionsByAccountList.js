@@ -41,6 +41,16 @@ export class ElectionsByAccountList extends Component {
             return "No";
     }
 
+    renderEstado(value) {
+        if(value == 0)
+            return "Nueva";
+        else
+            if(value == 1)
+                return "Iniciada";
+            else
+                return "Finalizada";
+    }
+
     // Información del candidato
     candidateWinDisplay(candidate) {
         swal(<div>
@@ -70,7 +80,7 @@ export class ElectionsByAccountList extends Component {
         let electionDetails = result.map((candidate ) => {
             const {id, name, voteCount } = candidate
             totalVotos += voteCount;
-            return (<tr key={id}><td>{id}</td><td className="text-left">&nbsp;{name}</td><td className="text-right">{voteCount}</td></tr>);
+            return (<tr key={id}><td>{id}</td><td>&nbsp;</td><td className="text-left">&nbsp;{name}</td><td>&nbsp;</td><td className="text-right">{voteCount}</td></tr>);
         });
 
         swal(<div>
@@ -83,8 +93,10 @@ export class ElectionsByAccountList extends Component {
                         <table>
                             <thead className="thead-dark">
                                 <tr>
-                                    <th>Número</th>                                
+                                    <th>Número</th>
+                                    <th>&nbsp;</th>                                
                                     <th>Nombre</th>
+                                    <th>&nbsp;</th>
                                     <th>Votos</th>
                                 </tr>
                             </thead>
@@ -110,12 +122,12 @@ export class ElectionsByAccountList extends Component {
     renderTableDataElectionsByAccount () {
         if(this.props.state.conected) {
             return this.props.state.electionsByAccount.map((election) => {
-            const { id, name, description, active, candidatesCount, votersCount, yaVoto } = election
+            const { id, name, description, estado, candidatesCount, votersCount, yaVoto } = election
             return (
                 <tr key={id}>
                     <td className="text-center">{id}</td>
                     <td>{name}</td>
-                    <td>{this.renderBoolean(active)}</td>
+                    <td>{this.renderEstado(estado)}</td>
                     <td className="text-center">{candidatesCount}</td>
                     <td className="text-center">{votersCount}</td>
                     <td>{this.renderBoolean(yaVoto)}</td>
@@ -124,7 +136,7 @@ export class ElectionsByAccountList extends Component {
                             className="btn btn-primary"                                                         
                             onClick={
                                     async () => {                       
-                                        if(yaVoto != "false" && active == "false") {
+                                        if(yaVoto == "true" && estado == 2) {
                                             let result = await this.getResultElection(id);
                                             if(result.status == okCode)
                                                 this.candidateWinDisplay(result.data);
@@ -144,7 +156,7 @@ export class ElectionsByAccountList extends Component {
                             className="btn btn-info"                                                         
                             onClick={
                                     async () => {
-                                        if(yaVoto != "false" && active == "false") {
+                                        if(yaVoto == "true" && estado == 2) {
                                             let result = await this.getDetailsByElection(id);
                                             this.electionDetailsDisplay(result);
                                         }
@@ -172,7 +184,7 @@ export class ElectionsByAccountList extends Component {
                     <tr>
                         <th>Número</th>
                         <th>Nombre</th>
-                        <th>Activa</th>
+                        <th>Estado</th>
                         <th>Candidatos</th>
                         <th>Votantes</th>
                         <th>Ya Voto</th>

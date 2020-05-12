@@ -24,7 +24,7 @@ contract BEV {
         uint id;
         string name;
         string description;
-        bool active; // Estado de la elección => activa = true
+        uint estado; // 0: "nueva", 1: "iniciada", 2: "finalizada"
         uint candidatesCount;// Almacenar el recuento de los candidatos
         uint votersCount; // Almacenar el recuento de los votantes
         uint candidatesIndex; // Indice de candidatos, ya que al eliminar no se borra el objeto
@@ -56,6 +56,8 @@ contract BEV {
     constructor () public {
         owner = msg.sender; // Quien publica el contrato es el dueño
         admins[msg.sender] = true; // Es administrador tambien
+        electionsCount = 0;
+        electionsIndex = 0;
     }
 
     // Agregar un administrador
@@ -75,20 +77,20 @@ contract BEV {
         require(msg.value > 0 ether, "addElection: No hay suficientes ethers.");
         electionsCount++;
         electionsIndex++;
-        elections[electionsIndex] = Election(electionsIndex, _name, _description, false, 0, 0, 0, 0);
+        elections[electionsIndex] = Election(electionsIndex, _name, _description, 0, 0, 0, 0, 0);
     }
 
     // Obtener detalles de una elección
-    function getElection(uint _idElection) public view returns(uint, string, string, bool, uint, uint) {
+    function getElection(uint _idElection) public view returns(uint, string, string, uint, uint, uint) {
         require(electionIsValid(_idElection), "getElection: Elección no valida");
         Election memory election = elections[_idElection];
-        return (election.id, election.name, election.description, election.active, election.candidatesCount, election.votersCount);
+        return (election.id, election.name, election.description, election.estado, election.candidatesCount, election.votersCount);
     }
 
     // Activar una elección
-    function activeElection(uint _idElection, bool _active) public isAdmin {
+    function activeElection(uint _idElection) public isAdmin {
         require(electionIsValid(_idElection), "activeElection: Elección no valida");
-        elections[_idElection].active = _active;
+        elections[_idElection].estado++;
     }
 
    // Eliminar una elección
@@ -120,6 +122,7 @@ contract BEV {
     // Agregar un candidato
     function addCandidate (uint _idElection, string _name, string _description) public isAdmin {
         require(electionIsValid(_idElection), "addCandidate: Elección no valida");
+        require(elections[_idElection].estado == 0, "addCandidate: Estado no valido para agregar candidato");
         elections[_idElection].candidatesCount++;
         elections[_idElection].candidatesIndex++;
         elections[_idElection].candidates[elections[_idElection].candidatesIndex] = Candidate(elections[_idElection].candidatesIndex, _name, _description, 0);
@@ -137,6 +140,7 @@ contract BEV {
     function deleteCandidate(uint _idElection, uint _idCandidate) public isAdmin {
         require(electionIsValid(_idElection), "deleteCandidate: Elección no valida");
         require(candidateIsValid(_idElection, _idCandidate), "deleteCandidate: Candidato no valido");
+        require(elections[_idElection].estado == 0, "deleteCandidate: Estado no valido para eliminar candidato");
         elections[_idElection].candidatesCount--;
         delete elections[_idElection].candidates[_idCandidate];
     }
@@ -164,6 +168,7 @@ contract BEV {
     // Agregar un votante
     function addVoter (uint _idElection, address _addr, string _name, string _description, uint _amount) public isAdmin {
         require(electionIsValid(_idElection), "addVoter: Elección no valida");
+        require(elections[_idElection].estado == 0, "addVoter: Estado no valido para agregar votante");
         elections[_idElection].votersCount++;
         elections[_idElection].votersIndex++;
         elections[_idElection].voters[_addr] = Voter(_name, _description, false);
@@ -197,6 +202,7 @@ contract BEV {
         require(electionIsValid(_idElection), "deleteVoter: Elección no valida");
         require(voterIsJoined(_idElection, _addr),"deleteVoter: Votante no valido");
         require(!voterHasVoted(_idElection, _addr), "deleteVoter: Votante ya voto");
+        require(elections[_idElection].estado == 0, "deleteVoter: Estado no valido para eliminar votante");
         elections[_idElection].joinedVoters[_addr] = false;
         delete elections[_idElection].voters[_addr];
 
@@ -230,6 +236,7 @@ contract BEV {
     function voting (uint _idElection, uint _idCandidate) public {
         require(electionIsValid(_idElection), "voting: Elección no valida"); // Requerir una elección válida
         // Exigir que sea un votante valido y que no haya votado antes
+        require(elections[_idElection].estado == 1, "voting: Estado no valido para votar");
         require(voterIsJoined(_idElection, msg.sender), "voting: Votante no valido");
         require(!voterHasVoted(_idElection, msg.sender), "voting: Votante ya voto");
         require(candidateIsValid(_idElection, _idCandidate), "voting: Candidato no valido"); // Requerir un candidato válido
@@ -248,6 +255,7 @@ contract BEV {
     // Resultado de la votación
     function getResultElection(uint _idElection) public view returns(uint) {
         require(electionIsValid(_idElection), "getResultElection: Elección no valida");
+        require(elections[_idElection].estado == 2, "getResultElection: Estado no valido para mostrar resultados");
         uint idGanadorActual = elections[_idElection].candidates[1].id;
         uint votosGanadorActual = elections[_idElection].candidates[1].voteCount;
         for(uint i = 2; i <= elections[_idElection].candidatesIndex; i++) {
@@ -271,9 +279,13 @@ contract BEV {
     }
 
     // Transferir los fondos del contrato
-    function transferFromContract(address _addr, uint amount) public isAdmin {
-        require(getContractBalance() > amount, "transferFromContract: No hay ethers suficientes");
-        _addr.transfer(amount);
+    function transferFromContract(address _addr, uint _amount) public isAdmin {
+        require(getContractBalance() > _amount, "transferFromContract: No hay ethers suficientes");
+        _addr.transfer(_amount);
+    }
+
+    function transferToContract() public isAdmin payable {
+        require(msg.value > 0 ether, "transferToContract: No hay suficientes ethers.");
     }
 
     // Obtener el balance del SmartContract

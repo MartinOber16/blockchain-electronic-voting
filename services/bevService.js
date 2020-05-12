@@ -78,7 +78,7 @@ export class BEVService {
             id: election[0].toNumber(),
             name: election[1],
             description: election[2],
-            active: election[3].toString(),
+            estado: election[3].toNumber(),
             candidatesCount: election[4].toNumber(),
             votersCount: election[5].toNumber()
         }
@@ -123,7 +123,7 @@ export class BEVService {
                             id: e[0].toNumber(),
                             name: e[1],
                             description: e[2],
-                            active: e[3].toString(),
+                            estado: e[3].toNumber(),
                             candidatesCount: e[4].toNumber(),
                             votersCount: e[5].toNumber(),
                             yaVoto: _yaVoto.toString()
@@ -177,9 +177,9 @@ export class BEVService {
             return this.response(errorCode, "No se pudo eliminar la elección.");
     }
 
-    async activeElection(id, activated, account) {
+    async activeElection(id, account) {
         let transactionInfo;
-        await this.contract.activeElection(id, activated, {from: account}).then((receipt) => {
+        await this.contract.activeElection(id, {from: account}).then((receipt) => {
             transactionInfo = receipt;
         });
 
@@ -421,6 +421,19 @@ export class BEVService {
     async transferFromContract(toAddress, amount, account) {
         let transactionInfo;
         await this.contract.transferFromContract(toAddress, amount, {from: account}).then((receipt) => {
+            transactionInfo = receipt;
+        });
+
+        if(transactionInfo != null)
+            return this.response(okCode, transactionInfo);
+        else
+            return this.response(errorCode, "No se pudo realizar la transferencia.");
+    }
+
+    // Transferencia a el contrato
+    async transferToContract(amount, account) {
+        let transactionInfo;
+        await this.contract.transferToContract({from: account, value: amount}).then((receipt) => {
             transactionInfo = receipt;
         });
 
