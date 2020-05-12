@@ -1,48 +1,97 @@
 # Blockchain Electronic Voting Descentralized App  - README
 
-**Proyecto de tesis para la universidad de Morón**
-
 <img src="http://introtocrypto.com/wp-content/uploads/2017/08/ether@2x.png" height="128" width="128">
 
-TODO: Actualizar información
+## Introducción
+BEVDApp es una aplicación web de votación electronica implementada con la tecnologia de Blockchain. El front-end esta desarrollado en React, mientras que el back-end se encuentra implementado en un Smart Contract de Ethereum desarrollado en lenguaje Solidity. 
+Esta aplicación fue desarrollada como una propuesta de sistema para la implementación de Blockchain para un proyecto de tesis de la universidad de Morón.
 
-Instalar node js y npm
+## Preparar el ambiente para desarrollo
 
-Instalar la extensión Solidity para VS code
+1. Descargar e instalar [Node JS y NPM](https://nodejs.org/).
+	
+2. Instalar la extensión [Solidity](https://marketplace.visualstudio.com/items?itemName=JuanBlanco.solidity) para VS code.
+	
+3. Descargar proyecto [BEVDApp](https://github.com/MartinOber16/blockchain-electronic-voting) de github.
 
-Bajar template (Aplicacion web React con truffle, web3, truffle contract)
+4. Instalar las dependencias del proyecto:
+    ~~~
+    npm install
+    ~~~
 
-npm install (instalar las dependencias del proyecto)
+5. Instalar complementos de truffle:
+	~~~
+    npm install truffle@4.1.15 -g --save-dev
+    npm install truffle-contract --save-dev
+    npm install truffle-hdwallet-provider@0.0.6 --save-dev
+    ~~~
 
-npm start (para comprobar si esta levantando la app correctamente)
+6. Descargar e iniciar la aplicación [Ganache](https://www.trufflesuite.com/ganache) para implementar una red blockchain de Ethereum localmente.
+	
+7. Desplegar el smart contract en la red local de Ganache:
+	~~~
+    truffle deploy --reset --network development
+    ~~~
 
-instalar truffle => sudo npm install truffle@4.1.15 -g
+8. Para ejecutar el script de test para ejecutar pruebas automaticas al Smart Contract:
+	~~~
+    truffle test
+	~~~
 
-truffle test
+9. Instalar la extensión [MetaMask](https://metamask.io) en el explorador.
+	
+10. Iniciar la aplicación BEVDApp:
+	~~~
+    npm start 
+	~~~
 
-npm start y comprobar si web3 esta disponible. para eso se instala MetaMask. Es un gestor de wallet, permite interactuar con applicaciones distribuidas desde el browser sin necesidad de ejecutar un nodo complero de ethereum
+11. Dar permisos para utilizar nuestras cuentas del wallet desde el navegador:
+    ~~~
+    ethereum.enable();
+	~~~
+    
+12. En la consola, comprobar si web3 esta disponible.
+	~~~
+    web3
+	~~~
 
-instalar MetaMask y Comprobar si funciona web3 en nuestra pagina
 
-dar permisos para utilizar nuestras cuentas del wallet desde el navegador
-ethereum.enable();
+## Implementación del sistema en Ethereum
 
-npm install truffle-contract
+1. Crear una cuenta en [Infura.io](https://infura.io) para poder conectarse a la red sin tener que implementar un nodo Ethereum.
+	
+2. Configurar los datos de conexión a infura.io en el archivo "truffle-config.js".
 
-Desplegar contrato
-truffle deploy --reset
+3. Desplegar el smart contract en la red de testeo Rinkeby:
+	~~~
+    truffle deploy --reset --network rinkeby
+    ~~~
 
-Crear una cuenta en infura para poder conectar a la red sin tener que configurar un nodo ethereum
+4. Comprobar la dirección donde fue desplegado el Smart Contract:
+	~~~
+    truffle networks
+    ~~~
 
-Instalar truffle-hdwallet
-install truffle-hdwallet-provider@0.0.6 --save-dev
+5. Compilar la aplicación para publicarla en un sitio web:
+	~~~
+    npm run build
+	~~~
 
-Desplegar el smart contract en la red
-truffle deploy --reset --network rinkeby
-truffle networks
+6. Publicar la aplicación en [Surge.sh](https://surge.sh/):  
+	~~~
+    surge build
+	~~~  
+  
 
-Implementar aplicacion en Surge
-npm run build
-surge build
+## Utilidades
 
-Obtener etheres desde Rinkeby Faucet
+* Se pueden obtener Ethers en el ambiente testeo en el sitio de [Rinkeby Authenticated Faucet](https://faucet.rinkeby.io/).  
+
+* Para ver las transacciones y código del Smart Contract en la red se puede utilizar el explorador [EtherScan.io](https://rinkeby.etherscan.io/).  
+
+
+## Autor
+** Martin Obermeier. **  
+*martin.obermeier@gmail.com*
+
+** Fecha de actualización: ** 12/05/2020 14:00.
