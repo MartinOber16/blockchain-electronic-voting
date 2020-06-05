@@ -18,7 +18,6 @@ import swal from 'sweetalert';
 
 // TODO: Mejorar la presentación de los resultados.
 // TODO: Manejar errores de validación. Por ejemplo, no se puede eliminar una elección si tiene datos.
-// TODO: Error con usuario que no es administrador. No afecta a la funcionalidad.
 
 // Funcion para convertir de weis a ethers
 const converter = (web3) => {
