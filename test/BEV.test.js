@@ -252,7 +252,4 @@ contract('BEV', accounts => {
     assert(balanceContract > balanceContract2, "Error al transferir fondos.");
   });
 
-
- // TODO: Casos de prueba para probar errores
-
 });

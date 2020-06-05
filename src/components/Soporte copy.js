@@ -1,5 +1,5 @@
 import React from "react";
-// TODO: Actualizar información de soporte
+
 export default (props) => {
     return <div>
                 <div className="text-left">
