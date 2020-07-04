@@ -9,7 +9,7 @@ const ElectionForm = (props) => {
         initialValues: {
             electionName: "",
             electionDescription: "",
-            valueElection: 1
+            valueElection: 0
         },
         onSubmit: values => {      
             if(values.electionName != "") {
@@ -67,7 +67,7 @@ const ElectionForm = (props) => {
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="valueElection">Costo de la elección (1 ether = 40 votantes aprox.)</label>
+                            <label htmlFor="valueElection">Costo de la elección (0,004 ether = 40 votantes aprox.)</label>
                             <input className="form-control" placeholder="Enter value"
                                 id="valueElection"
                                 name="valueElection"

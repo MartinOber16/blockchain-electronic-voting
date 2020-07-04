@@ -3,7 +3,7 @@ import React from "react";
 export default (props) => {
     return <div>
                 <div className="text-left">
-                    <h4>¿Qué beneficios trae el voto electronico sobre blockchain?</h4>
+                    <h4>¿Qué beneficios trae el voto electrónico sobre blockchain?</h4>
                 </div>
                 <div className="text-justify">
                     <br />
