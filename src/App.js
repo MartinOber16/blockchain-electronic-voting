@@ -56,10 +56,12 @@ export class App extends Component {
             var account = (await this.web3.eth.getAccounts())[0]; // Información del usuario actual
 
             // Metodo de metamask para actualizar cuando hay cambio de cuenta
-            this.web3.currentProvider.publicConfigStore.on('update', async function(event){
-                if(event.selectedAddress != null) {
+            //this.web3.currentProvider.publicConfigStore.on('update', async function(event){
+            ethereum.on('accountsChanged', async function (accounts) {
+                 console.log(accounts[0]);
+                if(accounts[0]!= null) {
                     this.setState({
-                        account: event.selectedAddress.toLowerCase()
+                        account: accounts[0].toLowerCase()
                     }, () => {
                         this.load();
                     });

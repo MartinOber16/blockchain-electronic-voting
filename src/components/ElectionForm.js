@@ -48,7 +48,7 @@ const ElectionForm = (props) => {
                     <form onSubmit={formik.handleSubmit}>
                         <div className="form-group">
                             <label htmlFor="electionName">Nombre de la Elección</label>
-                            <input className="form-control" placeholder="Enter name"
+                            <input className="form-control" placeholder="Ingrese el nombre de la elección."
                                 id="electionName"
                                 name="electionName"
                                 type="text"
@@ -58,7 +58,7 @@ const ElectionForm = (props) => {
                         </div>
                         <div className="form-group">
                             <label htmlFor="electionDescription">Descripción de la Elección</label>
-                            <input className="form-control" placeholder="Enter description"
+                            <textarea className="form-control" placeholder="Ingresa una descripción para la elección."
                                 id="electionDescription"
                                 name="electionDescription"
                                 type="text"
@@ -68,7 +68,7 @@ const ElectionForm = (props) => {
                         </div>
                         <div className="form-group">
                             <label htmlFor="valueElection">Costo de la elección (0,008 ether = 40 votantes aprox.)</label>
-                            <input className="form-control" placeholder="Enter value"
+                            <input className="form-control" placeholder="Ingrese un valor para el costo de la elección."
                                 id="valueElection"
                                 name="valueElection"
                                 type="text"

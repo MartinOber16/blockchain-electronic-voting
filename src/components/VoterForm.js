@@ -71,13 +71,13 @@ const VoterForm = (props) => {
                                 onChange={formik.handleChange}
                                 value={formik.values.idElectionVoter}
                             >
-                                <option key="0" value="0">Seleccione elección</option>
+                                <option key="0" value="0">Seleccione una elección</option>
                                 {renderSelectElections()}
                             </select>
                         </div>
                         <div className="form-group">
                             <label htmlFor="voterAddress">Cuenta del Votante</label>
-                            <input className="form-control" placeholder="Enter address"
+                            <input className="form-control" placeholder="Ingrese la cuenta del votante."
                                 id="voterAddress"
                                 name="voterAddress"
                                 type="text"
@@ -87,7 +87,7 @@ const VoterForm = (props) => {
                         </div>
                         <div className="form-group">
                             <label htmlFor="voterIdentification">Identificación personal</label>
-                            <input className="form-control" placeholder="Enter personal identification"
+                            <input className="form-control" placeholder="Ingrese una identificación del votante."
                                 id="voterIdentification"
                                 name="voterIdentification"
                                 type="text"
@@ -97,7 +97,7 @@ const VoterForm = (props) => {
                         </div>
                         <div className="form-group">
                             <label htmlFor="voterDescription">Descripción</label>
-                            <input className="form-control" placeholder="Enter description"
+                            <textarea className="form-control" placeholder="Ingrese una descripción del votante."
                                 id="voterDescription"
                                 name="voterDescription"
                                 type="text"

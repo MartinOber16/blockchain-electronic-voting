@@ -64,13 +64,13 @@ const CandidateForm = (props) => {
                                 onChange={formik.handleChange}
                                 value={formik.values.idElectionCandidate}
                             >
-                                <option key="0" value="0">Seleccione elección</option>
+                                <option key="0" value="0">Seleccione una elección</option>
                                 {renderSelectElections()}
                             </select>
                         </div>
                         <div className="form-group">
                             <label htmlFor="candidateName">Nombre del candidato</label>
-                            <input className="form-control" placeholder="Enter name"
+                            <input className="form-control" placeholder="Ingrese el nombre del candidato."
                                 id="candidateName"
                                 name="candidateName"
                                 type="text"
@@ -80,7 +80,7 @@ const CandidateForm = (props) => {
                         </div>
                         <div className="form-group">
                             <label htmlFor="candidateProposal">Propuesta del candidato</label>
-                            <input className="form-control" placeholder="Enter proposal"
+                            <textarea className="form-control" placeholder="Ingrese la propuesta del candidato."
                                 id="candidateProposal"
                                 name="candidateProposal"
                                 type="text"

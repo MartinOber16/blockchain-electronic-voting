@@ -60,7 +60,7 @@ export class ElectionList extends Component {
         swal(<div>
                 <h3>{election.name}</h3>
                 <hr/>
-                <p>{election.description}</p>
+                <p className="text-left">{election.description}</p>
                 <hr/>
                 <br/>
                 <div className="form-group row">

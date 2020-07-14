@@ -20,7 +20,7 @@ export class Information extends Component {
         return (<div>
                 <div className="row">
                     <div className="col-sm-1"></div>
-                    <div className="card bg-light text-dark col-sm-10" id="accountData">
+                    <div className="card bg-light text-dark col-sm-8" id="accountData">
                         <div className="card-body">
                             <h5 className="card-title">Información de la cuenta</h5>
                             <hr />
@@ -28,11 +28,14 @@ export class Information extends Component {
                             <div className="card-text"><b>Balance:</b> {this.props.state.accountBalance} eth</div>
                         </div>
                     </div>
+                    <div className="col-sm-2">
+                    <div class="coinmarketcap-currency-widget" data-currencyid="1027" data-base="USD" data-secondary="" data-ticker="true" data-rank="false" data-marketcap="false" data-volume="false" data-statsticker="true" data-stats="USD"></div>
+                    </div>
                 </div>
                 <br />
                 <div className="row">
                     <div className="col-sm-1"></div>
-                    <div className="card bg-light text-dark col-sm-10" id="networkData">
+                    <div className="card bg-light text-dark col-sm-8" id="networkData">
                         <div className="card-body">
                             <h5 className="card-title">Información de la aplicación
                                 <div className="float-right">{this.isConectedInfo()}</div>
@@ -44,8 +47,12 @@ export class Information extends Component {
                             <div className="card-text"><b>Dirección del contrato:</b> {this.props.state.contract}</div>
                             <div className="card-text"><b>Balance del contrato:</b> {this.props.state.contractBalance} eth</div>
                         </div>
-                    </div> 
+                    </div>
+                    <div className="col-sm-2">
+                        
+                    </div>
                 </div>
+
             </div>
             );
     }
