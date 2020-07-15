@@ -9,6 +9,7 @@ export class CandidateList extends Component {
 
     constructor(props) {
         super(props);
+        console.log(props);
     }
 
     notify (receipt) {
@@ -16,6 +17,7 @@ export class CandidateList extends Component {
             swal("Transacción realizada correctamente!", receipt.data.tx, "success");
         else
             swal("Error al realizar la transacción!", receipt.data, "error");
+
     }
 
     // Obtener un candidato

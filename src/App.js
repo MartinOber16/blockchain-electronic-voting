@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import getWeb3 from "../services/getWeb3";
 import BEVContract from "../services/bev";
 import { BEVService } from "../services/bevService";
-import {okCode} from "../services/GlobalVariables";
+import {okCode, networkNames} from "../services/GlobalVariables";
 import Header from "./components/Header";
 import Menu from "./components/Menu";
 import { Information } from "./components/Information";
@@ -38,7 +38,8 @@ export class App extends Component {
             contract: 0,
             elections: [],
             electionsByAccount: [], 
-            name: undefined,    
+            name: undefined,
+            networkName: '',   
             totalElections: 0,
             voters: []
         };
@@ -47,18 +48,20 @@ export class App extends Component {
     // Despues de que se carga el componente
     async componentDidMount() {
         try{
-            this.web3 = await getWeb3(); // Obtengo la versión 1 de web3            
+            this.web3 = await getWeb3(); // Obtengo la versión 1 de web3
+            console.log('web3.version', this.web3.version);           
             this.toEther = converter(this.web3); // Funcion para convertir de wei a ether
             this.BEV = await BEVContract(this.web3.currentProvider); // Instancia del contrato  
             this.BEVService = new BEVService(this.BEV);
-            ethereum.enable(); // Habilitar acceso a las cuentas en MetaMask
-            ethereum.autoRefreshOnNetworkChange = false;
-            var account = (await this.web3.eth.getAccounts())[0]; // Información del usuario actual
-
+            //ethereum.enable(); // Habilitar acceso a las cuentas en MetaMask
+            //var account = (await this.web3.eth.getAccounts())[0]; // Información del usuario actual
+            let accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+            let account = accounts[0];
+            
             // Metodo de metamask para actualizar cuando hay cambio de cuenta
             //this.web3.currentProvider.publicConfigStore.on('update', async function(event){
-            ethereum.on('accountsChanged', async function (accounts) {
-                 console.log(accounts[0]);
+            //ethereum.on('accountsChanged', async function (accounts) {
+            ethereum._publicConfigStore.on('update', async function(event){
                 if(accounts[0]!= null) {
                     this.setState({
                         account: accounts[0].toLowerCase()
@@ -68,10 +71,26 @@ export class App extends Component {
                 }
             }.bind(this));
 
+            ethereum.on('accountsChanged', function (accounts) {
+                console.log('accounts', accounts);
+                window.location.reload();
+            }.bind(this));
+
+            ethereum.autoRefreshOnNetworkChange = false;
+            ethereum.on('chainChanged', function (chainId) {
+                console.log('chainId', chainId);
+                window.location.reload();
+            }.bind(this));
+
+            ethereum.on('message', function (message) {
+                console.log('message', message);
+            }.bind(this));
+
             // Guardo en el estado la información de la cuenta y cuando esta lista ejecuto la funcion load
             if(account != undefined){
                 this.setState({
-                    account: account.toLowerCase()
+                    account: account.toLowerCase(),
+                    networkName: networkNames[ethereum.networkVersion]
                 }, () => {
                     this.load();
                 } );
@@ -111,8 +130,9 @@ export class App extends Component {
             this.setState({
                 conected: this.web3.currentProvider.isConnected(),
                 contractBalance: this.toEther(contractInfo.balance),
-                contract: contractInfo.address,                        
-                totalElections: contractInfo.totalElections
+                contract: contractInfo.address,
+                networkName: networkNames[ethereum.networkVersion],                   
+                totalElections: contractInfo.totalElections             
             });
         }
     }
@@ -197,6 +217,7 @@ export class App extends Component {
     }
 
     async load(){
+        console.log('load()');
         await this.getContractInfo();
         await this.getUserInfo();
         await this.getElectionsByAccount();
@@ -237,8 +258,8 @@ export class App extends Component {
                             />
                             <br />
                             <CandidateList 
-                                BEVService={this.BEVService} 
-                                state={this.state} 
+                                BEVService={this.BEVService}
+                                state={this.state}
                             />
                             <br />
                             <VoterList 

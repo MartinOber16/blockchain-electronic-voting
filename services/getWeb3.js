@@ -11,13 +11,15 @@ const getWeb3 = () => {
                     web3 = new Web3(web3.currentProvider);
                     resolve(web3);
                 } else {
-                    console.error("No provider found, please install Metamask");
+                    let msj = "No se encontró ningún proveedor, por favor instale Metamask"
+                    console.error(msj);
+                    swal(msj, "error");
                     reject();
                 }
             } catch(e) {
                 console.log("Error!");
                 console.error(e);
-                swal("Error!", "No provider found, please install Metamask", "error");
+                swal("Error!", e, "error");
                 
             }
         });

@@ -26,7 +26,7 @@
     "solc": "^0.6.0",
     "truffle-contract": "^3.0.8",
     "truffle-hdwallet-provider": "^1.0.17",
-    "web3": "1.2.4",
+    "web3": "^1.2.4",
     "webpack": "^4.41.2",
     "webpack-cli": "3.1.0",
     "webpack-dev-server": "^3.9.0"
@@ -45,6 +45,7 @@
     "@fortawesome/react-fontawesome": "^0.1.8",
     "@sweetalert/with-react": "^0.1.1",
     "formik": "^2.1.2",
-    "sweetalert": "^2.1.2"
+    "sweetalert": "^2.1.2",
+    "versions": "^8.4.2"
   }
 }
