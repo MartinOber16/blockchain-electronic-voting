@@ -9,7 +9,6 @@ export class CandidateList extends Component {
 
     constructor(props) {
         super(props);
-        console.log(props);
     }
 
     notify (receipt) {

@@ -48,8 +48,7 @@ export class App extends Component {
     // Despues de que se carga el componente
     async componentDidMount() {
         try{
-            this.web3 = await getWeb3(); // Obtengo la versión 1 de web3
-            console.log('web3.version', this.web3.version);           
+            this.web3 = await getWeb3(); // Obtengo la versión 1 de web3        
             this.toEther = converter(this.web3); // Funcion para convertir de wei a ether
             this.BEV = await BEVContract(this.web3.currentProvider); // Instancia del contrato  
             this.BEVService = new BEVService(this.BEV);
@@ -110,8 +109,10 @@ export class App extends Component {
 
         }
         catch(e) {
-            swal("Error obteniendo instancia del contrato.", e.toString(), "error");
-            console.error(e);
+            if(e !== undefined){
+                swal("Error obteniendo instancia del contrato.", e.toString(), "error");
+                console.error(e);
+            }
         }
     }
 

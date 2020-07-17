@@ -7,20 +7,18 @@ const getWeb3 = () => {
             try{
                 let web3 = window.web3;
                 // se reconstruye para utilizar una version mas actual
-                if(typeof web3 !== undefined){
+                if(web3 !== undefined){
                     web3 = new Web3(web3.currentProvider);
                     resolve(web3);
                 } else {
-                    let msj = "No se encontró ningún proveedor, por favor instale Metamask"
+                    let msj = "No se encontró ningún proveedor, por favor instale Metamask";
+                    swal("Error!", msj, "error");
                     console.error(msj);
-                    swal(msj, "error");
                     reject();
                 }
             } catch(e) {
-                console.log("Error!");
+                swal("Error!", e.toString(), "error");
                 console.error(e);
-                swal("Error!", e, "error");
-                
             }
         });
     });
