@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "start": "webpack-dev-server --mode development --open",
+    "start": "webpack-dev-server --mode development --open 'Google Chrome'",
     "build": "webpack --mode production"
   },
   "devDependencies": {

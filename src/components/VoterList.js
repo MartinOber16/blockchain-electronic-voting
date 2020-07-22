@@ -122,7 +122,7 @@ export class VoterList extends Component {
                     <tr>
                         <th>Elección</th>
                         <th>Cuenta</th>
-                        <th>Nombre</th>
+                        <th>Identificación</th>
                         <th>Ya voto</th>
                         <th>Acciones</th>
                     </tr>

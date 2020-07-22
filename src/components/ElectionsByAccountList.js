@@ -54,12 +54,12 @@ export class ElectionsByAccountList extends Component {
     // Información del candidato
     candidateWinDisplay(candidate) {
         swal(<div>
-                <h3>Candidato ganador</h3>
+                <h3>Ganador de la elección</h3>
                 <hr/>
                 <br/>
                 <div className="form-group row">
                     <div className="col-sm-2"></div>
-                    <label className="col-sm-2 control-label text-left"><strong>Nombre:</strong></label>
+                    <label className="col-sm-2 control-label text-left"><strong>Candidato:</strong></label>
                     <div className="col-sm-6">
                         <p className="form-control-static">{candidate.name}</p>
                     </div>
@@ -80,24 +80,23 @@ export class ElectionsByAccountList extends Component {
         let electionDetails = result.map((candidate ) => {
             const {id, name, voteCount } = candidate
             totalVotos += voteCount;
-            return (<tr key={id}><td>{id}</td><td>&nbsp;</td><td className="text-left">&nbsp;{name}</td><td>&nbsp;</td><td className="text-right">{voteCount}</td></tr>);
+            return (<tr key={id}><td className="text-left">{name}</td><td>&nbsp;</td><td>&nbsp;</td><td className="text-right">{voteCount}</td></tr>);
         });
 
         swal(<div>
-                <h3>Detalles de la votación</h3>
+                <h3>Detalles de la elección</h3>
                 <hr/>
                 <br/>
                 <div className="row">
                     <div className="col-sm-1"></div>
-                    <div className="col-sm-10">
+                    <div className="col-sm-9">
                         <table>
                             <thead className="thead-dark">
-                                <tr>
-                                    <th>Número</th>
-                                    <th>&nbsp;</th>                                
-                                    <th>Nombre</th>
+                                <tr>                               
+                                    <th className="text-left"><u>Candidato</u></th>
                                     <th>&nbsp;</th>
-                                    <th>Votos</th>
+                                    <td>&nbsp;</td>
+                                    <th className="text-right"><u>Votos</u></th>
                                 </tr>
                             </thead>
                             <tbody id="electionTableByAccount">
@@ -105,6 +104,7 @@ export class ElectionsByAccountList extends Component {
                             </tbody>
                         </table>
                     </div>
+                    <div className="col-sm-1"></div>
                 </div>
                 
                 <br/>

@@ -12,6 +12,7 @@ module.exports = {
   },
   devServer: {
     contentBase: "./build",
+    open: 'Google Chrome',
     hot: true
   },
   module: {
