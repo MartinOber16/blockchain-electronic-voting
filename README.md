@@ -1,6 +1,6 @@
 # Blockchain Electronic Voting Descentralized App - README
 
-<img src="http://introtocrypto.com/wp-content/uploads/2017/08/ether@2x.png" height="128" width="128">
+<img src="https://www.aclu-ms.org/sites/default/files/styles/featured_image_580x386/public/field_image/aclu_2018_icons_voting_rights.png?itok=6bDt6KJq" height="128" width="128">
 
 ## Introducción
 BEVDApp es una aplicación web de votación electrónica implementada con la tecnología de Blockchain. El front-end esta desarrollado en React, mientras que el back-end se encuentra implementado en un Smart Contract de Ethereum desarrollado en lenguaje Solidity. 
