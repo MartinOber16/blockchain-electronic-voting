@@ -32,10 +32,16 @@ export class VoterList extends Component {
     }
 
     // Eliminar un votante
-    async deleteVoter(election, address) {          
-        await this.props.BEVService.deleteVoter(election, address, this.props.state.account).then((receipt) => {
-            this.notify(receipt);
-        });
+    async deleteVoter(election, address) {    
+        let eleccion = await this.props.BEVService.getElection(election);
+        if(eleccion.estado === 0){
+            await this.props.BEVService.deleteVoter(election, address, this.props.state.account).then((receipt) => {
+                this.notify(receipt);
+            });
+        }
+        else{
+            swal("Error al realizar la transacción!", "No se puede eliminar el votante porque la elección ya esta iniciada o finalizada.", "error");
+        }
     }
 
     renderBoolean(value) {

@@ -132,7 +132,13 @@ export class ElectionList extends Component {
                         </button> 
                         <button 
                             className="btn btn-danger"                              
-                            onClick={ async () => { await this.deleteElection(id); } } 
+                            onClick={ async () => { 
+                                if(estado === 0)
+                                    await this.deleteElection(id);
+                                else
+                                    swal("Error al realizar la transacción!", "No se puede eliminar la elección, ya que se encuentra iniciada o finalizada.", "error");
+                                } 
+                            } 
                             type="button">
                             <FontAwesomeIcon icon={faTrashAlt} />
                         </button>
