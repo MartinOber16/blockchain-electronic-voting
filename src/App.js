@@ -16,8 +16,6 @@ import Soporte from "./components/Soporte";
 import { ToastContainer } from "react-toastr";
 import swal from 'sweetalert';
 
-// TODO: Manejar errores de validación. Por ejemplo, no se puede eliminar una elección si tiene datos.
-
 // Funcion para convertir de weis a ethers
 const converter = (web3) => {
     return (value) => {
