@@ -1,6 +1,6 @@
 export const okCode = 200;
 export const errorCode = 204;
-export const ethersForVoter = 300000000000000; // 0,0003 ethers
+export const ethersForVoter = 500000000000000; // 0,0005 ethers
 export const smartContractVersion = '1.0.0';
 export const appVersion = '1.0.0';
 export const networkNames = {

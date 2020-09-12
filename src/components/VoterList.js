@@ -34,7 +34,7 @@ export class VoterList extends Component {
     // Eliminar un votante
     async deleteVoter(election, address) {    
         let eleccion = await this.props.BEVService.getElection(election);
-        if(eleccion.estado === 0){
+        if(eleccion.data.estado === 0){
             await this.props.BEVService.deleteVoter(election, address, this.props.state.account).then((receipt) => {
                 this.notify(receipt);
             });
