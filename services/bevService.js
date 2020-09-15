@@ -216,14 +216,20 @@ export class BEVService {
             for(var i = 1; i <= index; i++) {    
                 let totalCandidates = await this.contract.getCandidatesIndex(i);
                 for(var j = 1 ; j <= totalCandidates; j++) {
-                    let candidate = await this.contract.getCandidate(i,j);
-                    if(candidate[1]>0)
+                    //let candidate = await this.contract.getCandidate(i,j);
+                    let candidate;
+                    await this.getCandidate(i, j).then((receipt) => {
+                        candidate = receipt.data;
+                    })
+                    //if(candidate[1]>0)
+                    if(candidate != null)
                         candidates.push(candidate);
                 }   
             }
 
             if(candidates.length > 0)
-                return this.response(okCode, this.mapCandidate(candidates));
+                return this.response(okCode, candidates);
+                //return this.response(okCode, this.mapCandidate(candidates));
         }
             
         return this.response(errorCode, "No hay candidatos.");
@@ -236,8 +242,13 @@ export class BEVService {
             candidate = this.structCandidate(receipt);
         });
         
-        if(candidate != null)
+        if(candidate != null){
+            let eleccion = await this.contract.getElection(election);
+            if(eleccion[3].toNumber() < 2) // Si la elección no esta finalizada oculto la información de los votos que recibio el candidato.
+                candidate.voteCount = '?';
+            
             return this.response(okCode, candidate);
+        }
         else
             return this.response(errorCode, "No se pudo obtener el candidato.");
     }
@@ -335,16 +346,20 @@ export class BEVService {
             return this.response(errorCode, "El votante ya se encuentra registrado.");
         }
         else {
-            let transactionInfo;
-            await this.contract.addVoter(election, address, name, description, ethersForVoter, { from: account }).then((receipt) => {
-                transactionInfo = receipt;
-                });
-    
-            if(transactionInfo != null)
-                return this.response(okCode, transactionInfo);
-            else
-                return this.response(errorCode, "No se pudo agregar el nuevo votante.");
-
+            let balance = await this.contract.getContractBalance();
+            if(balance.toNumber() <= ethersForVoter)
+                return this.response(errorCode, "No hay fondos suficientes para agregar el nuevo votante.");
+            else {
+                let transactionInfo;
+                await this.contract.addVoter(election, address, name, description, ethersForVoter, { from: account }).then((receipt) => {
+                    transactionInfo = receipt;
+                    });
+        
+                if(transactionInfo != null)
+                    return this.response(okCode, transactionInfo);
+                else
+                    return this.response(errorCode, "No se pudo agregar el nuevo votante.");
+            }
         }
     }
 

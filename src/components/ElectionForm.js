@@ -67,7 +67,7 @@ const ElectionForm = (props) => {
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="valueElection">Costo de la elección (0,008 ether = 40 votantes aprox.)</label>
+                            <label htmlFor="valueElection">Costo de la elección (0.015 ether = 40 votantes aprox.)</label>
                             <input className="form-control" placeholder="Ingrese un valor para el costo de la elección."
                                 id="valueElection"
                                 name="valueElection"

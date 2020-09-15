@@ -92,8 +92,8 @@ export class CandidateList extends Component {
                             className="btn btn-info"                                                              
                             onClick={
                                 async () => {
-                                    let result = await this.getCandidate(election, id);
-                                    this.candidateDisplay(result);
+                                    let candidate = await this.getCandidate(election, id);
+                                    this.candidateDisplay(candidate);
                                 }
                             } 
                             type="button"
