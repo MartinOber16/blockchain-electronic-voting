@@ -347,7 +347,7 @@ export class BEVService {
         }
         else {
             let balance = await this.contract.getContractBalance();
-            if(balance.toNumber() <= ethersForVoter)
+            if(balance.toNumber() < ethersForVoter)
                 return this.response(errorCode, "No hay fondos suficientes para agregar el nuevo votante.");
             else {
                 let transactionInfo;

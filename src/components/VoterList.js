@@ -54,16 +54,16 @@ export class VoterList extends Component {
     // Información del votante
     voterDisplay(voter) {
         swal(<div>
-                <h3>{voter.name}</h3>
+                <h3>{voter.description}</h3>
                 <hr/>
-                <p>{voter.description}</p>
+                <p>{voter.address}</p>
                 <hr/>
                 <br/>
                 <div className="form-group row">
                     <div className="col-sm-1"></div>
-                    <label className="col-sm-2 control-label text-left"><strong>Cuenta:</strong></label>
-                    <div className="col-sm-4">
-                        <p className="form-control-static small">{voter.address}</p>
+                    <label className="col-sm-3 control-label text-left"><strong>Identificación:</strong></label>
+                    <div className="col-sm-6">
+                        <p className="form-control-static small">{voter.name}</p>
                     </div>
                 </div>
                 <div className="form-group row">
@@ -92,7 +92,7 @@ export class VoterList extends Component {
             <tr key={index}>
                 <td className="text-center">{election}</td>
                 <td>{address}</td>
-                <td>{name}</td>
+                <td>{description}</td>
                 <td>{this.renderBoolean(voted)}</td>
                 <td>
                     <button 
@@ -128,7 +128,7 @@ export class VoterList extends Component {
                     <tr>
                         <th>Elección</th>
                         <th>Cuenta</th>
-                        <th>Identificación</th>
+                        <th>Descripción</th>
                         <th>Ya voto</th>
                         <th>Acciones</th>
                     </tr>
