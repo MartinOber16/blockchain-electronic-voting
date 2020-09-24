@@ -38,7 +38,9 @@ export default (props) => {
                     <br />
                     <ul>
                         <li><a href="https://drive.google.com/file/d/1TWH3cQScuSqbM6Mq4MzalNCJI1k-7TEi/view?usp=sharing" target="_blank" >Manual del usuario</a></li>
-                        <li><a href="https://github.com/MartinOber16/blockchain-electronic-voting/blob/master/README.md" target="_blank" >Documentación del proyecto</a></li>
+                        <li><a href="https://github.com/MartinOber16/blockchain-electronic-voting/blob/master/README.md" target="_blank" >Proyecto en GitHub</a></li>
+                        <li><a href="https://docs.google.com/presentation/d/12reEBA9AjjCqkbdbGxuMAwb_75rheUdKxxB26lmROjY/edit#slide=id.gd9c453428_0_16" target="_blank" >Presentación BEV</a></li>
+                        <li><a href="https://drive.google.com/file/d/1C8g09fI41DQ_1dn4TsqbfFkxFGekxaPe/view?usp=sharing" target="_blank" >Tesis de Grado - Martin Obermeier</a></li>
                     </ul>
                     <br />
                 </div>
