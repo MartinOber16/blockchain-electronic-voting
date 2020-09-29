@@ -231,9 +231,9 @@ export class App extends Component {
     render() {
         return <React.Fragment>    
             <Header name={this.state.name} account={this.state.account}/>        
-            <div className="container row">
+            <div className="container-fluid row">
                 <Menu admin={this.state.admin}/>
-                <div className="container-fluid pl-4 col-sm-10" id="content">
+                <div className="container-fluid col-sm-10" id="content">
                     <div className="container tab-content">
                         <div id="home" className="container tab-pane active">
                             <Information 

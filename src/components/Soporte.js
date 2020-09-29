@@ -1,11 +1,11 @@
 import React from "react";
 
 export default (props) => {
-    return <div>
-                <div className="text-left">
+    return <div className="row">
+                <div className="text-left col-sm-10">
                     <h4>¿Qué beneficios trae el voto electrónico sobre blockchain?</h4>
                 </div>
-                <div className="text-justify">
+                <div className="text-justify col-sm-10">
                     <br />
                     <h5>Aumentar el nivel de participación</h5>
                     <p>El sistema de votación por blockchain tiende a maximizar la participación de los usuarios, permitiéndoles votar desde cualquier lugar y permitiéndoles el acceso desde diferentes sistemas informáticos y desde cualquier dispositivo que tenga una conexión a Internet.</p>
@@ -28,13 +28,13 @@ export default (props) => {
                     <h5>Fiabilidad</h5>
                     <p>Los protocolos de cifrado de la tecnología de blockchain son la base de la seguridad, la privacidad y la auditabilidad. Proporciona una auditoría aún más segura que en el voto por correo tradicional, en el que el votante pierde el control de su voto.</p>
                     <br />
+                    <hr />
+                    <br />
                 </div>
-                <hr />
-                <br />
-                <div className="text-left">
+                <div className="text-left col-sm-10">
                     <h4>Documentación</h4>
                 </div>
-                <div className="text-justify">
+                <div className="text-justify col-sm-10">
                     <br />
                     <ul>
                         <li><a href="https://drive.google.com/file/d/1TWH3cQScuSqbM6Mq4MzalNCJI1k-7TEi/view?usp=sharing" target="_blank" >Manual del usuario</a></li>
