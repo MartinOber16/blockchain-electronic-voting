@@ -58,7 +58,8 @@ export class App extends Component {
             // Metodo de metamask para actualizar cuando hay cambio de cuenta
             //this.web3.currentProvider.publicConfigStore.on('update', async function(event){
             //ethereum.on('accountsChanged', async function (accounts) {
-            ethereum._publicConfigStore.on('update', async function(event){
+            //ethereum._publicConfigStore.on('update', async function(event){
+            ethereum.on('update', async function(event){
                 if(accounts[0]!= null) {
                     this.setState({
                         account: accounts[0].toLowerCase()
